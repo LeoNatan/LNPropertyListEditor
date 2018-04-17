@@ -46,6 +46,11 @@
 	}
 }
 
+- (void)setControlWithBoolean:(BOOL)boolean
+{
+	[self.typeButton selectItemAtIndex:(NSInteger)boolean];
+}
+
 - (void)flashError
 {
 	CABasicAnimation* flashAnimation = [CABasicAnimation animationWithKeyPath:@"backgroundColor"];

@@ -225,7 +225,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 
 - (IBAction)delete:(id)sender
 {
-	LNPropertyListNode* selectedItem = [_outlineView itemAtRow:_outlineView.selectedRow];
+	NSInteger selectedRow = _outlineView.selectedRow;
 	
 	NSInteger row = [self _rowForSender:sender beep:YES];
 	if(row == -1)
@@ -256,7 +256,14 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	
 	[self->_outlineView endUpdates];
 	
-	[_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:[_outlineView rowForItem:selectedItem]] byExtendingSelection:NO];
+	if(selectedRow != -1)
+	{
+		if(selectedRow == _outlineView.numberOfRows)
+		{
+			selectedRow -= 1;
+		}
+		[_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedRow] byExtendingSelection:NO];
+	}
 }
 
 - (void)_convertToType:(LNPropertyListNodeType)newType forSender:(id)sender
@@ -317,7 +324,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	
 	LNPropertyListNode* node = [_outlineView itemAtRow:row];
 	
-	node.value = [LNPropertyListNode convertString:[sender title] toObjectOfType:LNPropertyListNodeTypeBoolean];
+	node.value = @([[sender menu].itemArray indexOfObject:sender] == 1);
 }
 
 #pragma mark NSOutlineViewDataSource
@@ -388,7 +395,14 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	}
 	
 	cellView = [outlineView makeViewWithIdentifier:identifier owner:nil];
-	[cellView setControlWithString:value];
+	if([cellView.identifier isEqualToString:@"BoolCell"])
+	{
+		[cellView setControlWithBoolean:[item.value boolValue]];
+	}
+	else
+	{
+		[cellView setControlWithString:value];
+	}
 	cellView.textField.selectable = cellView.textField.editable = editable;
 	cellView.textField.delegate = self;
 	

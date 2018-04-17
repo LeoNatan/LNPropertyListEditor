@@ -8,8 +8,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class LNPropertyListCellView;
-
 @interface LNPropertyListCellView : NSTableCellView
 
 @property (nonatomic, strong) IBOutlet NSPopUpButton *typeButton;
@@ -20,6 +18,7 @@
 @property (nonatomic) BOOL showsControlButtons;
 
 - (void)setControlWithString:(NSString*)str;
+- (void)setControlWithBoolean:(BOOL)boolean;
 - (void)flashError;
 
 @end
