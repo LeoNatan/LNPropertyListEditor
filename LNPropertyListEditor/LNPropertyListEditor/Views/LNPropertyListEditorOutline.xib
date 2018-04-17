@@ -9,9 +9,9 @@
             <connections>
                 <outlet property="_keyColumn" destination="JH4-EF-CLc" id="DZG-tZ-T0I"/>
                 <outlet property="_menuItem" destination="vpK-HX-z6u" id="EmF-vO-vER"/>
-                <outlet property="_outlineView" destination="CSS-uw-PRr" id="0Dz-ns-7bG"/>
                 <outlet property="_typeColumn" destination="mXq-GQ-RtL" id="eUT-Zd-nes"/>
                 <outlet property="_valueColumn" destination="ocb-ja-fwj" id="tw6-TM-Kmk"/>
+                <outlet property="outlineView" destination="CSS-uw-PRr" id="56o-wW-9J4"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>

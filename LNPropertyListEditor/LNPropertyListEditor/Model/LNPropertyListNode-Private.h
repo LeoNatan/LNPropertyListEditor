@@ -13,7 +13,7 @@
 
 + (NSString*)stringForType:(LNPropertyListNodeType)type;
 + (LNPropertyListNodeType)typeForString:(NSString*)str;
-+ (void)resetNode:(LNPropertyListNode*)node forNewType:(LNPropertyListNodeType)type;
++ (id)defaultValueForType:(LNPropertyListNodeType)type;
 + (id)convertString:(NSString*)str toObjectOfType:(LNPropertyListNodeType)type;
 + (NSString*)stringKeyOfNode:(LNPropertyListNode*)node;
 + (NSString*)stringValueOfNode:(LNPropertyListNode*)node;

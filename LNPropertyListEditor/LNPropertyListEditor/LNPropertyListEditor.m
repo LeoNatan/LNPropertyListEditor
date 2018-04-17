@@ -17,13 +17,17 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 
 @interface LNPropertyListEditor () <NSOutlineViewDataSource, NSOutlineViewDelegate, NSTextFieldDelegate>
 {
-	IBOutlet NSOutlineView* _outlineView;
+	
 	IBOutlet NSMenu* _menuItem;
 	
 	IBOutlet NSTableColumn* _keyColumn;
 	IBOutlet NSTableColumn* _typeColumn;
 	IBOutlet NSTableColumn* _valueColumn;
+	
+	NSUndoManager* _undoManager;
 }
+
+@property (nonatomic, weak) IBOutlet NSOutlineView* outlineView;
 
 @end
 
@@ -67,6 +71,8 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 											  [self.leftAnchor constraintEqualToAnchor:_outlineView.enclosingScrollView.leftAnchor],
 											  [self.rightAnchor constraintEqualToAnchor:_outlineView.enclosingScrollView.rightAnchor],
 											  ]];
+	
+	_undoManager = [NSUndoManager new];
 }
 
 - (void)setPropertyList:(id)propertyList
@@ -81,57 +87,75 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	return _rootPropertyListNode.propertyList;
 }
 
-#pragma mark Outlets
+#pragma mark Node change handling
 
-- (NSInteger)_rowForSender:(id)sender beep:(BOOL)beep
+- (void)_updateKey:(NSString*)key ofNode:(LNPropertyListNode*)node
 {
-	NSInteger row = -1;
+	NSString* oldKey = node.key;
+	node.key = key;
 	
-	if([sender isKindOfClass:[NSMenuItem class]])
-	{
-		NSPopUpButton* button = objc_getAssociatedObject([sender menu], "button");
-		row = [_outlineView rowForView:button];
-	}
-	if(row == -1)
-	{
-		row = _outlineView.clickedRow;
-	}
-	if(row == -1)
-	{
-		row = _outlineView.selectedRow;
-	}
+	LNPropertyListCellView* cellView = [[_outlineView rowViewAtRow:[_outlineView rowForItem:node] makeIfNecessary:NO] viewAtColumn:0];
+	[cellView setControlWithString:key];
 	
-	if(row == -1 && beep == YES)
-	{
-		NSBeep();
-	}
-	return row;
+	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
+		[target _updateKey:oldKey ofNode:node];
+	}];
 }
 
-- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+- (void)_setType:(LNPropertyListNodeType)type children:(id)children value:(id)value forSender:(id)sender
 {
-	if(menuItem.action == @selector(add:))
+	NSInteger row = [self _rowForSender:sender beep:YES];
+	if(row == -1)
 	{
-		return YES;
+		return;
 	}
 	
-	if(menuItem.action == @selector(paste:))
-	{
-		return [NSPasteboard.generalPasteboard canReadItemWithDataConformingToTypes:@[LNPropertyListNodePasteboardType]];
-	}
+	LNPropertyListNode* node = [_outlineView itemAtRow:row];
 	
-	return menuItem.action && [self respondsToSelector:menuItem.action] && ([self _rowForSender:menuItem beep:NO] != -1 || menuItem.action == @selector(add:));
+	LNPropertyListNodeType oldType = node.type;
+	id oldValue = node.value;
+	id oldChildren = node.children;
+	
+	node.type = type;
+	node.value = value;
+	node.children = children;
+	
+	[_outlineView reloadItem:node reloadChildren:YES];
+	
+	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
+		[target _setType:oldType children:oldChildren value:oldValue forSender:@(row)];
+	}];
 }
 
-- (BOOL)_nodeContainsChildrenWithKey:(NSString*)key inNode:(LNPropertyListNode*)node excludingNode:(LNPropertyListNode*)excludedNode
+- (void)_convertToType:(LNPropertyListNodeType)newType forSender:(id)sender
 {
-	return [node.children filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"key == %@ && self != %@", key, excludedNode]].count > 0;
+	[self _setType:newType children:(newType == LNPropertyListNodeTypeArray || newType == LNPropertyListNodeTypeDictionary ? [NSMutableArray new] : nil) value:[LNPropertyListNode defaultValueForType:newType] forSender:sender];
+}
+
+- (void)_updateValue:(id)value ofNode:(LNPropertyListNode*)node
+{
+	id oldValue = node.value;
+	node.value = value;
+	
+	LNPropertyListCellView* cellView = [[_outlineView rowViewAtRow:[_outlineView rowForItem:node] makeIfNecessary:NO] viewAtColumn:2];
+	if(node.type == LNPropertyListNodeTypeBoolean)
+	{
+		[cellView setControlWithBoolean:[value boolValue]];
+	}
+	else
+	{
+		[cellView setControlWithString:value];
+	}
+	
+	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
+		[target _updateValue:oldValue ofNode:node];
+	}];
 }
 
 - (void)_insertNode:(LNPropertyListNode*)insertedNode sender:(id)sender
 {
 	NSInteger row = [self _rowForSender:sender beep:NO];
-	if(row == -1)
+	if(row == -1 && [sender isKindOfClass:[NSNumber class]] == NO)
 	{
 		row = _rootPropertyListNode.children.count - 1;
 	}
@@ -145,7 +169,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	LNPropertyListNode* parentNode;
 	if([_outlineView isItemExpanded:node])
 	{
-		parentNode = node;
+		parentNode = node ?: _rootPropertyListNode;
 		insertionRow = 0;
 	}
 	else
@@ -175,7 +199,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	}
 	
 	[parentNode.children insertObject:insertedNode atIndex:insertionRow];
-	[_outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:insertionRow] inParent:parentNodeInOutline withAnimation:NSTableViewAnimationSlideDown];
+	[_outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:insertionRow] inParent:parentNodeInOutline withAnimation:NSTableViewAnimationEffectNone];
 	
 	[_outlineView reloadItem:parentNode];
 	if(parentNode.type == LNPropertyListNodeTypeArray)
@@ -187,7 +211,122 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	
 	[_outlineView endUpdates];
 	
-	[_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:[_outlineView rowForItem:insertedNode]] byExtendingSelection:NO];
+	NSInteger insertedRow = [_outlineView rowForItem:insertedNode];
+	
+	[_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:insertedRow] byExtendingSelection:NO];
+	
+	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
+		[target delete:@(insertedRow)];
+	}];
+}
+
+- (void)_deleteNodeWithSender:(id)sender
+{
+	NSInteger selectedRow = _outlineView.selectedRow;
+	
+	NSInteger row = [self _rowForSender:sender beep:YES];
+	if(row == -1)
+	{
+		return;
+	}
+	
+	[_outlineView beginUpdates];
+	
+	LNPropertyListNode* deletedNode = [_outlineView itemAtRow:row];
+	LNPropertyListNode* parentNodeInOutline = deletedNode.parent != _rootPropertyListNode ? deletedNode.parent : nil;
+	
+	NSUInteger deletionRow = [deletedNode.parent.children indexOfObject:deletedNode];
+	
+	[deletedNode.parent.children removeObjectAtIndex:deletionRow];
+	[_outlineView removeItemsAtIndexes:[NSIndexSet indexSetWithIndex:deletionRow] inParent:parentNodeInOutline withAnimation:NSTableViewAnimationEffectNone];
+	
+	if(parentNodeInOutline != nil)
+	{
+		[_outlineView reloadItem:parentNodeInOutline];
+	}
+	if(deletedNode.parent.type == LNPropertyListNodeTypeArray)
+	{
+		[[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(deletionRow, deletedNode.parent.children.count - deletionRow)] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+			[self->_outlineView reloadItem:deletedNode.parent.children[idx]];
+		}];
+	}
+	
+	[self->_outlineView endUpdates];
+	
+	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
+		[target _insertNode:deletedNode sender:@(row - 1)];
+	}];
+	
+	if(selectedRow != -1)
+	{
+		if(selectedRow > 0)
+		{
+			selectedRow -= 1;
+		}
+		[_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedRow] byExtendingSelection:NO];
+	}
+}
+
+#pragma mark Outlets
+
+- (NSInteger)_rowForSender:(id)sender beep:(BOOL)beep
+{
+	if([sender isKindOfClass:[NSNumber class]])
+	{
+		return [sender integerValue];
+	}
+	
+	NSInteger row = -1;
+	
+	if([sender isKindOfClass:[NSMenuItem class]])
+	{
+		NSPopUpButton* button = objc_getAssociatedObject([sender menu], "button");
+		row = [_outlineView rowForView:button];
+	}
+	if(row == -1)
+	{
+		row = _outlineView.clickedRow;
+	}
+	if(row == -1)
+	{
+		row = _outlineView.selectedRow;
+	}
+	
+	if(row == -1 && beep == YES)
+	{
+		NSBeep();
+	}
+	return row;
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+{
+	if(menuItem.action == @selector(undo:))
+	{
+		return _undoManager.canUndo;
+	}
+	
+	if(menuItem.action == @selector(redo:))
+	{
+		return _undoManager.canRedo;
+	}
+	
+	if(menuItem.action == @selector(add:))
+	{
+		return YES;
+	}
+	
+	if(menuItem.action == @selector(paste:))
+	{
+		return [NSPasteboard.generalPasteboard canReadItemWithDataConformingToTypes:@[LNPropertyListNodePasteboardType]];
+	}
+	
+	return menuItem.action && [self respondsToSelector:menuItem.action] && ([self _rowForSender:menuItem beep:NO] != -1 || menuItem.action == @selector(add:));
+}
+
+- (BOOL)_nodeContainsChildrenWithKey:(NSString*)key inNode:(LNPropertyListNode*)node excludingNode:(LNPropertyListNode*)excludedNode
+{
+	return [node.children filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"key == %@ && self != %@", key, excludedNode]].count > 0;
 }
 
 - (IBAction)add:(id)sender
@@ -225,58 +364,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 
 - (IBAction)delete:(id)sender
 {
-	NSInteger selectedRow = _outlineView.selectedRow;
-	
-	NSInteger row = [self _rowForSender:sender beep:YES];
-	if(row == -1)
-	{
-		return;
-	}
-	
-	[_outlineView beginUpdates];
-	
-	LNPropertyListNode* node = [_outlineView itemAtRow:row];
-	LNPropertyListNode* parentNodeInOutline = node.parent != _rootPropertyListNode ? node.parent : nil;
-	
-	NSUInteger deletionRow = [node.parent.children indexOfObject:node];
-	
-	[node.parent.children removeObjectAtIndex:deletionRow];
-	[_outlineView removeItemsAtIndexes:[NSIndexSet indexSetWithIndex:deletionRow] inParent:parentNodeInOutline withAnimation:NSTableViewAnimationSlideUp];
-	
-	if(parentNodeInOutline != nil)
-	{
-		[_outlineView reloadItem:parentNodeInOutline];
-	}
-	if(node.parent.type == LNPropertyListNodeTypeArray)
-	{
-		[[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(deletionRow, node.parent.children.count - deletionRow)] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
-			[self->_outlineView reloadItem:node.parent.children[idx]];
-		}];
-	}
-	
-	[self->_outlineView endUpdates];
-	
-	if(selectedRow != -1)
-	{
-		if(selectedRow == _outlineView.numberOfRows)
-		{
-			selectedRow -= 1;
-		}
-		[_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedRow] byExtendingSelection:NO];
-	}
-}
-
-- (void)_convertToType:(LNPropertyListNodeType)newType forSender:(id)sender
-{
-	NSInteger row = [self _rowForSender:sender beep:YES];
-	if(row == -1)
-	{
-		return;
-	}
-	
-	LNPropertyListNode* node = [_outlineView itemAtRow:row];
-	[LNPropertyListNode resetNode:node forNewType:newType];
-	[_outlineView reloadItem:node reloadChildren:YES];
+	[self _deleteNodeWithSender:sender];
 }
 
 - (IBAction)boolean:(id)sender
@@ -324,7 +412,17 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	
 	LNPropertyListNode* node = [_outlineView itemAtRow:row];
 	
-	node.value = @([[sender menu].itemArray indexOfObject:sender] == 1);
+	[self _updateValue:@([[sender menu].itemArray indexOfObject:sender] == 1) ofNode:node];
+}
+
+- (IBAction)undo:(id)sender
+{
+	[_undoManager undo];
+}
+
+- (IBAction)redo:(id)sender
+{
+	[_undoManager redo];
 }
 
 #pragma mark NSOutlineViewDataSource
@@ -423,7 +521,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	{
 		if([self _nodeContainsChildrenWithKey:textField.stringValue inNode:node.parent excludingNode:node] == NO)
 		{
-			node.key = textField.stringValue;
+			[self _updateKey:textField.stringValue ofNode:node];
 		}
 		else
 		{
@@ -444,7 +542,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 		id newValue = [LNPropertyListNode convertString:textField.stringValue toObjectOfType:node.type];
 		if(newValue != nil)
 		{
-			node.value = newValue;
+			[self _updateValue:newValue ofNode:node];
 		}
 		else
 		{

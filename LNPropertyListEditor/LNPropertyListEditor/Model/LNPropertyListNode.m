@@ -122,47 +122,26 @@ static NSNumberFormatter* __numberFormatter;
 	return LNPropertyListNodeTypeUnknown;
 }
 
-+ (void)resetNode:(LNPropertyListNode*)node forNewType:(LNPropertyListNodeType)type;
++ (id)defaultValueForType:(LNPropertyListNodeType)type;
 {
-	if(node.type == type)
-	{
-		return;
-	}
-	
 	switch (type)
 	{
 		case LNPropertyListNodeTypeUnknown:
-			node.value = nil;
-			break;
+			return nil;
 		case LNPropertyListNodeTypeArray:
-			node.value = nil;
-			break;
 		case LNPropertyListNodeTypeDictionary:
-			node.value = nil;
-			break;
+			return nil;
 		case LNPropertyListNodeTypeBoolean:
-			node.value = @NO;
-			break;
+			return @NO;
 		case LNPropertyListNodeTypeDate:
-			node.value = [NSDate date];
-			break;
+			return [NSDate date];
 		case LNPropertyListNodeTypeData:
-			node.value = [NSData data];
-			break;
+			return [NSData data];
 		case LNPropertyListNodeTypeNumber:
-			node.value = @0;
-			break;
+			return @0;
 		case LNPropertyListNodeTypeString:
-			node.value = @"";
-			break;
+			return @"";
 	}
-	
-	if(node.value == nil && type != LNPropertyListNodeTypeUnknown)
-	{
-		node.children = [NSMutableArray new];
-	}
-	
-	node.type = type;
 }
 
 + (id)convertString:(NSString*)str toObjectOfType:(LNPropertyListNodeType)type
