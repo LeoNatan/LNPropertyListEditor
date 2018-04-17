@@ -20,7 +20,7 @@ typedef NS_ENUM(NSUInteger, LNPropertyListNodeType) {
 	LNPropertyListNodeTypeString,
 };
 
-@interface LNPropertyListNode : NSObject
+@interface LNPropertyListNode : NSObject <NSSecureCoding>
 
 - (instancetype)initWithPropertyList:(id)obj;
 

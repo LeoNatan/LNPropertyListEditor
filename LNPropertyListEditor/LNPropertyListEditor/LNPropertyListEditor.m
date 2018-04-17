@@ -11,9 +11,14 @@
 #import "LNPropertyListRowView.h"
 #import "LNPropertyListCellView.h"
 
-@interface LNPropertyListEditor () <NSOutlineViewDataSource, NSOutlineViewDelegate, NSTextFieldDelegate, LNPropertyListCellViewDelegate>
+static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNPropertyListNode";
+
+@import ObjectiveC;
+
+@interface LNPropertyListEditor () <NSOutlineViewDataSource, NSOutlineViewDelegate, NSTextFieldDelegate>
 {
 	IBOutlet NSOutlineView* _outlineView;
+	IBOutlet NSMenu* _menuItem;
 	
 	IBOutlet NSTableColumn* _keyColumn;
 	IBOutlet NSTableColumn* _typeColumn;
@@ -64,26 +69,71 @@
 											  ]];
 }
 
-- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+- (void)setPropertyList:(id)propertyList
 {
-	if(menuItem.action == @selector(deleteItem:))
-	{
-		return _outlineView.selectedRow != -1;
-	}
+	_rootPropertyListNode = [[LNPropertyListNode alloc] initWithPropertyList:propertyList];
 	
-	return NO;
+	[_outlineView reloadData];
 }
 
-- (IBAction)addItem:(id)sender
+- (id)propertyList
 {
-	NSInteger row = [_outlineView rowForView:sender];
+	return _rootPropertyListNode.propertyList;
+}
+
+#pragma mark Outlets
+
+- (NSInteger)_rowForSender:(id)sender beep:(BOOL)beep
+{
+	NSInteger row = -1;
+	
+	if([sender isKindOfClass:[NSMenuItem class]])
+	{
+		NSPopUpButton* button = objc_getAssociatedObject([sender menu], "button");
+		row = [_outlineView rowForView:button];
+	}
+	if(row == -1)
+	{
+		row = _outlineView.clickedRow;
+	}
 	if(row == -1)
 	{
 		row = _outlineView.selectedRow;
 	}
+	
+	if(row == -1 && beep == YES)
+	{
+		NSBeep();
+	}
+	return row;
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+{
+	if(menuItem.action == @selector(add:))
+	{
+		return YES;
+	}
+	
+	if(menuItem.action == @selector(paste:))
+	{
+		return [NSPasteboard.generalPasteboard canReadItemWithDataConformingToTypes:@[LNPropertyListNodePasteboardType]];
+	}
+	
+	return menuItem.action && [self respondsToSelector:menuItem.action] && ([self _rowForSender:menuItem beep:NO] != -1 || menuItem.action == @selector(add:));
+}
+
+- (BOOL)_nodeContainsChildrenWithKey:(NSString*)key inNode:(LNPropertyListNode*)node excludingNode:(LNPropertyListNode*)excludedNode
+{
+	return [node.children filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"key == %@ && self != %@", key, excludedNode]].count > 0;
+}
+
+- (void)_insertNode:(LNPropertyListNode*)insertedNode sender:(id)sender
+{
+	NSInteger row = [self _rowForSender:sender beep:NO];
 	if(row == -1)
 	{
-		row = _propertyListNode.children.count - 1;
+		row = _rootPropertyListNode.children.count - 1;
 	}
 	
 	[_outlineView beginUpdates];
@@ -103,13 +153,25 @@
 		parentNode = [node parent];
 		insertionRow = [parentNode.children indexOfObject:node] + 1;
 	}
-	LNPropertyListNode* parentNodeInOutline = parentNode != _propertyListNode ? parentNode : nil;
+	LNPropertyListNode* parentNodeInOutline = parentNode != _rootPropertyListNode ? parentNode : nil;
 	
-	LNPropertyListNode* insertedNode = [[LNPropertyListNode alloc] initWithPropertyList:@""];
 	insertedNode.parent = parentNode;
+	
 	if(parentNode.type == LNPropertyListNodeTypeDictionary)
 	{
-		insertedNode.key = @"New Item";
+		if(insertedNode.key == nil)
+		{
+			insertedNode.key = @"Key";
+		}
+		
+		NSUInteger count = 2;
+		NSString* originalKey = insertedNode.key;
+		
+		while([self _nodeContainsChildrenWithKey:insertedNode.key inNode:parentNode excludingNode:insertedNode])
+		{
+			insertedNode.key = [NSString stringWithFormat:@"%@ %lu", originalKey, count];
+			count += 1;
+		}
 	}
 	
 	[parentNode.children insertObject:insertedNode atIndex:insertionRow];
@@ -128,26 +190,53 @@
 	[_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:[_outlineView rowForItem:insertedNode]] byExtendingSelection:NO];
 }
 
-- (IBAction)deleteItem:(id)sender
+- (IBAction)add:(id)sender
 {
-	LNPropertyListNode* selectedItem = [_outlineView itemAtRow:[_outlineView selectedRow]];
-	
-	NSInteger row = [_outlineView rowForView:sender];
+	LNPropertyListNode* insertedNode = [[LNPropertyListNode alloc] initWithPropertyList:@""];
+	[self _insertNode:insertedNode sender:sender];
+}
+
+- (IBAction)cut:(id)sender
+{
+	[self copy:sender];
+	[self delete:sender];
+}
+
+- (IBAction)copy:(id)sender
+{
+	NSInteger row = [self _rowForSender:sender beep:YES];
 	if(row == -1)
 	{
-		row = _outlineView.selectedRow;
+		return;
 	}
 	
+	LNPropertyListNode* node = [_outlineView itemAtRow:row];
+	
+	[NSPasteboard.generalPasteboard clearContents];
+	[NSPasteboard.generalPasteboard setData:[NSKeyedArchiver archivedDataWithRootObject:node] forType:LNPropertyListNodePasteboardType];
+}
+
+- (IBAction)paste:(id)sender
+{
+	LNPropertyListNode* node = [NSKeyedUnarchiver unarchiveObjectWithData:[NSPasteboard.generalPasteboard dataForType:LNPropertyListNodePasteboardType]];
+	
+	[self _insertNode:node sender:sender];
+}
+
+- (IBAction)delete:(id)sender
+{
+	LNPropertyListNode* selectedItem = [_outlineView itemAtRow:_outlineView.selectedRow];
+	
+	NSInteger row = [self _rowForSender:sender beep:YES];
 	if(row == -1)
 	{
-		NSBeep();
 		return;
 	}
 	
 	[_outlineView beginUpdates];
 	
 	LNPropertyListNode* node = [_outlineView itemAtRow:row];
-	LNPropertyListNode* parentNodeInOutline = node.parent != _propertyListNode ? node.parent : nil;
+	LNPropertyListNode* parentNodeInOutline = node.parent != _rootPropertyListNode ? node.parent : nil;
 	
 	NSUInteger deletionRow = [node.parent.children indexOfObject:node];
 	
@@ -170,16 +259,65 @@
 	[_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:[_outlineView rowForItem:selectedItem]] byExtendingSelection:NO];
 }
 
-- (void)setPropertyList:(id)propertyList
+- (void)_convertToType:(LNPropertyListNodeType)newType forSender:(id)sender
 {
-	_propertyListNode = [[LNPropertyListNode alloc] initWithPropertyList:propertyList];
+	NSInteger row = [self _rowForSender:sender beep:YES];
+	if(row == -1)
+	{
+		return;
+	}
 	
-	[_outlineView reloadData];
+	LNPropertyListNode* node = [_outlineView itemAtRow:row];
+	[LNPropertyListNode resetNode:node forNewType:newType];
+	[_outlineView reloadItem:node reloadChildren:YES];
 }
 
-- (id)propertyList
+- (IBAction)boolean:(id)sender
 {
-	return _propertyListNode.propertyList;
+	[self _convertToType:LNPropertyListNodeTypeBoolean forSender:sender];
+}
+
+- (IBAction)number:(id)sender
+{
+	[self _convertToType:LNPropertyListNodeTypeNumber forSender:sender];
+}
+
+- (IBAction)string:(id)sender
+{
+	[self _convertToType:LNPropertyListNodeTypeString forSender:sender];
+}
+
+- (IBAction)date:(id)sender
+{
+	[self _convertToType:LNPropertyListNodeTypeDate forSender:sender];
+}
+
+- (IBAction)data:(id)sender
+{
+	[self _convertToType:LNPropertyListNodeTypeData forSender:sender];
+}
+
+- (IBAction)array:(id)sender
+{
+	[self _convertToType:LNPropertyListNodeTypeArray forSender:sender];
+}
+
+- (IBAction)dictionary:(id)sender
+{
+	[self _convertToType:LNPropertyListNodeTypeDictionary forSender:sender];
+}
+
+- (IBAction)_setToBoolValue:(id)sender
+{
+	NSInteger row = [self _rowForSender:sender beep:YES];
+	if(row == -1)
+	{
+		return;
+	}
+	
+	LNPropertyListNode* node = [_outlineView itemAtRow:row];
+	
+	node.value = [LNPropertyListNode convertString:[sender title] toObjectOfType:LNPropertyListNodeTypeBoolean];
 }
 
 #pragma mark NSOutlineViewDataSource
@@ -188,7 +326,7 @@
 {
 	if(item == nil)
 	{
-		return _propertyListNode.type == LNPropertyListNodeTypeArray || _propertyListNode.type == LNPropertyListNodeTypeDictionary ? _propertyListNode.children.count : 1;
+		return _rootPropertyListNode.type == LNPropertyListNodeTypeArray || _rootPropertyListNode.type == LNPropertyListNodeTypeDictionary ? _rootPropertyListNode.children.count : 1;
 	}
 	
 	return item.children.count;
@@ -198,7 +336,7 @@
 {
 	if(item == nil)
 	{
-		item = _propertyListNode;
+		item = _rootPropertyListNode;
 	}
 	
 	return [item.children objectAtIndex:index];
@@ -253,7 +391,6 @@
 	[cellView setControlWithString:value];
 	cellView.textField.selectable = cellView.textField.editable = editable;
 	cellView.textField.delegate = self;
-	cellView.delegate = self;
 	
 	return cellView;
 }
@@ -263,7 +400,6 @@
 - (void)controlTextDidEndEditing:(NSNotification *)note
 {
 	NSTextField *textField = note.object;
-	
 	NSUInteger row = [_outlineView rowForView:textField];
 	NSUInteger column = [_outlineView columnForView:textField];
 	
@@ -271,7 +407,23 @@
 	
 	if(column == 0)
 	{
-		node.key = textField.stringValue;
+		if([self _nodeContainsChildrenWithKey:textField.stringValue inNode:node.parent excludingNode:node] == NO)
+		{
+			node.key = textField.stringValue;
+		}
+		else
+		{
+			NSAlert* alert = [NSAlert new];
+			alert.alertStyle = NSAlertStyleWarning;
+			alert.messageText = [NSString stringWithFormat:NSLocalizedString(@"The key “%@” already exists in containing item.", @""), textField.stringValue];
+			[alert addButtonWithTitle:NSLocalizedString(@"OK", @"")];
+			
+			textField.stringValue = node.key;
+			
+			[(LNPropertyListCellView*)textField.superview flashError];
+			
+			[alert runModal];
+		}
 	}
 	else if(column == 2)
 	{
@@ -285,29 +437,6 @@
 			textField.stringValue = [LNPropertyListNode stringValueOfNode:node];
 			[(LNPropertyListCellView*)textField.superview flashError];
 		}
-	}
-}
-
-#pragma mark LNPropertyListCellViewDelegate
-
-- (void)typeButtonValueDidChangeForPropertyListCell:(LNPropertyListCellView *)cell
-{
-	NSUInteger row = [_outlineView rowForView:cell];
-	NSUInteger column = [_outlineView columnForView:cell];
-	
-	LNPropertyListNode* node = [_outlineView itemAtRow:row];
-	
-	NSString* value = cell.typeButton.title;
-	
-	if(column == 1)
-	{
-		LNPropertyListNodeType newType = [LNPropertyListNode typeForString:value];
-		[LNPropertyListNode resetNode:node forNewType:newType];
-		[_outlineView reloadItem:node reloadChildren:YES];
-	}
-	else if(column == 2)
-	{
-		node.value = [LNPropertyListNode convertString:value toObjectOfType:LNPropertyListNodeTypeBoolean];
 	}
 }
 

@@ -8,6 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="LNPropertyListEditor">
             <connections>
                 <outlet property="_keyColumn" destination="JH4-EF-CLc" id="DZG-tZ-T0I"/>
+                <outlet property="_menuItem" destination="vpK-HX-z6u" id="EmF-vO-vER"/>
                 <outlet property="_outlineView" destination="CSS-uw-PRr" id="0Dz-ns-7bG"/>
                 <outlet property="_typeColumn" destination="mXq-GQ-RtL" id="eUT-Zd-nes"/>
                 <outlet property="_valueColumn" destination="ocb-ja-fwj" id="tw6-TM-Kmk"/>
@@ -54,7 +55,7 @@
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
                                                 <connections>
-                                                    <action selector="deleteItem:" target="-1" id="hpL-mk-ToT"/>
+                                                    <action selector="delete:" target="-1" id="SJ7-eQ-Lbt"/>
                                                 </connections>
                                             </button>
                                             <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uC8-sB-LLp">
@@ -68,11 +69,11 @@
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
                                                 <connections>
-                                                    <action selector="addItem:" target="-1" id="ZPW-k2-LBt"/>
+                                                    <action selector="add:" target="-1" id="D8D-bf-ods"/>
                                                 </connections>
                                             </button>
                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="fSs-8t-em3" userLabel="Key Title">
-                                                <rect key="frame" x="4" y="2" width="170" height="14"/>
+                                                <rect key="frame" x="4" y="2" width="166" height="14"/>
                                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" title="Key" usesSingleLineMode="YES" id="XYB-pt-1cu">
                                                     <font key="font" metaFont="smallSystem"/>
                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -82,7 +83,7 @@
                                         </subviews>
                                         <constraints>
                                             <constraint firstItem="fSs-8t-em3" firstAttribute="leading" secondItem="t2u-Od-Zzd" secondAttribute="leading" constant="6" id="33i-e9-ykR"/>
-                                            <constraint firstItem="uC8-sB-LLp" firstAttribute="leading" secondItem="fSs-8t-em3" secondAttribute="trailing" constant="2" id="9C6-5m-fRL"/>
+                                            <constraint firstItem="uC8-sB-LLp" firstAttribute="leading" secondItem="fSs-8t-em3" secondAttribute="trailing" constant="6" id="9C6-5m-fRL"/>
                                             <constraint firstItem="VNx-8v-7cy" firstAttribute="centerY" secondItem="t2u-Od-Zzd" secondAttribute="centerY" id="9J0-bl-9Se"/>
                                             <constraint firstAttribute="trailing" secondItem="fSs-8t-em3" secondAttribute="trailing" priority="999" constant="2" id="RJo-Hh-NqX"/>
                                             <constraint firstAttribute="trailing" secondItem="VNx-8v-7cy" secondAttribute="trailing" constant="2" id="T3J-iW-wMi"/>
@@ -118,28 +119,49 @@
                                                     <font key="font" metaFont="smallSystem"/>
                                                     <menu key="menu" id="Tzv-tz-SaI">
                                                         <items>
-                                                            <menuItem title="Array" state="on" id="8UR-hR-pSj"/>
-                                                            <menuItem title="Dictionary" id="ffo-JN-fHh"/>
+                                                            <menuItem title="Array" state="on" id="8UR-hR-pSj">
+                                                                <connections>
+                                                                    <action selector="array:" target="-1" id="ZEO-KA-byP"/>
+                                                                </connections>
+                                                            </menuItem>
+                                                            <menuItem title="Dictionary" id="ffo-JN-fHh">
+                                                                <connections>
+                                                                    <action selector="dictionary:" target="-1" id="LRN-hs-ZLR"/>
+                                                                </connections>
+                                                            </menuItem>
                                                             <menuItem isSeparatorItem="YES" id="Cw5-9s-cu4"/>
-                                                            <menuItem title="Boolean" id="MGQ-jA-e2X"/>
+                                                            <menuItem title="Boolean" id="MGQ-jA-e2X">
+                                                                <connections>
+                                                                    <action selector="boolean:" target="-1" id="Omf-vw-ynu"/>
+                                                                </connections>
+                                                            </menuItem>
                                                             <menuItem title="Data" id="Kva-Ls-3rg">
                                                                 <modifierMask key="keyEquivalentModifierMask"/>
+                                                                <connections>
+                                                                    <action selector="data:" target="-1" id="TSg-kg-7JI"/>
+                                                                </connections>
                                                             </menuItem>
                                                             <menuItem title="Date" id="1gR-ic-BEQ">
                                                                 <modifierMask key="keyEquivalentModifierMask"/>
+                                                                <connections>
+                                                                    <action selector="date:" target="-1" id="lzQ-B3-tKu"/>
+                                                                </connections>
                                                             </menuItem>
                                                             <menuItem title="Number" id="YJa-vW-UHc">
                                                                 <modifierMask key="keyEquivalentModifierMask"/>
+                                                                <connections>
+                                                                    <action selector="number:" target="-1" id="FMj-Tv-PES"/>
+                                                                </connections>
                                                             </menuItem>
                                                             <menuItem title="String" id="WOk-cv-CJd">
                                                                 <modifierMask key="keyEquivalentModifierMask"/>
+                                                                <connections>
+                                                                    <action selector="string:" target="-1" id="4ew-ML-Kvg"/>
+                                                                </connections>
                                                             </menuItem>
                                                         </items>
                                                     </menu>
                                                 </popUpButtonCell>
-                                                <connections>
-                                                    <action selector="_typeButtonValueChanged:" target="Tdk-ZV-3aa" id="Cma-IZ-ugm"/>
-                                                </connections>
                                             </popUpButton>
                                         </subviews>
                                         <constraints>
@@ -195,14 +217,19 @@
                                                     <font key="font" metaFont="smallSystem"/>
                                                     <menu key="menu" id="mQh-HH-fza">
                                                         <items>
-                                                            <menuItem title="NO" state="on" id="h7F-ry-9JB"/>
-                                                            <menuItem title="YES" id="PFQ-mZ-udg"/>
+                                                            <menuItem title="NO" state="on" id="h7F-ry-9JB">
+                                                                <connections>
+                                                                    <action selector="_setToBoolValue:" target="-1" id="B68-aV-NjN"/>
+                                                                </connections>
+                                                            </menuItem>
+                                                            <menuItem title="YES" id="PFQ-mZ-udg">
+                                                                <connections>
+                                                                    <action selector="_setToBoolValue:" target="-1" id="ZRq-Rl-q82"/>
+                                                                </connections>
+                                                            </menuItem>
                                                         </items>
                                                     </menu>
                                                 </popUpButtonCell>
-                                                <connections>
-                                                    <action selector="_typeButtonValueChanged:" target="TJI-m7-gdE" id="UoE-hu-hCU"/>
-                                                </connections>
                                             </popUpButton>
                                         </subviews>
                                         <constraints>
@@ -220,6 +247,7 @@
                         <connections>
                             <outlet property="dataSource" destination="-2" id="EWg-DS-7ta"/>
                             <outlet property="delegate" destination="-2" id="ddG-e7-Eg2"/>
+                            <outlet property="menu" destination="vpK-HX-z6u" id="PC7-jN-Zqn"/>
                         </connections>
                     </outlineView>
                 </subviews>
@@ -238,6 +266,84 @@
             </tableHeaderView>
             <point key="canvasLocation" x="-578.5" y="-616"/>
         </scrollView>
+        <menu id="vpK-HX-z6u">
+            <items>
+                <menuItem title="Cut" id="fcg-eA-BaW">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="cut:" target="-1" id="NeT-j6-dDT"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Copy" id="ZQz-3Y-y4A">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="copy:" target="-1" id="HSw-p7-xKr"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Paste" id="gUo-cr-EVu">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="paste:" target="-1" id="I9U-hU-bNG"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="kro-cr-heo"/>
+                <menuItem title="Value Type" id="p5e-qZ-oat">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Value Type" id="iof-Zo-JMN">
+                        <items>
+                            <menuItem title="Array" id="QxY-ZN-p5E">
+                                <connections>
+                                    <action selector="array:" target="-1" id="vOg-yh-fcG"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Dictionary" id="RPA-Nf-04F">
+                                <connections>
+                                    <action selector="dictionary:" target="-1" id="peY-8f-T1x"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="AdC-NX-YNy"/>
+                            <menuItem title="Boolean" id="8jo-gl-CEW">
+                                <connections>
+                                    <action selector="boolean:" target="-1" id="4D2-Su-7pb"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Data" id="WOd-bO-gxq">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="data:" target="-1" id="8Vb-AD-NJC"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Date" id="7JM-0F-5UK">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="date:" target="-1" id="zMt-vM-vTL"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Number" id="UUo-dL-TdP">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="number:" target="-1" id="S9T-To-OQQ"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="String" id="Qdr-Xv-QeV">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="string:" target="-1" id="Ji7-7s-Qjm"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="Obl-Yu-AUV"/>
+                <menuItem title="Add Item" id="JTy-u0-Kc4">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="add:" target="-1" id="uBk-pY-IGT"/>
+                    </connections>
+                </menuItem>
+            </items>
+            <point key="canvasLocation" x="-579" y="-1006.5"/>
+        </menu>
     </objects>
     <resources>
         <image name="minus" width="11" height="11"/>

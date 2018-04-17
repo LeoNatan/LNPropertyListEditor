@@ -155,9 +155,20 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Delete" id="pa3-QI-u2k">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
                                             <connections>
                                                 <action selector="delete:" target="Ady-hI-5gd" id="0Mk-Ml-PaM"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Delete" hidden="YES" allowsKeyEquivalentWhenHidden="YES" id="vHm-eU-lH2">
+                                            <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="delete:" target="Ady-hI-5gd" id="GFC-ce-FgU"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Select All" keyEquivalent="a" id="Ruw-6m-B2m">
@@ -631,6 +642,66 @@
                                     </items>
                                 </menu>
                             </menuItem>
+                            <menuItem title="Editor" id="1fw-2a-SDe">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Editor" id="cZl-Os-UIE">
+                                    <items>
+                                        <menuItem title="Add Item" id="xlr-wc-Lbq">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="add:" target="Ady-hI-5gd" id="Hsj-Zb-meQ"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Value Type" id="aL4-cI-SvW">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <menu key="submenu" title="Value Type" id="xjp-Tv-ydq">
+                                                <items>
+                                                    <menuItem title="Array" id="zgi-wp-qUa">
+                                                        <connections>
+                                                            <action selector="array:" target="Ady-hI-5gd" id="gmx-C4-iAD"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Dictionary" id="Lyc-WI-bp6">
+                                                        <connections>
+                                                            <action selector="dictionary:" target="Ady-hI-5gd" id="A07-Rl-0iJ"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem isSeparatorItem="YES" id="oPC-Dh-VCS"/>
+                                                    <menuItem title="Boolean" id="HpG-Sd-aMl">
+                                                        <connections>
+                                                            <action selector="boolean:" target="Ady-hI-5gd" id="hTb-ET-zWc"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Data" id="FSW-sx-FQ5">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="data:" target="Ady-hI-5gd" id="sbO-4t-TT8"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Date" id="2xd-G0-R2r">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="date:" target="Ady-hI-5gd" id="Hpp-En-ibJ"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Number" id="apj-GP-QFv">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="number:" target="Ady-hI-5gd" id="Ofz-3n-9dv"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="String" id="hDQ-GV-BqZ">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="string:" target="Ady-hI-5gd" id="XKb-yM-OPL"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                </items>
+                                            </menu>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
                             <menuItem title="Window" id="aUF-d1-5bR">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Window" systemMenu="window" id="Td7-aD-5lo">
@@ -678,7 +749,7 @@
                 <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="75" y="0.0"/>
+            <point key="canvasLocation" x="-7" y="-402"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">

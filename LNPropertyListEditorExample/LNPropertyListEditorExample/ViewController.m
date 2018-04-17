@@ -9,6 +9,8 @@
 #import "ViewController.h"
 #import <LNPropertyListEditor/LNPropertyListEditor.h>
 
+@interface ViewController () <LNPropertyListEditorDelegate> @end
+
 @implementation ViewController
 {
 	IBOutlet LNPropertyListEditor* _plistEditor;
@@ -21,6 +23,13 @@
 	id obj = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:propertyListURL] options:0 format:nil error:NULL];
 	
 	_plistEditor.propertyList = obj;
+}
+
+#pragma mark LNPropertyListEditorDelegate
+
+- (void)propertyListEditor:(LNPropertyListEditor*)editor didChangeChildNode:(LNPropertyListNode*)childNode changeType:(LNPropertyListNodeChangeType)changeType oldKeyName:(NSString*)oldKeyName
+{
+	NSLog(@"");
 }
 
 @end

@@ -8,6 +8,7 @@
 
 #import "LNPropertyListCellView.h"
 @import QuartzCore;
+@import ObjectiveC;
 
 @implementation LNPropertyListCellView
 
@@ -18,6 +19,8 @@
 	self.wantsLayer = YES;
 	self.layer.borderWidth = 2.0;
 	self.layer.borderColor = NSColor.clearColor.CGColor;
+	
+	objc_setAssociatedObject(self.typeButton.menu, "button", self.typeButton, OBJC_ASSOCIATION_ASSIGN);
 }
 
 - (void)prepareForReuse
@@ -41,11 +44,6 @@
 	{
 		self.textField.stringValue = str;
 	}
-}
-
-- (IBAction)_typeButtonValueChanged:(id)sender
-{
-	[self.delegate typeButtonValueDidChangeForPropertyListCell:self];
 }
 
 - (void)flashError

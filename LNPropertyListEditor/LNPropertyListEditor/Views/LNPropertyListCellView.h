@@ -10,15 +10,7 @@
 
 @class LNPropertyListCellView;
 
-@protocol LNPropertyListCellViewDelegate <NSObject>
-
-- (void)typeButtonValueDidChangeForPropertyListCell:(LNPropertyListCellView*)cell;
-
-@end
-
 @interface LNPropertyListCellView : NSTableCellView
-
-@property (nonatomic, weak) id<LNPropertyListCellViewDelegate> delegate;
 
 @property (nonatomic, strong) IBOutlet NSPopUpButton *typeButton;
 @property (nonatomic, weak) IBOutlet NSButton *minusButton;

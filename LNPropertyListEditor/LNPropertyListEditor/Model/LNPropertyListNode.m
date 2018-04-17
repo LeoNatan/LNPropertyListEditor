@@ -13,6 +13,11 @@ static NSNumberFormatter* __numberFormatter;
 
 @implementation LNPropertyListNode
 
++ (BOOL)supportsSecureCoding
+{
+	return YES;
+}
+
 + (void)load
 {
 	static dispatch_once_t onceToken;
@@ -216,6 +221,25 @@ static NSNumberFormatter* __numberFormatter;
 	}
 }
 
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+	self = [super init];
+	
+	if(self)
+	{
+		self.key = [aDecoder decodeObjectForKey:@"key"];
+		self.type = [[aDecoder decodeObjectForKey:@"type"] unsignedIntegerValue];
+		self.value = [aDecoder decodeObjectForKey:@"value"];
+		self.children = [aDecoder decodeObjectForKey:@"children"];
+		
+		[self.children enumerateObjectsUsingBlock:^(LNPropertyListNode * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+			obj.parent = self;
+		}];
+	}
+	
+	return self;
+}
+
 - (instancetype)initWithDictionary:(NSDictionary<NSString*, id>*)dictionary
 {
 	self = [super init];
@@ -279,6 +303,14 @@ static NSNumberFormatter* __numberFormatter;
 - (instancetype)initWithPropertyList:(id)obj
 {
 	return [self initWithObject:obj];
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+	[aCoder encodeObject:self.key forKey:@"key"];
+	[aCoder encodeObject:@(self.type) forKey:@"type"];
+	[aCoder encodeObject:self.value forKey:@"value"];
+	[aCoder encodeObject:self.children forKey:@"children"];
 }
 
 - (NSString *)description
