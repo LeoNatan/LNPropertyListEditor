@@ -34,7 +34,7 @@
 	}
 }
 
-- (void)setControlWithString:(NSString*)str
+- (void)setControlWithString:(NSString*)str setToolTip:(BOOL)setToolTip
 {
 	if(self.typeButton)
 	{
@@ -43,6 +43,11 @@
 	else
 	{
 		self.textField.stringValue = str;
+	}
+	
+	if(setToolTip)
+	{
+		self.toolTip = str;
 	}
 }
 

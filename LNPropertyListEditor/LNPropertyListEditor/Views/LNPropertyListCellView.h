@@ -17,7 +17,7 @@
 
 @property (nonatomic) BOOL showsControlButtons;
 
-- (void)setControlWithString:(NSString*)str;
+- (void)setControlWithString:(NSString*)str setToolTip:(BOOL)setToolTip;
 - (void)setControlWithBoolean:(BOOL)boolean;
 - (void)flashError;
 

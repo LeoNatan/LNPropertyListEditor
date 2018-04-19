@@ -95,7 +95,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	node.key = key;
 	
 	LNPropertyListCellView* cellView = [[_outlineView rowViewAtRow:[_outlineView rowForItem:node] makeIfNecessary:NO] viewAtColumn:0];
-	[cellView setControlWithString:key];
+	[cellView setControlWithString:key setToolTip:YES];
 	
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
 		[target _updateKey:oldKey ofNode:node];
@@ -144,7 +144,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	}
 	else
 	{
-		[cellView setControlWithString:value];
+		[cellView setControlWithString:value setToolTip:cellView.textField.editable];
 	}
 	
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
@@ -499,7 +499,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	}
 	else
 	{
-		[cellView setControlWithString:value];
+		[cellView setControlWithString:value setToolTip:(tableColumn == _keyColumn || (tableColumn == _valueColumn && editable))];
 	}
 	cellView.textField.selectable = cellView.textField.editable = editable;
 	cellView.textField.delegate = self;

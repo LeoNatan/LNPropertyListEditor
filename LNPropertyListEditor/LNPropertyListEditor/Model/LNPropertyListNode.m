@@ -257,6 +257,11 @@ static NSNumberFormatter* __numberFormatter;
 
 - (instancetype)initWithObject:(id)obj
 {
+	if(obj == nil)
+	{
+		return nil;
+	}
+	
 	LNPropertyListNodeType type = [LNPropertyListNode _typeForObject:obj];
 	
 	if(type == LNPropertyListNodeTypeDictionary)
