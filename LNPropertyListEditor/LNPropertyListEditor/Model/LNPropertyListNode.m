@@ -358,4 +358,16 @@ static NSNumberFormatter* __numberFormatter;
 	return self.value;
 }
 
+- (LNPropertyListNode*)childNodeContainingDescendantNode:(LNPropertyListNode*)descendantNode;
+{
+	LNPropertyListNode* parent = descendantNode;
+	
+	while(parent != nil && [self.children containsObject:parent] == NO)
+	{
+		parent = parent.parent;
+	}
+	
+	return parent;
+}
+
 @end

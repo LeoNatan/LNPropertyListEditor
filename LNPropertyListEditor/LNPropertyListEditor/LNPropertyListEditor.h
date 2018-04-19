@@ -106,6 +106,6 @@ typedef NS_ENUM(NSUInteger, LNPropertyListNodeChangeType) {
 	LNPropertyListNodeChangeTypeUpdate
 };
 
-- (void)propertyListEditor:(LNPropertyListEditor*)editor didChangeChildNode:(LNPropertyListNode*)childNode changeType:(LNPropertyListNodeChangeType)changeType oldKeyName:(NSString*)oldKeyName;
+- (void)propertyListEditor:(LNPropertyListEditor *)editor willChangeNode:(LNPropertyListNode *)node changeType:(LNPropertyListNodeChangeType)changeType previousKey:(NSString *)previousKey;
 
 @end

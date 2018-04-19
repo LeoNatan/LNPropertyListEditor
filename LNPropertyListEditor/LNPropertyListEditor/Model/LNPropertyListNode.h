@@ -23,6 +23,7 @@ typedef NS_ENUM(NSUInteger, LNPropertyListNodeType) {
 @interface LNPropertyListNode : NSObject <NSSecureCoding>
 
 - (instancetype)initWithPropertyList:(id)obj;
+- (LNPropertyListNode*)childNodeContainingDescendantNode:(LNPropertyListNode*)descendantNode;
 
 @property (nonatomic, strong) NSString* key;
 @property (nonatomic) LNPropertyListNodeType type;

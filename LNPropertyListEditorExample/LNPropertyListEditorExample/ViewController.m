@@ -22,14 +22,32 @@
 	NSURL* propertyListURL = [[NSBundle mainBundle].bundleURL URLByAppendingPathComponent:@"Contents/Info.plist"];
 	id obj = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:propertyListURL] options:0 format:nil error:NULL];
 	
+	_plistEditor.delegate = self;
+	
 	_plistEditor.propertyList = obj;
 }
 
 #pragma mark LNPropertyListEditorDelegate
 
-- (void)propertyListEditor:(LNPropertyListEditor*)editor didChangeChildNode:(LNPropertyListNode*)childNode changeType:(LNPropertyListNodeChangeType)changeType oldKeyName:(NSString*)oldKeyName
+- (void)propertyListEditor:(LNPropertyListEditor *)editor willChangeNode:(LNPropertyListNode *)node changeType:(LNPropertyListNodeChangeType)changeType previousKey:(NSString *)previousKey
 {
-	NSLog(@"");
+	switch(changeType)
+	{
+		case LNPropertyListNodeChangeTypeMove:
+			NSLog(@"➡️");
+			break;
+		case LNPropertyListNodeChangeTypeInsert:
+			NSLog(@"🎉");
+			break;
+		case LNPropertyListNodeChangeTypeDelete:
+			NSLog(@"🗑");
+			break;
+		case LNPropertyListNodeChangeTypeUpdate:
+			NSLog(@"🔄");
+			break;
+	}
+	
+	NSLog(@"%@", [editor.rootPropertyListNode childNodeContainingDescendantNode:node]);
 }
 
 @end

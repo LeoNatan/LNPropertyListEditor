@@ -91,8 +91,15 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 
 - (void)_updateKey:(NSString*)key ofNode:(LNPropertyListNode*)node
 {
+	if([node.key isEqualToString:key])
+	{
+		return;
+	}
+	
 	NSString* oldKey = node.key;
 	node.key = key;
+	
+	[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeMove previousKey:oldKey];
 	
 	LNPropertyListCellView* cellView = [[_outlineView rowViewAtRow:[_outlineView rowForItem:node] makeIfNecessary:NO] viewAtColumn:0];
 	[cellView setControlWithString:key setToolTip:YES];
@@ -111,6 +118,13 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	}
 	
 	LNPropertyListNode* node = [_outlineView itemAtRow:row];
+	
+	if(node.type == type)
+	{
+		return;
+	}
+	
+	[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeUpdate previousKey:node.key];
 	
 	LNPropertyListNodeType oldType = node.type;
 	id oldValue = node.value;
@@ -134,8 +148,15 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 
 - (void)_updateValue:(id)value ofNode:(LNPropertyListNode*)node
 {
+	if([node.value isEqual:value])
+	{
+		return;
+	}
+	
 	id oldValue = node.value;
 	node.value = value;
+	
+	[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeUpdate previousKey:node.key];
 	
 	LNPropertyListCellView* cellView = [[_outlineView rowViewAtRow:[_outlineView rowForItem:node] makeIfNecessary:NO] viewAtColumn:2];
 	if(node.type == LNPropertyListNodeTypeBoolean)
@@ -144,7 +165,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	}
 	else
 	{
-		[cellView setControlWithString:value setToolTip:cellView.textField.editable];
+		[cellView setControlWithString:[LNPropertyListNode stringValueOfNode:node] setToolTip:cellView.textField.editable];
 	}
 	
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
@@ -201,6 +222,8 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	[parentNode.children insertObject:insertedNode atIndex:insertionRow];
 	[_outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:insertionRow] inParent:parentNodeInOutline withAnimation:NSTableViewAnimationEffectNone];
 	
+	[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeInsert previousKey:node.key];
+	
 	[_outlineView reloadItem:parentNode];
 	if(parentNode.type == LNPropertyListNodeTypeArray)
 	{
@@ -233,12 +256,16 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	[_outlineView beginUpdates];
 	
 	LNPropertyListNode* deletedNode = [_outlineView itemAtRow:row];
+	
+	[self.delegate propertyListEditor:self willChangeNode:deletedNode changeType:LNPropertyListNodeChangeTypeDelete previousKey:deletedNode.key];
+	
 	LNPropertyListNode* parentNodeInOutline = deletedNode.parent != _rootPropertyListNode ? deletedNode.parent : nil;
 	
-	NSUInteger deletionRow = [deletedNode.parent.children indexOfObject:deletedNode];
+	NSUInteger deletionIndex = [deletedNode.parent.children indexOfObject:deletedNode];
 	
-	[deletedNode.parent.children removeObjectAtIndex:deletionRow];
-	[_outlineView removeItemsAtIndexes:[NSIndexSet indexSetWithIndex:deletionRow] inParent:parentNodeInOutline withAnimation:NSTableViewAnimationEffectNone];
+	[deletedNode.parent.children removeObjectAtIndex:deletionIndex];
+	deletedNode.parent = nil;
+	[_outlineView removeItemsAtIndexes:[NSIndexSet indexSetWithIndex:deletionIndex] inParent:parentNodeInOutline withAnimation:NSTableViewAnimationEffectNone];
 	
 	if(parentNodeInOutline != nil)
 	{
@@ -246,7 +273,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	}
 	if(deletedNode.parent.type == LNPropertyListNodeTypeArray)
 	{
-		[[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(deletionRow, deletedNode.parent.children.count - deletionRow)] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+		[[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(deletionIndex, deletedNode.parent.children.count - deletionIndex)] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
 			[self->_outlineView reloadItem:deletedNode.parent.children[idx]];
 		}];
 	}
