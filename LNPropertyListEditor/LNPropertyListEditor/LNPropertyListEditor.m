@@ -124,8 +124,6 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 		return;
 	}
 	
-	[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeUpdate previousKey:node.key];
-	
 	LNPropertyListNodeType oldType = node.type;
 	id oldValue = node.value;
 	id oldChildren = node.children;
@@ -133,6 +131,8 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	node.type = type;
 	node.value = value;
 	node.children = children;
+	
+	[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeUpdate previousKey:node.key];
 	
 	[_outlineView reloadItem:node reloadChildren:YES];
 	
@@ -222,7 +222,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	[parentNode.children insertObject:insertedNode atIndex:insertionRow];
 	[_outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:insertionRow] inParent:parentNodeInOutline withAnimation:NSTableViewAnimationEffectNone];
 	
-	[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeInsert previousKey:node.key];
+	[self.delegate propertyListEditor:self willChangeNode:insertedNode changeType:LNPropertyListNodeChangeTypeInsert previousKey:nil];
 	
 	[_outlineView reloadItem:parentNode];
 	if(parentNode.type == LNPropertyListNodeTypeArray)
