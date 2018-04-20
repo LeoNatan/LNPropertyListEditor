@@ -73,17 +73,17 @@
                                                 </connections>
                                             </button>
                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="fSs-8t-em3" userLabel="Key Title">
-                                                <rect key="frame" x="4" y="2" width="166" height="14"/>
-                                                <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" title="Key" usesSingleLineMode="YES" id="XYB-pt-1cu">
+                                                <rect key="frame" x="4" y="2" width="168" height="14"/>
+                                                <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" title="Key" usesSingleLineMode="YES" id="XYB-pt-1cu">
                                                     <font key="font" metaFont="smallSystem"/>
                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                    <color key="backgroundColor" white="1" alpha="0.0" colorSpace="deviceWhite"/>
+                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
                                             </textField>
                                         </subviews>
                                         <constraints>
                                             <constraint firstItem="fSs-8t-em3" firstAttribute="leading" secondItem="t2u-Od-Zzd" secondAttribute="leading" constant="6" id="33i-e9-ykR"/>
-                                            <constraint firstItem="uC8-sB-LLp" firstAttribute="leading" secondItem="fSs-8t-em3" secondAttribute="trailing" constant="6" id="9C6-5m-fRL"/>
+                                            <constraint firstItem="uC8-sB-LLp" firstAttribute="leading" secondItem="fSs-8t-em3" secondAttribute="trailing" constant="4" id="9C6-5m-fRL"/>
                                             <constraint firstItem="VNx-8v-7cy" firstAttribute="centerY" secondItem="t2u-Od-Zzd" secondAttribute="centerY" id="9J0-bl-9Se"/>
                                             <constraint firstAttribute="trailing" secondItem="fSs-8t-em3" secondAttribute="trailing" priority="999" constant="2" id="RJo-Hh-NqX"/>
                                             <constraint firstAttribute="trailing" secondItem="VNx-8v-7cy" secondAttribute="trailing" constant="2" id="T3J-iW-wMi"/>

@@ -21,6 +21,11 @@
 	self.layer.borderColor = NSColor.clearColor.CGColor;
 	
 	objc_setAssociatedObject(self.typeButton.menu, "button", self.typeButton, OBJC_ASSOCIATION_ASSIGN);
+	
+	if(self.buttonsConstraint)
+	{
+		[NSLayoutConstraint deactivateConstraints:@[self.buttonsConstraint]];
+	}
 }
 
 - (void)prepareForReuse
