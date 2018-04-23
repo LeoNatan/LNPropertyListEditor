@@ -10,6 +10,16 @@
 
 @implementation LNPropertyListOutlineView
 
+- (void)awakeFromNib
+{
+	[super awakeFromNib];
+	
+	self.wantsLayer = YES;
+	self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawOnSetNeedsDisplay;
+	self.enclosingScrollView.wantsLayer = YES;
+	self.enclosingScrollView.layerContentsRedrawPolicy = NSViewLayerContentsRedrawOnSetNeedsDisplay;
+}
+
 - (void)drawGridInClipRect:(NSRect)clipRect
 {
 	NSRect lastRowRect = [self rectOfRow:[self numberOfRows] - 1];

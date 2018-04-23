@@ -17,6 +17,7 @@
 	[super awakeFromNib];
 	
 	self.wantsLayer = YES;
+	self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawOnSetNeedsDisplay;
 	self.layer.borderWidth = 2.0;
 	self.layer.borderColor = NSColor.clearColor.CGColor;
 	
