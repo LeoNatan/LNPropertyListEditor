@@ -15,10 +15,12 @@
 @property (nonatomic, weak) IBOutlet NSButton *plusButton;
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint *buttonsConstraint;
 
-@property (nonatomic) BOOL showsControlButtons;
+@property (nonatomic, readonly) BOOL showsControlButtons;
+- (void)setShowsControlButtons:(BOOL)showsControlButtons addButtonEnabled:(BOOL)addButtonEnabled deleteButtonEnabled:(BOOL)deleteButtonEnabled;
 
 - (void)setControlWithString:(NSString*)str setToolTip:(BOOL)setToolTip;
 - (void)setControlWithBoolean:(BOOL)boolean;
+- (void)setControlEditable:(BOOL)editable;
 - (void)flashError;
 
 @end

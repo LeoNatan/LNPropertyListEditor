@@ -61,7 +61,6 @@ static NSNumberFormatter* __numberFormatter;
 		return LNPropertyListNodeTypeNumber;
 	}
 	
-	[NSException raise:NSInvalidArgumentException format:@"Not property list class: “%@”", [obj class]];
 	return LNPropertyListNodeTypeUnknown;
 }
 
@@ -70,7 +69,7 @@ static NSNumberFormatter* __numberFormatter;
 	switch (type)
 	{
 		case LNPropertyListNodeTypeUnknown:
-			return @"Unknown";
+			return nil;
 		case LNPropertyListNodeTypeArray:
 			return @"Array";
 		case LNPropertyListNodeTypeDictionary:
@@ -169,23 +168,27 @@ static NSNumberFormatter* __numberFormatter;
 
 + (NSString*)stringValueOfNode:(LNPropertyListNode*)node
 {
-	switch (node.type)
+	id valueToTranslate = node._cachedDisplayValue ?: node.value;
+	NSArray* childrenToTranslate = [node._cachedDisplayValue isKindOfClass:[NSArray class]] ? node._cachedDisplayValue : [node._cachedDisplayValue isKindOfClass:[NSDictionary class]] ? [node._cachedDisplayValue allKeys] : node.children;
+	LNPropertyListNodeType typeToTranslate = node._cachedDisplayValue ? [self _typeForObject:node._cachedDisplayValue] : node.type;
+	
+	switch (typeToTranslate)
 	{
 		case LNPropertyListNodeTypeUnknown:
 			return nil;
 		case LNPropertyListNodeTypeArray:
 		case LNPropertyListNodeTypeDictionary:
-			return [NSString stringWithFormat:NSLocalizedString(@"(%lu items)", @""), node.children.count];
+			return [NSString stringWithFormat:NSLocalizedString(@"(%lu items)", @""), childrenToTranslate.count];
 		case LNPropertyListNodeTypeBoolean:
-			return [node.value boolValue] ? @"YES" : @"NO";
+			return [valueToTranslate boolValue] ? @"YES" : @"NO";
 		case LNPropertyListNodeTypeDate:
-			return [__dateFormatter stringFromDate:node.value];
+			return [__dateFormatter stringFromDate:valueToTranslate];
 		case LNPropertyListNodeTypeData:
 			return @"<Data>";
 		case LNPropertyListNodeTypeNumber:
-			return [__numberFormatter stringFromNumber:node.value];
+			return [__numberFormatter stringFromNumber:valueToTranslate];
 		case LNPropertyListNodeTypeString:
-			return node.value;
+			return valueToTranslate;
 	}
 }
 
@@ -368,6 +371,21 @@ static NSNumberFormatter* __numberFormatter;
 	}
 	
 	return parent;
+}
+
+- (LNPropertyListNode*)childNodeForKey:(NSString*)key
+{
+	return [self.children filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"key == %@", key]].firstObject;
+}
+
+- (void)_sortUsingDescriptors:(NSArray<NSSortDescriptor *> *)descriptors
+{
+	if(self.type != LNPropertyListNodeTypeDictionary)
+	{
+		return;
+	}
+	
+	[self.children sortUsingDescriptors:descriptors];
 }
 
 @end

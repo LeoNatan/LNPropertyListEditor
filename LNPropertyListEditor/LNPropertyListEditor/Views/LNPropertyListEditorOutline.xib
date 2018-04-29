@@ -31,13 +31,14 @@
                         <tableViewGridLines key="gridStyleMask" horizontal="YES"/>
                         <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                         <tableColumns>
-                            <tableColumn identifier="" width="200" minWidth="120" maxWidth="1000" id="JH4-EF-CLc">
+                            <tableColumn identifier="Key" width="200" minWidth="120" maxWidth="1000" id="JH4-EF-CLc">
                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Key">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                 </tableHeaderCell>
                                 <customCell key="dataCell" alignment="left" id="KkK-bh-zuW"/>
+                                <sortDescriptor key="sortDescriptorPrototype" selector="localizedCaseInsensitiveCompare:" sortKey="key"/>
                                 <tableColumnResizingMask key="resizingMask" userResizable="YES"/>
                                 <prototypeCellViews>
                                     <tableCellView identifier="KeyCell" id="t2u-Od-Zzd" customClass="LNPropertyListCellView">
@@ -100,13 +101,14 @@
                                     </tableCellView>
                                 </prototypeCellViews>
                             </tableColumn>
-                            <tableColumn identifier="" width="75" minWidth="75" maxWidth="75" id="mXq-GQ-RtL">
+                            <tableColumn identifier="Type" width="75" minWidth="75" maxWidth="75" id="mXq-GQ-RtL">
                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Type">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                 </tableHeaderCell>
                                 <customCell key="dataCell" alignment="left" id="XGb-Bg-yzk"/>
+                                <sortDescriptor key="sortDescriptorPrototype" selector="compare:" sortKey="type"/>
                                 <prototypeCellViews>
                                     <tableCellView identifier="TypeCell" id="Tdk-ZV-3aa" customClass="LNPropertyListCellView">
                                         <rect key="frame" x="204" y="1" width="75" height="17"/>
@@ -114,7 +116,7 @@
                                         <subviews>
                                             <popUpButton translatesAutoresizingMaskIntoConstraints="NO" id="hJ1-Ji-yiF" userLabel="Type Button">
                                                 <rect key="frame" x="-8" y="0.0" width="83" height="18"/>
-                                                <popUpButtonCell key="cell" type="bevel" title="Array" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" imageScaling="proportionallyDown" inset="2" selectedItem="8UR-hR-pSj" id="oSg-Lu-cDE">
+                                                <popUpButtonCell key="cell" type="bevel" title="Array" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" imageScaling="proportionallyDown" inset="2" selectedItem="8UR-hR-pSj" id="oSg-Lu-cDE" customClass="LNPropertyListPopUpButtonCell">
                                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="smallSystem"/>
                                                     <menu key="menu" id="Tzv-tz-SaI">
@@ -175,7 +177,7 @@
                                     </tableCellView>
                                 </prototypeCellViews>
                             </tableColumn>
-                            <tableColumn identifier="" width="507" minWidth="200" maxWidth="10000000" id="ocb-ja-fwj">
+                            <tableColumn identifier="Value" width="507" minWidth="200" maxWidth="10000000" id="ocb-ja-fwj">
                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Value">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>

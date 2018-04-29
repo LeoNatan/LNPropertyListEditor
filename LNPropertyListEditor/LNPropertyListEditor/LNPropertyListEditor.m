@@ -6,14 +6,16 @@
 //  Copyright © 2018 Leo Natan. All rights reserved.
 //
 
-#import "LNPropertyListEditor.h"
+#import "LNPropertyListEditor-Private.h"
 #import "LNPropertyListNode-Private.h"
 #import "LNPropertyListRowView.h"
 #import "LNPropertyListCellView.h"
 
+@import ObjectiveC;
+
 static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNPropertyListNode";
 
-@import ObjectiveC;
+
 
 @interface LNPropertyListEditor () <NSOutlineViewDataSource, NSOutlineViewDelegate, NSTextFieldDelegate>
 {
@@ -26,8 +28,6 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	
 	NSUndoManager* _undoManager;
 }
-
-@property (nonatomic, weak) IBOutlet NSOutlineView* outlineView;
 
 @end
 
@@ -75,6 +75,29 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	_undoManager = [NSUndoManager new];
 }
 
+- (void)setDelegate:(id<LNPropertyListEditorDelegate>)delegate
+{
+	_delegate = delegate;
+	
+	_flags.delegate_willChangeNode = [delegate respondsToSelector:@selector(propertyListEditor:willChangeNode:changeType:previousKey:)];
+	_flags.delegate_canEditKeyOfNode = [delegate respondsToSelector:@selector(propertyListEditor:canEditKeyOfNode:)];
+	_flags.delegate_canEditTypeOfNode = [delegate respondsToSelector:@selector(propertyListEditor:canEditTypeOfNode:)];
+	_flags.delegate_canEditValueOfNode = [delegate respondsToSelector:@selector(propertyListEditor:canEditValueOfNode:)];
+	_flags.delegate_canDeleteNode = [delegate respondsToSelector:@selector(propertyListEditor:canDeleteNode:)];
+	_flags.delegate_canAddNewNodeInNode = [delegate respondsToSelector:@selector(propertyListEditor:canAddNewNodeInNode:)];
+	_flags.delegate_canPasteNode = [delegate respondsToSelector:@selector(propertyListEditor:canPasteNode:inNode:)];
+	_flags.delegate_defaultPropertyListForAddingInNode = [delegate respondsToSelector:@selector(propertyListEditor:defaultPropertyListForAddingInNode:)];
+}
+
+- (void)setDataTransformer:(id<LNPropertyListEditorDataTransformer>)dataTransformer
+{
+	_dataTransformer = dataTransformer;
+	
+	_flags.dataTransformer_displayNameForNode = [dataTransformer respondsToSelector:@selector(propertyListEditor:displayNameForNode:)];
+	_flags.dataTransformer_transformValueForDisplay = [dataTransformer respondsToSelector:@selector(propertyListEditor:transformValueForDisplay:)];
+	_flags.dataTransformer_transformValueForStorage = [dataTransformer respondsToSelector:@selector(propertyListEditor:transformValueForStorage:displayValue:)];
+}
+
 - (void)setPropertyList:(id)propertyList
 {
 	_rootPropertyListNode = [[LNPropertyListNode alloc] initWithPropertyList:propertyList];
@@ -85,6 +108,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 - (id)propertyList
 {
 	return _rootPropertyListNode.propertyList;
+}
+
+- (void)reloadNode:(LNPropertyListNode*)node reloadChildren:(BOOL)reloadChildren
+{
+	[_outlineView reloadItem:node reloadChildren:reloadChildren];
 }
 
 #pragma mark Node change handling
@@ -99,7 +127,10 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	NSString* oldKey = node.key;
 	node.key = key;
 	
-	[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeMove previousKey:oldKey];
+	if(_flags.delegate_willChangeNode)
+	{
+		[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeMove previousKey:oldKey];
+	}
 	
 	LNPropertyListCellView* cellView = [[_outlineView rowViewAtRow:[_outlineView rowForItem:node] makeIfNecessary:NO] viewAtColumn:0];
 	[cellView setControlWithString:key setToolTip:YES];
@@ -132,7 +163,10 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	node.value = value;
 	node.children = children;
 	
-	[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeUpdate previousKey:node.key];
+	if(_flags.delegate_willChangeNode)
+	{
+		[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeUpdate previousKey:node.key];
+	}
 	
 	[_outlineView reloadItem:node reloadChildren:YES];
 	
@@ -148,25 +182,48 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 
 - (void)_updateValue:(id)value ofNode:(LNPropertyListNode*)node
 {
+	id valueToUse = nil;
+	
+	if(_flags.dataTransformer_transformValueForStorage && node.type != LNPropertyListNodeTypeDictionary && node.type != LNPropertyListNodeTypeArray)
+	{
+		valueToUse = [self.dataTransformer propertyListEditor:self transformValueForStorage:node displayValue:value];
+	}
+	
+	if(valueToUse == nil)
+	{
+		valueToUse = value;
+	}
+	
+	LNPropertyListNodeType typeOfValue = [LNPropertyListNode _typeForObject:valueToUse];
+	
+	NSAssert(typeOfValue == node.type, @"Value type %@ does not match node type %@.", [LNPropertyListNode stringForType:typeOfValue], [LNPropertyListNode stringForType:node.type]);
+	
 	if([node.value isEqual:value])
 	{
 		return;
 	}
 	
 	id oldValue = node.value;
-	node.value = value;
+	node.value = valueToUse;
 	
-	[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeUpdate previousKey:node.key];
+	if(_flags.delegate_willChangeNode)
+	{
+		[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeUpdate previousKey:node.key];
+	}
 	
-	LNPropertyListCellView* cellView = [[_outlineView rowViewAtRow:[_outlineView rowForItem:node] makeIfNecessary:NO] viewAtColumn:2];
-	if(node.type == LNPropertyListNodeTypeBoolean)
-	{
-		[cellView setControlWithBoolean:[value boolValue]];
-	}
-	else
-	{
-		[cellView setControlWithString:[LNPropertyListNode stringValueOfNode:node] setToolTip:cellView.textField.editable];
-	}
+	//TODO: update cell
+	[_outlineView reloadItem:node];
+	
+	
+//	LNPropertyListCellView* cellView = [[_outlineView rowViewAtRow:[_outlineView rowForItem:node] makeIfNecessary:NO] viewAtColumn:2];
+//	if(node.type == LNPropertyListNodeTypeBoolean)
+//	{
+//		[cellView setControlWithBoolean:[value boolValue]];
+//	}
+//	else
+//	{
+//		[cellView setControlWithString:[LNPropertyListNode stringValueOfNode:node] setToolTip:cellView.textField.editable];
+//	}
 	
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
 		[target _updateValue:oldValue ofNode:node];
@@ -222,7 +279,10 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	[parentNode.children insertObject:insertedNode atIndex:insertionRow];
 	[_outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:insertionRow] inParent:parentNodeInOutline withAnimation:NSTableViewAnimationEffectNone];
 	
-	[self.delegate propertyListEditor:self willChangeNode:insertedNode changeType:LNPropertyListNodeChangeTypeInsert previousKey:nil];
+	if(_flags.delegate_willChangeNode)
+	{
+		[self.delegate propertyListEditor:self willChangeNode:insertedNode changeType:LNPropertyListNodeChangeTypeInsert previousKey:nil];
+	}
 	
 	[_outlineView reloadItem:parentNode];
 	if(parentNode.type == LNPropertyListNodeTypeArray)
@@ -253,11 +313,20 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 		return;
 	}
 	
+	if([self _validateCanDeleteForSender:sender] == NO)
+	{
+		NSBeep();
+		return;
+	}
+	
 	[_outlineView beginUpdates];
 	
 	LNPropertyListNode* deletedNode = [_outlineView itemAtRow:row];
 	
-	[self.delegate propertyListEditor:self willChangeNode:deletedNode changeType:LNPropertyListNodeChangeTypeDelete previousKey:deletedNode.key];
+	if(_flags.delegate_willChangeNode)
+	{
+		[self.delegate propertyListEditor:self willChangeNode:deletedNode changeType:LNPropertyListNodeChangeTypeDelete previousKey:deletedNode.key];
+	}
 	
 	LNPropertyListNode* parentNodeInOutline = deletedNode.parent != _rootPropertyListNode ? deletedNode.parent : nil;
 	
@@ -292,6 +361,101 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 		}
 		[_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedRow] byExtendingSelection:NO];
 	}
+}
+
+#pragma mark Private
+
+- (BOOL)_validateCanAddForSender:(id)sender
+{
+	if(_flags.delegate_canAddNewNodeInNode)
+	{
+		NSInteger row = [self _rowForSender:sender beep:NO];
+		id node = [self.outlineView itemAtRow:row];
+		return [self canInsertAtNode:node];
+	}
+	
+	return YES;
+}
+
+- (BOOL)_validateCanPasteForSender:(id)sender
+{
+	BOOL canPaste = [NSPasteboard.generalPasteboard canReadItemWithDataConformingToTypes:@[LNPropertyListNodePasteboardType]];
+	NSInteger row = [self _rowForSender:sender beep:NO];
+	id node = [self.outlineView itemAtRow:row];
+	if(canPaste && _flags.delegate_canAddNewNodeInNode)
+	{
+		canPaste = [self canInsertAtNode:node];
+	}
+	if(canPaste && _flags.delegate_canPasteNode)
+	{
+		LNPropertyListNode* pasted = [NSKeyedUnarchiver unarchiveObjectWithData:[NSPasteboard.generalPasteboard dataForType:LNPropertyListNodePasteboardType]];
+		canPaste = [self.delegate propertyListEditor:self canPasteNode:pasted inNode:node];
+	}
+	return canPaste;
+}
+
+- (BOOL)_validateCanDeleteForSender:(id)sender
+{
+	if(_flags.delegate_canDeleteNode)
+	{
+		NSInteger row = [self _rowForSender:sender beep:NO];
+		id node = [self.outlineView itemAtRow:row];
+		return node != nil && [self canDeleteNode:node];
+	}
+	
+	return YES;
+}
+
+- (BOOL)canInsertAtNode:(LNPropertyListNode*)node
+{
+	if(_flags.delegate_canAddNewNodeInNode)
+	{
+		LNPropertyListNode* nodeToAddIn = node.parent;
+		if([_outlineView isItemExpanded:node])
+		{
+			nodeToAddIn = node;
+		}
+		
+		if(nodeToAddIn == nil)
+		{
+			nodeToAddIn = self.rootPropertyListNode;
+		}
+		
+		return [self.delegate propertyListEditor:self canAddNewNodeInNode:nodeToAddIn];
+	}
+	
+	return YES;
+}
+
+- (BOOL)canPaste:(LNPropertyListNode*)pasted atNode:(LNPropertyListNode*)node
+{
+	if(_flags.delegate_canPasteNode)
+	{
+		LNPropertyListNode* nodeToAddIn = node.parent;
+		if([_outlineView isItemExpanded:node])
+		{
+			nodeToAddIn = node;
+		}
+		
+		if(nodeToAddIn == nil)
+		{
+			nodeToAddIn = self.rootPropertyListNode;
+		}
+		
+		return [self.delegate propertyListEditor:self canPasteNode:pasted inNode:nodeToAddIn];
+	}
+	
+	return YES;
+}
+
+- (BOOL)canDeleteNode:(LNPropertyListNode*)node
+{
+	if(_flags.delegate_canDeleteNode)
+	{
+		return [self.delegate propertyListEditor:self canDeleteNode:node];
+	}
+	
+	return YES;
 }
 
 #pragma mark Outlets
@@ -340,15 +504,35 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	
 	if(menuItem.action == @selector(add:))
 	{
-		return YES;
+		return [self _validateCanAddForSender:menuItem];
+	}
+	
+	BOOL extraCase = YES;
+	if(menuItem.action == @selector(delete:))
+	{
+		extraCase = [self _validateCanDeleteForSender:menuItem];
+	}
+	
+	if((menuItem.action == @selector(boolean:) ||
+		menuItem.action == @selector(number:) ||
+		menuItem.action == @selector(string:) ||
+		menuItem.action == @selector(data:) ||
+		menuItem.action == @selector(date:) ||
+		menuItem.action == @selector(array:) ||
+		menuItem.action == @selector(dictionary:)) &&
+	   _flags.delegate_canEditTypeOfNode)
+	{
+		NSInteger row = [self _rowForSender:menuItem beep:NO];
+		id node = [self.outlineView itemAtRow:row];
+		extraCase = node != nil && [self.delegate propertyListEditor:self canEditTypeOfNode:node];
 	}
 	
 	if(menuItem.action == @selector(paste:))
 	{
-		return [NSPasteboard.generalPasteboard canReadItemWithDataConformingToTypes:@[LNPropertyListNodePasteboardType]];
+		return [self _validateCanPasteForSender:menuItem];
 	}
 	
-	return menuItem.action && [self respondsToSelector:menuItem.action] && ([self _rowForSender:menuItem beep:NO] != -1 || menuItem.action == @selector(add:));
+	return extraCase && (menuItem.action && [self respondsToSelector:menuItem.action] && ([self _rowForSender:menuItem beep:NO] != -1 || menuItem.action == @selector(add:)));
 }
 
 - (BOOL)_nodeContainsChildrenWithKey:(NSString*)key inNode:(LNPropertyListNode*)node excludingNode:(LNPropertyListNode*)excludedNode
@@ -356,9 +540,44 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	return [node.children filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"key == %@ && self != %@", key, excludedNode]].count > 0;
 }
 
+- (id)_defaultPropertyListForSender:(id)sender
+{
+	id insertedPropertyListObject = nil;
+
+	if(_flags.delegate_defaultPropertyListForAddingInNode)
+	{
+		LNPropertyListNode* node = [_outlineView itemAtRow:[self _rowForSender:sender beep:NO]];
+		LNPropertyListNode* nodeToAddIn = node.parent;
+		if([_outlineView isItemExpanded:node])
+		{
+			nodeToAddIn = node;
+		}
+		
+		if(nodeToAddIn == nil)
+		{
+			nodeToAddIn = self.rootPropertyListNode;
+		}
+		
+		insertedPropertyListObject = [self.delegate propertyListEditor:self defaultPropertyListForAddingInNode:nodeToAddIn];
+	}
+	
+	if(insertedPropertyListObject == nil)
+	{
+		insertedPropertyListObject = @"";
+	}
+	
+	return insertedPropertyListObject;
+}
+
 - (IBAction)add:(id)sender
 {
-	LNPropertyListNode* insertedNode = [[LNPropertyListNode alloc] initWithPropertyList:@""];
+	if([self _validateCanAddForSender:sender] == NO)
+	{
+		NSBeep();
+		return;
+	}
+	
+	LNPropertyListNode* insertedNode = [[LNPropertyListNode alloc] initWithPropertyList:[self _defaultPropertyListForSender:sender]];
 	[self _insertNode:insertedNode sender:sender];
 }
 
@@ -384,6 +603,12 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 
 - (IBAction)paste:(id)sender
 {
+	if([self _validateCanPasteForSender:sender] == NO)
+	{
+		NSBeep();
+		return;
+	}
+	
 	LNPropertyListNode* node = [NSKeyedUnarchiver unarchiveObjectWithData:[NSPasteboard.generalPasteboard dataForType:LNPropertyListNodePasteboardType]];
 	
 	[self _insertNode:node sender:sender];
@@ -439,7 +664,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	
 	LNPropertyListNode* node = [_outlineView itemAtRow:row];
 	
-	[self _updateValue:@([[sender menu].itemArray indexOfObject:sender] == 1) ofNode:node];
+	[self _updateValue:[NSNumber numberWithBool:[[sender menu].itemArray indexOfObject:sender] == 1] ofNode:node];
 }
 
 - (IBAction)undo:(id)sender
@@ -483,7 +708,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 
 - (NSTableRowView *)outlineView:(NSOutlineView *)outlineView rowViewForItem:(id)item
 {
-	return [LNPropertyListRowView new];
+	LNPropertyListRowView* rowView = [LNPropertyListRowView new];
+	rowView.editor = self;
+	rowView.node = item;
+	
+	return rowView;
 }
 
 - (nullable NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(nullable NSTableColumn *)tableColumn item:(LNPropertyListNode*)item
@@ -497,16 +726,51 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	{
 		identifier = @"KeyCell";
 		value = [LNPropertyListNode stringKeyOfNode:item];
-		editable = item.parent == nil || item.parent.type == LNPropertyListNodeTypeDictionary;
+		
+		BOOL transformed = NO;
+		if(self.dataTransformer && _flags.dataTransformer_displayNameForNode)
+		{
+			NSString* displayName = [self.dataTransformer propertyListEditor:self displayNameForNode:item];
+			if(displayName != nil && [displayName isEqualToString:value] == NO)
+			{
+				value = displayName;
+				transformed = YES;
+			}
+		}
+		
+		editable = transformed == NO && (item.parent == nil || item.parent.type == LNPropertyListNodeTypeDictionary);
+		if(editable && _flags.delegate_canEditKeyOfNode)
+		{
+			editable = [self.delegate propertyListEditor:self canEditKeyOfNode:item];
+		}
 	}
 	else if(tableColumn == _typeColumn)
 	{
 		identifier = @"TypeCell";
-		value = [LNPropertyListNode stringForType:item.type];
+		editable = YES;
+		
+		if(_flags.dataTransformer_transformValueForDisplay && item.type != LNPropertyListNodeTypeArray && item.type != LNPropertyListNodeTypeDictionary)
+		{
+			item._cachedDisplayValue = [self.dataTransformer propertyListEditor:self transformValueForDisplay:item];
+			value = [LNPropertyListNode stringForType:[LNPropertyListNode _typeForObject:item._cachedDisplayValue]];
+		}
+		
+		if(value == nil)
+		{
+			item._cachedDisplayValue = nil;
+			value = [LNPropertyListNode stringForType:item.type];
+		}
+		
+		if(editable && _flags.delegate_canEditTypeOfNode)
+		{
+			editable = [self.delegate propertyListEditor:self canEditTypeOfNode:item];
+		}
 	}
 	else if(tableColumn == _valueColumn)
 	{
-		if(item.type == LNPropertyListNodeTypeBoolean)
+		LNPropertyListNodeType type = item._cachedDisplayValue ? [LNPropertyListNode _typeForObject:item._cachedDisplayValue] : item.type;
+		
+		if(type == LNPropertyListNodeTypeBoolean)
 		{
 			identifier = @"BoolCell";
 		}
@@ -515,8 +779,13 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 			identifier = @"ValueCell";
 		}
 		
-		editable = !(item.type == LNPropertyListNodeTypeArray || item.type == LNPropertyListNodeTypeDictionary);
+		editable = !(type == LNPropertyListNodeTypeArray || type == LNPropertyListNodeTypeDictionary);
 		value = [LNPropertyListNode stringValueOfNode:item];
+		
+		if(editable && _flags.delegate_canEditValueOfNode)
+		{
+			editable = [self.delegate propertyListEditor:self canEditValueOfNode:item];
+		}
 	}
 	
 	cellView = [outlineView makeViewWithIdentifier:identifier owner:nil];
@@ -528,10 +797,38 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	{
 		[cellView setControlWithString:value setToolTip:(tableColumn == _keyColumn || (tableColumn == _valueColumn && editable))];
 	}
-	cellView.textField.selectable = cellView.textField.editable = editable;
+	
+	[cellView setControlEditable:editable];
+	
 	cellView.textField.delegate = self;
 	
 	return cellView;
+}
+
+- (void)outlineViewItemDidExpand:(NSNotification *)notification
+{
+	id item = notification.userInfo[@"NSObject"];
+	[[self.outlineView rowViewAtRow:[self.outlineView rowForItem:item] makeIfNecessary:NO] updateEditButtons];
+}
+
+- (void)outlineViewItemDidCollapse:(NSNotification *)notification
+{
+	id item = notification.userInfo[@"NSObject"];
+	[[self.outlineView rowViewAtRow:[self.outlineView rowForItem:item] makeIfNecessary:NO] updateEditButtons];
+}
+
+- (void)outlineView:(NSOutlineView *)outlineView sortDescriptorsDidChange:(NSArray<NSSortDescriptor *> *)oldDescriptors;
+{
+	//Make the outline view as the first responder to prevent issues with currently edited text fields.
+	[outlineView.window makeFirstResponder:outlineView];
+	
+	LNPropertyListNode* node = [outlineView itemAtRow:outlineView.selectedRow];
+	[self.rootPropertyListNode _sortUsingDescriptors:outlineView.sortDescriptors];
+	[self.outlineView reloadItem:nil reloadChildren:YES];
+	
+	NSInteger selectionRow = [self.outlineView rowForItem:node];
+	[self.outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectionRow] byExtendingSelection:NO];
+	[self.outlineView scrollRowToVisible:selectionRow];
 }
 
 #pragma mark NSTextFieldDelegate

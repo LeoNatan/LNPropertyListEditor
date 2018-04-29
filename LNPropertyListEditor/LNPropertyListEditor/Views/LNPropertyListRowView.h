@@ -7,7 +7,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "LNPropertyListEditor-Private.h"
+#import "LNPropertyListNode.h"
 
 @interface LNPropertyListRowView : NSTableRowView
+
+@property (nonatomic, weak) LNPropertyListEditor* editor;
+@property (nonatomic, strong) LNPropertyListNode* node;
+
+- (void)updateEditButtons;
 
 @end

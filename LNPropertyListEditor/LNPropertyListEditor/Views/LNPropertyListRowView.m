@@ -15,12 +15,16 @@
 	NSTrackingArea* _trackingArea;
 }
 
-- (void)_setButtonsAccourdingToState;
+- (void)updateEditButtons;
 {
 	if(self.subviews.count > 0)
 	{
 		LNPropertyListCellView* cellView = [self viewAtColumn:0];
-		cellView.showsControlButtons = self.selected || _mouseIn;
+		
+		BOOL addButtonEnabled = [self.editor canInsertAtNode:self.node];
+		BOOL deleteButtonEnabled = [self.editor canDeleteNode:self.node];
+		
+		[cellView setShowsControlButtons:self.selected || _mouseIn addButtonEnabled:addButtonEnabled deleteButtonEnabled:deleteButtonEnabled];
 	}
 }
 
@@ -28,7 +32,7 @@
 {
 	[super setSelected:selected];
 	
-	[self _setButtonsAccourdingToState];
+	[self updateEditButtons];
 }
 
 - (void)ensureTrackingArea
@@ -54,14 +58,14 @@
 {
 	_mouseIn = YES;
 	
-	[self _setButtonsAccourdingToState];
+	[self updateEditButtons];
 }
 
 - (void)mouseExited:(NSEvent *)event
 {
 	_mouseIn = NO;
 	
-	[self _setButtonsAccourdingToState];
+	[self updateEditButtons];
 }
 
 @end

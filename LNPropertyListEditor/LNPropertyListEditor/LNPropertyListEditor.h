@@ -10,6 +10,7 @@
 #import <LNPropertyListEditor/LNPropertyListNode.h>
 
 @protocol LNPropertyListEditorDelegate;
+@protocol LNPropertyListEditorDataTransformer;
 
 IB_DESIGNABLE
 @interface LNPropertyListEditor : NSView
@@ -23,8 +24,10 @@ IB_DESIGNABLE
  * The root node of the edited property list.
  */
 @property (nonatomic, readonly) LNPropertyListNode* rootPropertyListNode;
+- (void)reloadNode:(LNPropertyListNode*)node reloadChildren:(BOOL)reloadChildren;
 
 @property (nonatomic, weak) id<LNPropertyListEditorDelegate> delegate;
+@property (nonatomic, weak) id<LNPropertyListEditorDataTransformer> dataTransformer;
 
 /**
  * Adds a new item.
@@ -106,6 +109,78 @@ typedef NS_ENUM(NSUInteger, LNPropertyListNodeChangeType) {
 	LNPropertyListNodeChangeTypeUpdate
 };
 
+@optional
+
 - (void)propertyListEditor:(LNPropertyListEditor *)editor willChangeNode:(LNPropertyListNode *)node changeType:(LNPropertyListNodeChangeType)changeType previousKey:(NSString *)previousKey;
 
+- (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canEditKeyOfNode:(LNPropertyListNode*)node;
+- (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canEditTypeOfNode:(LNPropertyListNode*)node;
+- (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canEditValueOfNode:(LNPropertyListNode*)node;
+- (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canDeleteNode:(LNPropertyListNode*)node;
+- (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canAddNewNodeInNode:(LNPropertyListNode*)node;
+- (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canPasteNode:(LNPropertyListNode*)pastedNode inNode:(LNPropertyListNode*)node;
+
+- (id)propertyListEditor:(LNPropertyListEditor *)editor defaultPropertyListForAddingInNode:(LNPropertyListNode*)node;
+
 @end
+
+@protocol LNPropertyListEditorDataTransformer <NSObject>
+
+@optional
+
+- (NSString*)propertyListEditor:(LNPropertyListEditor *)editor displayNameForNode:(LNPropertyListNode*)node;
+- (id)propertyListEditor:(LNPropertyListEditor *)editor transformValueForDisplay:(LNPropertyListNode*)node;
+- (NSString*)propertyListEditor:(LNPropertyListEditor *)editor transformValueForStorage:(LNPropertyListNode*)node displayValue:(id)displayValue;
+
+@end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

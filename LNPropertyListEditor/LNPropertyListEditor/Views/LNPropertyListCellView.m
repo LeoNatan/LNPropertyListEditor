@@ -10,6 +10,8 @@
 @import QuartzCore;
 @import ObjectiveC;
 
+@interface LNPropertyListCellView () <NSTextFieldDelegate> @end
+
 @implementation LNPropertyListCellView
 
 - (void)awakeFromNib
@@ -76,12 +78,25 @@
 	[self.layer addAnimation:flashAnimation forKey:@"backgroundColor"];
 }
 
-- (void)setShowsControlButtons:(BOOL)showsControlButtons
+- (void)setShowsControlButtons:(BOOL)showsControlButtons addButtonEnabled:(BOOL)addButtonEnabled deleteButtonEnabled:(BOOL)deleteButtonEnabled
 {
-	_showsControlButtons = showsControlButtons;
+	_showsControlButtons = showsControlButtons && (addButtonEnabled || deleteButtonEnabled);
 	
-	self.plusButton.hidden = self.minusButton.hidden = !showsControlButtons;
-	self.buttonsConstraint.active = showsControlButtons;
+	self.plusButton.hidden = self.minusButton.hidden = !_showsControlButtons;
+	self.buttonsConstraint.active = _showsControlButtons;
+	
+	self.plusButton.enabled = addButtonEnabled;
+	self.minusButton.enabled = deleteButtonEnabled;
+}
+
+- (void)setControlEditable:(BOOL)editable
+{
+	self.textField.selectable = self.textField.editable = editable;
+	_typeButton.enabled = editable;
+	
+	NSColor* controlColor = editable ? NSColor.textColor : NSColor.disabledControlTextColor;
+	
+	self.textField.textColor = controlColor;
 }
 
 @end

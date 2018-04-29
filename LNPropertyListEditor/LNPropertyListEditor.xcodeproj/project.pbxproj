@@ -20,6 +20,9 @@
 		393E1882207FAD26002E6136 /* LNPropertyListNode-Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 393E1881207FAD26002E6136 /* LNPropertyListNode-Private.h */; };
 		393E1885207FAEC6002E6136 /* LNPropertyListCellView.h in Headers */ = {isa = PBXBuildFile; fileRef = 393E1883207FAEC6002E6136 /* LNPropertyListCellView.h */; };
 		393E1886207FAEC6002E6136 /* LNPropertyListCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E1884207FAEC6002E6136 /* LNPropertyListCellView.m */; };
+		39DE8E942092030500ED16B4 /* LNPropertyListPopUpButtonCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8E922092030500ED16B4 /* LNPropertyListPopUpButtonCell.h */; };
+		39DE8E952092030500ED16B4 /* LNPropertyListPopUpButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8E932092030500ED16B4 /* LNPropertyListPopUpButtonCell.m */; };
+		39DE8E9C2092214400ED16B4 /* LNPropertyListEditor-Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8E9B2092214300ED16B4 /* LNPropertyListEditor-Private.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +41,9 @@
 		393E1881207FAD26002E6136 /* LNPropertyListNode-Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LNPropertyListNode-Private.h"; sourceTree = "<group>"; };
 		393E1883207FAEC6002E6136 /* LNPropertyListCellView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LNPropertyListCellView.h; sourceTree = "<group>"; };
 		393E1884207FAEC6002E6136 /* LNPropertyListCellView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LNPropertyListCellView.m; sourceTree = "<group>"; };
+		39DE8E922092030500ED16B4 /* LNPropertyListPopUpButtonCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LNPropertyListPopUpButtonCell.h; sourceTree = "<group>"; };
+		39DE8E932092030500ED16B4 /* LNPropertyListPopUpButtonCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LNPropertyListPopUpButtonCell.m; sourceTree = "<group>"; };
+		39DE8E9B2092214300ED16B4 /* LNPropertyListEditor-Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LNPropertyListEditor-Private.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +79,7 @@
 				393E187B207F68B7002E6136 /* Model */,
 				393E1880207FA52B002E6136 /* Views */,
 				393E1873207F64A0002E6136 /* LNPropertyListEditor.h */,
+				39DE8E9B2092214300ED16B4 /* LNPropertyListEditor-Private.h */,
 				393E1874207F64A0002E6136 /* LNPropertyListEditor.m */,
 				393E183D207F6119002E6136 /* Info.plist */,
 				391FF02A2084060000005D0F /* Assets.xcassets */,
@@ -100,6 +107,8 @@
 				391FF02E208412CC00005D0F /* LNPropertyListRowView.m */,
 				393E1883207FAEC6002E6136 /* LNPropertyListCellView.h */,
 				393E1884207FAEC6002E6136 /* LNPropertyListCellView.m */,
+				39DE8E922092030500ED16B4 /* LNPropertyListPopUpButtonCell.h */,
+				39DE8E932092030500ED16B4 /* LNPropertyListPopUpButtonCell.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -117,6 +126,8 @@
 				391FF02F208412CC00005D0F /* LNPropertyListRowView.h in Headers */,
 				393E1879207F68B4002E6136 /* LNPropertyListNode.h in Headers */,
 				393E1885207FAEC6002E6136 /* LNPropertyListCellView.h in Headers */,
+				39DE8E9C2092214400ED16B4 /* LNPropertyListEditor-Private.h in Headers */,
+				39DE8E942092030500ED16B4 /* LNPropertyListPopUpButtonCell.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -194,6 +205,7 @@
 				393E1886207FAEC6002E6136 /* LNPropertyListCellView.m in Sources */,
 				391FF0342084270400005D0F /* LNPropertyListOutlineView.m in Sources */,
 				393E1876207F64A0002E6136 /* LNPropertyListEditor.m in Sources */,
+				39DE8E952092030500ED16B4 /* LNPropertyListPopUpButtonCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -298,7 +310,6 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
