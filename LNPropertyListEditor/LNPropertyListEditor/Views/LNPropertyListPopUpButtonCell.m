@@ -24,4 +24,11 @@
 	return [super drawTitle:title withFrame:frame inView:controlView];
 }
 
+- (BOOL)trackMouse:(NSEvent *)event inRect:(NSRect)cellFrame ofView:(NSView *)controlView untilMouseUp:(BOOL)flag
+{
+	[self.controlView.window makeFirstResponder:self.controlView.superview];
+	
+	return [super trackMouse:event inRect:cellFrame ofView:controlView untilMouseUp:flag];
+}
+
 @end

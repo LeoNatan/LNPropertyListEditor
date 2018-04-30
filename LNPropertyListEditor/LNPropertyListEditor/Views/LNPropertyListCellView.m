@@ -64,6 +64,11 @@
 	[self.typeButton selectItemAtIndex:(NSInteger)boolean];
 }
 
+- (void)setControlWithDate:(NSDate*)date
+{
+	_datePicker.dateValue = date;
+}
+
 - (void)flashError
 {
 	CABasicAnimation* flashAnimation = [CABasicAnimation animationWithKeyPath:@"backgroundColor"];

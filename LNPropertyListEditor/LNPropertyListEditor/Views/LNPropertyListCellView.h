@@ -7,9 +7,11 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "LNPropertyListDatePicker.h"
 
 @interface LNPropertyListCellView : NSTableCellView
 
+@property (nonatomic, strong) IBOutlet LNPropertyListDatePicker *datePicker;
 @property (nonatomic, strong) IBOutlet NSPopUpButton *typeButton;
 @property (nonatomic, weak) IBOutlet NSButton *minusButton;
 @property (nonatomic, weak) IBOutlet NSButton *plusButton;
@@ -20,6 +22,7 @@
 
 - (void)setControlWithString:(NSString*)str setToolTip:(BOOL)setToolTip;
 - (void)setControlWithBoolean:(BOOL)boolean;
+- (void)setControlWithDate:(NSDate*)date;
 - (void)setControlEditable:(BOOL)editable;
 - (void)flashError;
 

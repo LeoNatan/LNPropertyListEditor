@@ -15,8 +15,6 @@
 
 static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNPropertyListNode";
 
-
-
 @interface LNPropertyListEditor () <NSOutlineViewDataSource, NSOutlineViewDelegate, NSTextFieldDelegate>
 {
 	
@@ -75,6 +73,13 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	_undoManager = [NSUndoManager new];
 }
 
+- (void)layout
+{
+	[super layout];
+
+	[_outlineView sizeLastColumnToFit];
+}
+
 - (void)setDelegate:(id<LNPropertyListEditorDelegate>)delegate
 {
 	_delegate = delegate;
@@ -113,6 +118,15 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 - (void)reloadNode:(LNPropertyListNode*)node reloadChildren:(BOOL)reloadChildren
 {
 	[_outlineView reloadItem:node reloadChildren:reloadChildren];
+}
+
+- (IBAction)_dateChanged:(NSDatePicker*)sender
+{
+	NSUInteger row = [_outlineView rowForView:sender];
+	
+	LNPropertyListNode* node = [_outlineView itemAtRow:row];
+	
+	[self _updateValue:sender.dateValue ofNode:node reloadItem:NO];
 }
 
 #pragma mark Node change handling
@@ -180,7 +194,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	[self _setType:newType children:(newType == LNPropertyListNodeTypeArray || newType == LNPropertyListNodeTypeDictionary ? [NSMutableArray new] : nil) value:[LNPropertyListNode defaultValueForType:newType] forSender:sender];
 }
 
-- (void)_updateValue:(id)value ofNode:(LNPropertyListNode*)node
+- (void)_updateValue:(id)value ofNode:(LNPropertyListNode*)node reloadItem:(BOOL)reloadItem
 {
 	id valueToUse = nil;
 	
@@ -211,22 +225,13 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 		[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeUpdate previousKey:node.key];
 	}
 	
-	//TODO: update cell
-	[_outlineView reloadItem:node];
-	
-	
-//	LNPropertyListCellView* cellView = [[_outlineView rowViewAtRow:[_outlineView rowForItem:node] makeIfNecessary:NO] viewAtColumn:2];
-//	if(node.type == LNPropertyListNodeTypeBoolean)
-//	{
-//		[cellView setControlWithBoolean:[value boolValue]];
-//	}
-//	else
-//	{
-//		[cellView setControlWithString:[LNPropertyListNode stringValueOfNode:node] setToolTip:cellView.textField.editable];
-//	}
+	if(reloadItem)
+	{
+		[_outlineView reloadItem:node];
+	}
 	
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
-		[target _updateValue:oldValue ofNode:node];
+		[target _updateValue:oldValue ofNode:node reloadItem:YES];
 	}];
 }
 
@@ -474,6 +479,10 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 		NSPopUpButton* button = objc_getAssociatedObject([sender menu], "button");
 		row = [_outlineView rowForView:button];
 	}
+	if(row == -1 && [sender isKindOfClass:[NSView class]])
+	{
+		row = [_outlineView rowForView:sender];
+	}
 	if(row == -1)
 	{
 		row = _outlineView.clickedRow;
@@ -664,7 +673,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	
 	LNPropertyListNode* node = [_outlineView itemAtRow:row];
 	
-	[self _updateValue:[NSNumber numberWithBool:[[sender menu].itemArray indexOfObject:sender] == 1] ofNode:node];
+	[self _updateValue:[NSNumber numberWithBool:[[sender menu].itemArray indexOfObject:sender] == 1] ofNode:node reloadItem:YES];
 }
 
 - (IBAction)undo:(id)sender
@@ -774,6 +783,10 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 		{
 			identifier = @"BoolCell";
 		}
+		else if(type == LNPropertyListNodeTypeDate)
+		{
+			identifier = @"DateCell";
+		}
 		else
 		{
 			identifier = @"ValueCell";
@@ -792,6 +805,10 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	if([cellView.identifier isEqualToString:@"BoolCell"])
 	{
 		[cellView setControlWithBoolean:[item.value boolValue]];
+	}
+	else if([cellView.identifier isEqualToString:@"DateCell"])
+	{
+		[cellView setControlWithDate:item.value];
 	}
 	else
 	{
@@ -866,7 +883,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 		id newValue = [LNPropertyListNode convertString:textField.stringValue toObjectOfType:node.type];
 		if(newValue != nil)
 		{
-			[self _updateValue:newValue ofNode:node];
+			[self _updateValue:newValue ofNode:node reloadItem:YES];
 		}
 		else
 		{

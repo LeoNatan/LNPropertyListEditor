@@ -8,7 +8,6 @@
 
 #import "LNPropertyListNode-Private.h"
 
-static NSDateFormatter* __dateFormatter;
 static NSNumberFormatter* __numberFormatter;
 
 @implementation LNPropertyListNode
@@ -22,9 +21,6 @@ static NSNumberFormatter* __numberFormatter;
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		__dateFormatter = [NSDateFormatter new];
-		__dateFormatter.dateStyle = NSDateFormatterMediumStyle;
-		__dateFormatter.timeStyle = NSDateFormatterMediumStyle;
 		__numberFormatter = [NSNumberFormatter new];
 		__numberFormatter.numberStyle = NSNumberFormatterNoStyle;
 	});
@@ -156,7 +152,7 @@ static NSNumberFormatter* __numberFormatter;
 		case LNPropertyListNodeTypeBoolean:
 			return [str isEqualToString:@"YES"] ? @YES : @NO;
 		case LNPropertyListNodeTypeDate:
-			return [__dateFormatter dateFromString:str];
+			return nil;
 		case LNPropertyListNodeTypeData:
 			return nil;
 		case LNPropertyListNodeTypeNumber:
@@ -182,7 +178,7 @@ static NSNumberFormatter* __numberFormatter;
 		case LNPropertyListNodeTypeBoolean:
 			return [valueToTranslate boolValue] ? @"YES" : @"NO";
 		case LNPropertyListNodeTypeDate:
-			return [__dateFormatter stringFromDate:valueToTranslate];
+			return nil;
 		case LNPropertyListNodeTypeData:
 			return @"<Data>";
 		case LNPropertyListNodeTypeNumber:

@@ -3,6 +3,7 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14111"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+        <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="LNPropertyListEditor">
@@ -16,7 +17,7 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="FkX-Yb-55C">
+        <scrollView autohidesScrollers="YES" horizontalLineScroll="20" horizontalPageScroll="10" verticalLineScroll="20" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="FkX-Yb-55C">
             <rect key="frame" x="0.0" y="0.0" width="793" height="568"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <clipView key="contentView" id="q1h-xs-TTh">
@@ -26,14 +27,14 @@
                     <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="Qlm-qK-nHO" viewBased="YES" indentationPerLevel="16" outlineTableColumn="JH4-EF-CLc" id="CSS-uw-PRr" customClass="LNPropertyListOutlineView">
                         <rect key="frame" x="0.0" y="0.0" width="791" height="544"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <size key="intercellSpacing" width="3" height="2"/>
+                        <size key="intercellSpacing" width="2" height="3"/>
                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         <tableViewGridLines key="gridStyleMask" horizontal="YES"/>
                         <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                         <tableColumns>
                             <tableColumn identifier="Key" width="200" minWidth="120" maxWidth="1000" id="JH4-EF-CLc">
                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Key">
-                                    <font key="font" metaFont="smallSystem"/>
+                                    <font key="font" metaFont="systemMedium" size="11"/>
                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                 </tableHeaderCell>
@@ -101,7 +102,7 @@
                                     </tableCellView>
                                 </prototypeCellViews>
                             </tableColumn>
-                            <tableColumn identifier="Type" width="75" minWidth="75" maxWidth="75" id="mXq-GQ-RtL">
+                            <tableColumn identifier="Type" editable="NO" width="75" minWidth="75" maxWidth="75" id="mXq-GQ-RtL">
                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Type">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -111,12 +112,12 @@
                                 <sortDescriptor key="sortDescriptorPrototype" selector="compare:" sortKey="type"/>
                                 <prototypeCellViews>
                                     <tableCellView identifier="TypeCell" id="Tdk-ZV-3aa" customClass="LNPropertyListCellView">
-                                        <rect key="frame" x="204" y="1" width="75" height="17"/>
+                                        <rect key="frame" x="203" y="1" width="75" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <popUpButton translatesAutoresizingMaskIntoConstraints="NO" id="hJ1-Ji-yiF" userLabel="Type Button">
                                                 <rect key="frame" x="-8" y="0.0" width="83" height="18"/>
-                                                <popUpButtonCell key="cell" type="bevel" title="Array" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" imageScaling="proportionallyDown" inset="2" selectedItem="8UR-hR-pSj" id="oSg-Lu-cDE" customClass="LNPropertyListPopUpButtonCell">
+                                                <popUpButtonCell key="cell" type="bevel" title="Array" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" imageScaling="proportionallyDown" inset="2" selectedItem="8UR-hR-pSj" id="oSg-Lu-cDE" customClass="LNPropertyListPopUpButtonCell">
                                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="smallSystem"/>
                                                     <menu key="menu" id="Tzv-tz-SaI">
@@ -177,7 +178,7 @@
                                     </tableCellView>
                                 </prototypeCellViews>
                             </tableColumn>
-                            <tableColumn identifier="Value" width="507" minWidth="200" maxWidth="10000000" id="ocb-ja-fwj">
+                            <tableColumn identifier="Value" editable="NO" width="507" minWidth="200" maxWidth="10000000" id="ocb-ja-fwj">
                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Value">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -187,7 +188,7 @@
                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                 <prototypeCellViews>
                                     <tableCellView identifier="ValueCell" id="rKh-Fg-3qw" customClass="LNPropertyListCellView">
-                                        <rect key="frame" x="282" y="1" width="507" height="17"/>
+                                        <rect key="frame" x="280" y="1" width="507" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Axh-Xk-Scw" userLabel="Value Title">
@@ -209,12 +210,12 @@
                                         </connections>
                                     </tableCellView>
                                     <tableCellView identifier="BoolCell" id="TJI-m7-gdE" customClass="LNPropertyListCellView">
-                                        <rect key="frame" x="282" y="20" width="507" height="17"/>
+                                        <rect key="frame" x="280" y="21" width="507" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <popUpButton translatesAutoresizingMaskIntoConstraints="NO" id="okM-IP-jIc" userLabel="Type Button">
                                                 <rect key="frame" x="-8" y="0.0" width="515" height="18"/>
-                                                <popUpButtonCell key="cell" type="bevel" title="NO" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" imageScaling="proportionallyDown" inset="2" selectedItem="h7F-ry-9JB" id="c8n-Vg-c0j">
+                                                <popUpButtonCell key="cell" type="bevel" title="NO" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" imageScaling="proportionallyDown" inset="2" selectedItem="h7F-ry-9JB" id="c8n-Vg-c0j" customClass="LNPropertyListPopUpButtonCell">
                                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="smallSystem"/>
                                                     <menu key="menu" id="mQh-HH-fza">
@@ -241,6 +242,25 @@
                                         </constraints>
                                         <connections>
                                             <outlet property="typeButton" destination="okM-IP-jIc" id="l9A-ko-pVv"/>
+                                        </connections>
+                                    </tableCellView>
+                                    <tableCellView identifier="DateCell" id="BrW-CZ-E8U" customClass="LNPropertyListCellView">
+                                        <rect key="frame" x="280" y="41" width="507" height="17"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        <subviews>
+                                            <customView placeholderIntrinsicWidth="279" placeholderIntrinsicHeight="17" translatesAutoresizingMaskIntoConstraints="NO" id="cut-BW-s5Y" customClass="LNPropertyListDatePicker">
+                                                <rect key="frame" x="0.0" y="0.0" width="279" height="17"/>
+                                                <connections>
+                                                    <action selector="_dateChanged:" target="-1" id="mtt-h7-3EW"/>
+                                                </connections>
+                                            </customView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="cut-BW-s5Y" firstAttribute="centerY" secondItem="BrW-CZ-E8U" secondAttribute="centerY" id="KBK-tA-YcV"/>
+                                            <constraint firstItem="cut-BW-s5Y" firstAttribute="leading" secondItem="BrW-CZ-E8U" secondAttribute="leading" id="RsJ-p9-tPb"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="datePicker" destination="cut-BW-s5Y" id="H4q-GO-htG"/>
                                         </connections>
                                     </tableCellView>
                                 </prototypeCellViews>
@@ -346,6 +366,12 @@
             </items>
             <point key="canvasLocation" x="-579" y="-1006.5"/>
         </menu>
+        <colorWell id="N6b-WL-0u5">
+            <rect key="frame" x="0.0" y="0.0" width="44" height="23"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+            <point key="canvasLocation" x="-512" y="-135"/>
+        </colorWell>
     </objects>
     <resources>
         <image name="minus" width="11" height="11"/>
