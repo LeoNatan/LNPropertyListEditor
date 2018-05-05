@@ -18,11 +18,6 @@
 {
 	[super awakeFromNib];
 	
-	self.wantsLayer = YES;
-	self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawOnSetNeedsDisplay;
-	self.layer.borderWidth = 2.0;
-	self.layer.borderColor = NSColor.clearColor.CGColor;
-	
 	objc_setAssociatedObject(self.typeButton.menu, "button", self.typeButton, OBJC_ASSOCIATION_ASSIGN);
 	
 	if(self.buttonsConstraint)
@@ -98,6 +93,7 @@
 {
 	self.textField.selectable = self.textField.editable = editable;
 	_typeButton.enabled = editable;
+	_datePicker.enabled = editable;
 	
 	NSColor* controlColor = editable ? NSColor.textColor : NSColor.disabledControlTextColor;
 	

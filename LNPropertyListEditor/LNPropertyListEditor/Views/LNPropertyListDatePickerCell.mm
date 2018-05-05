@@ -59,9 +59,18 @@ static thread_local BOOL __drawingDatePicker;
 	return self;
 }
 
+- (BOOL)isOpaque
+{
+	return YES;
+}
+
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
 	__drawingDatePicker = YES;
+	//Draw background to kick in antialiasing.
+	[(self.backgroundStyle == NSBackgroundStyleDark ? NSColor.alternateSelectedControlColor : NSColor.controlBackgroundColor) set];
+	NSRectFill(cellFrame);
+	
 	[super drawWithFrame:cellFrame inView:controlView];
 	__drawingDatePicker = NO;
 }

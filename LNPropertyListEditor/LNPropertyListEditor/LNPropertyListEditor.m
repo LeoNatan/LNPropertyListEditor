@@ -386,7 +386,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 {
 	BOOL canPaste = [NSPasteboard.generalPasteboard canReadItemWithDataConformingToTypes:@[LNPropertyListNodePasteboardType]];
 	NSInteger row = [self _rowForSender:sender beep:NO];
-	id node = [self.outlineView itemAtRow:row];
+	id node = [self.outlineView itemAtRow:row] ?: self.rootPropertyListNode;
 	if(canPaste && _flags.delegate_canAddNewNodeInNode)
 	{
 		canPaste = [self canInsertAtNode:node];

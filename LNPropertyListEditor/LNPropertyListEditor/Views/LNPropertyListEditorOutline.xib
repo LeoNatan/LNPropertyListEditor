@@ -3,7 +3,6 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14111"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
-        <capability name="system font weights other than Regular or Bold" minToolsVersion="7.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="LNPropertyListEditor">
@@ -34,7 +33,7 @@
                         <tableColumns>
                             <tableColumn identifier="Key" width="200" minWidth="120" maxWidth="1000" id="JH4-EF-CLc">
                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Key">
-                                    <font key="font" metaFont="systemMedium" size="11"/>
+                                    <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                 </tableHeaderCell>

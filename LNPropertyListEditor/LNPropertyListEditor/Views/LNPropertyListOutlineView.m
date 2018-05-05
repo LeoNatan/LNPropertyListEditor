@@ -14,8 +14,6 @@
 {
 	[super awakeFromNib];
 	
-	self.wantsLayer = YES;
-	self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawOnSetNeedsDisplay;
 	self.enclosingScrollView.wantsLayer = YES;
 	self.enclosingScrollView.layerContentsRedrawPolicy = NSViewLayerContentsRedrawOnSetNeedsDisplay;
 }
