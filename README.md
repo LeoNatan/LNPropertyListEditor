@@ -2,7 +2,9 @@
 
 A property list editor for macOS, similar to Xcode's.
 
-![Property list editor](Supplements/Screenshot.png "Property list editor")
+![Property list editor](Supplements/Screenshot_1.png "Property list editor")
+
+![Property list editor](Supplements/Screenshot_2.png "Property list editor")
 
 ## Adding to Your Project
 
