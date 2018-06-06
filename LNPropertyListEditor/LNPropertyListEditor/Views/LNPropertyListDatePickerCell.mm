@@ -78,7 +78,7 @@ static thread_local BOOL __drawingDatePicker;
 //This is faster than setting the text color when the background color changes.
 - (NSColor*)_textColorBasedOnEnabledState
 {
-	return self.isEnabled ? self.backgroundStyle == NSBackgroundStyleDark ? NSColor.alternateSelectedControlTextColor : NSColor.textColor : self.backgroundStyle == NSBackgroundStyleDark ? [NSColor valueForKey:@"_alternateDisabledSelectedControlTextColor"] : NSColor.disabledControlTextColor;
+	return self.isEnabled ? self.backgroundStyle == NSBackgroundStyleDark ? NSColor.alternateSelectedControlTextColor : NSColor.labelColor : self.backgroundStyle == NSBackgroundStyleDark ? [NSColor valueForKey:@"_alternateDisabledSelectedControlTextColor"] : NSColor.disabledControlTextColor;
 
 }
 

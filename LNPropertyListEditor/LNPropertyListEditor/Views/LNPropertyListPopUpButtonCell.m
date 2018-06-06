@@ -18,7 +18,7 @@ static NSAppearance* __darkAppearanceCache;
 
 + (void)load
 {
-	__enabledTextColor = NSColor.textColor;
+	__enabledTextColor = NSColor.labelColor;
 	__enabledTextColorHighlight = NSColor.alternateSelectedControlTextColor;
 	__disabledTextColor = NSColor.disabledControlTextColor;
 	__disabledTextColorHighlight = [NSColor valueForKey:@"_alternateDisabledSelectedControlTextColor"];

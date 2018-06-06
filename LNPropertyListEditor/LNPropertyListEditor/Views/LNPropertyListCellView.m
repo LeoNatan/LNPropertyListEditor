@@ -95,7 +95,7 @@
 	_typeButton.enabled = editable;
 	_datePicker.enabled = editable;
 	
-	NSColor* controlColor = editable ? NSColor.textColor : NSColor.disabledControlTextColor;
+	NSColor* controlColor = editable ? NSColor.labelColor : NSColor.disabledControlTextColor;
 	
 	self.textField.textColor = controlColor;
 }
