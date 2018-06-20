@@ -59,11 +59,6 @@ static thread_local BOOL __drawingDatePicker;
 	return self;
 }
 
-- (BOOL)isOpaque
-{
-	return YES;
-}
-
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
 	__drawingDatePicker = YES;

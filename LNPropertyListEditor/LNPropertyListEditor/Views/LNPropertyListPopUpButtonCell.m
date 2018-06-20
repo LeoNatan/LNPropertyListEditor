@@ -36,24 +36,6 @@ static NSAppearance* __darkAppearanceCache;
 	return [super drawTitle:attr withFrame:frame inView:controlView];
 }
 
-- (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
-{
-	if(self.isOpaque)
-	{
-		//Draw background so that text antialiasing kicks in.
-		[(self.backgroundStyle == NSBackgroundStyleDark ? NSColor.alternateSelectedControlColor : NSColor.controlBackgroundColor) set];
-		NSRectFill(cellFrame);
-	}
-	
-	[super drawWithFrame:cellFrame inView:controlView];
-}
-
-//Want opaque for text antialiasing, but on dark vibrant appearance + disabled, there is crazy drawing going on - so in that case, leave non-opaque.
-- (BOOL)isOpaque
-{
-	return self.controlView.effectiveAppearance != __darkAppearanceCache || [(NSControl*)self.controlView isEnabled];
-}
-
 - (BOOL)trackMouse:(NSEvent *)event inRect:(NSRect)cellFrame ofView:(NSView *)controlView untilMouseUp:(BOOL)flag
 {
 	[self.controlView.window makeFirstResponder:self.controlView.superview];

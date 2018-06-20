@@ -26,11 +26,6 @@
 	self.layer.borderColor = NSColor.clearColor.CGColor;
 }
 
-- (BOOL)isOpaque
-{
-	return YES;
-}
-
 - (void)updateEditButtons;
 {
 	if(self.subviews.count > 0)
