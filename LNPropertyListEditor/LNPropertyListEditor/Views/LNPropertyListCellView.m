@@ -64,6 +64,13 @@
 	_datePicker.dateValue = date;
 }
 
+- (void)setBackgroundStyle:(NSBackgroundStyle)backgroundStyle
+{
+	[super setBackgroundStyle:backgroundStyle];
+	
+	[_datePicker.cell setBackgroundStyle:backgroundStyle];
+}
+
 - (void)flashError
 {
 	CABasicAnimation* flashAnimation = [CABasicAnimation animationWithKeyPath:@"backgroundColor"];

@@ -35,7 +35,7 @@ static thread_local BOOL __drawingDatePicker;
 {
 	if(__drawingDatePicker == YES)
 	{
-		[[NSColor.alternateSelectedControlColor highlightWithLevel:0.4] set];
+		[[NSColor.alternateSelectedControlColor highlightWithLevel:0.35] set];
 	}
 	
 	NSBezierPath* rv = [self __ln_bezierPathWithRoundedRect:rect xRadius:xRadius yRadius:yRadius];
@@ -62,10 +62,6 @@ static thread_local BOOL __drawingDatePicker;
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
 	__drawingDatePicker = YES;
-	//Draw background to kick in antialiasing.
-	[(self.backgroundStyle == NSBackgroundStyleDark ? NSColor.alternateSelectedControlColor : NSColor.controlBackgroundColor) set];
-	NSRectFill(cellFrame);
-	
 	[super drawWithFrame:cellFrame inView:controlView];
 	__drawingDatePicker = NO;
 }
@@ -73,7 +69,7 @@ static thread_local BOOL __drawingDatePicker;
 //This is faster than setting the text color when the background color changes.
 - (NSColor*)_textColorBasedOnEnabledState
 {
-	return self.isEnabled ? self.backgroundStyle == NSBackgroundStyleDark ? NSColor.alternateSelectedControlTextColor : NSColor.labelColor : self.backgroundStyle == NSBackgroundStyleDark ? [NSColor valueForKey:@"_alternateDisabledSelectedControlTextColor"] : NSColor.disabledControlTextColor;
+	return self.isEnabled ? self.backgroundStyle == NSBackgroundStyleEmphasized ? NSColor.alternateSelectedControlTextColor : NSColor.controlTextColor : self.backgroundStyle == NSBackgroundStyleEmphasized ? [NSColor valueForKey:@"_alternateDisabledSelectedControlTextColor"] : NSColor.disabledControlTextColor;
 
 }
 

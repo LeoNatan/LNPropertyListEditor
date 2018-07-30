@@ -95,7 +95,6 @@ IB_DESIGNABLE
 		
 		__LNPropertyListDatePickerPopover = [NSPopover new];
 		__LNPropertyListDatePickerPopover.contentViewController = vc;
-		__LNPropertyListDatePickerPopover.appearance = [NSAppearance appearanceNamed:NSAppearanceNameVibrantLight];
 	});
 }
 
