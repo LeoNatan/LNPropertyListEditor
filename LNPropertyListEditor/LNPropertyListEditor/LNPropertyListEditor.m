@@ -17,7 +17,6 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 
 @interface LNPropertyListEditor () <NSOutlineViewDataSource, NSOutlineViewDelegate, NSTextFieldDelegate>
 {
-	
 	IBOutlet NSMenu* _menuItem;
 	
 	IBOutlet NSTableColumn* _keyColumn;
@@ -30,6 +29,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 @end
 
 @implementation LNPropertyListEditor
+
+- (void)prepareForInterfaceBuilder
+{
+	self.propertyList = @{@"Example Text": @"Text", @"Example Number": @123, @"Example Date": NSDate.date};
+}
 
 - (instancetype)initWithFrame:(NSRect)frameRect
 {
@@ -73,6 +77,16 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	_undoManager = [NSUndoManager new];
 }
 
+- (BOOL)isTypeColumnHidden
+{
+	return _typeColumn.isHidden;
+}
+
+- (void)setTypeColumnHidden:(BOOL)typeColumnHidden
+{
+	_typeColumn.hidden = typeColumnHidden;
+}
+
 - (void)layout
 {
 	[super layout];
@@ -108,6 +122,8 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	_rootPropertyListNode = [[LNPropertyListNode alloc] initWithPropertyList:propertyList];
 	
 	[_outlineView reloadData];
+	
+	_outlineView.menu = _rootPropertyListNode == nil ? nil : _menuItem;
 }
 
 - (id)propertyList
@@ -522,6 +538,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 		extraCase = [self _validateCanDeleteForSender:menuItem];
 	}
 	
+	if(menuItem.action == @selector(cut:))
+	{
+		extraCase = [self _validateCanDeleteForSender:menuItem];
+	}
+	
 	if((menuItem.action == @selector(boolean:) ||
 		menuItem.action == @selector(number:) ||
 		menuItem.action == @selector(string:) ||
@@ -586,7 +607,17 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 		return;
 	}
 	
-	LNPropertyListNode* insertedNode = [[LNPropertyListNode alloc] initWithPropertyList:[self _defaultPropertyListForSender:sender]];
+	LNPropertyListNode* insertedNode;
+	id insertedPropertyList = [self _defaultPropertyListForSender:sender];
+	if([insertedPropertyList isKindOfClass:LNPropertyListNode.class])
+	{
+		insertedNode = insertedPropertyList;
+	}
+	else
+	{
+		insertedNode = [[LNPropertyListNode alloc] initWithPropertyList:insertedPropertyList];
+	}
+	
 	[self _insertNode:insertedNode sender:sender];
 }
 
@@ -692,7 +723,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 {
 	if(item == nil)
 	{
-		return _rootPropertyListNode.type == LNPropertyListNodeTypeArray || _rootPropertyListNode.type == LNPropertyListNodeTypeDictionary ? _rootPropertyListNode.children.count : 1;
+		return _rootPropertyListNode == nil ? 0 : _rootPropertyListNode.type == LNPropertyListNodeTypeArray || _rootPropertyListNode.type == LNPropertyListNodeTypeDictionary ? _rootPropertyListNode.children.count : 1;
 	}
 	
 	return item.children.count;
@@ -801,7 +832,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 		}
 	}
 	
-	cellView = [outlineView makeViewWithIdentifier:identifier owner:nil];
+	cellView = [outlineView makeViewWithIdentifier:identifier owner:self];
 	if([cellView.identifier isEqualToString:@"BoolCell"])
 	{
 		[cellView setControlWithBoolean:[item.value boolValue]];

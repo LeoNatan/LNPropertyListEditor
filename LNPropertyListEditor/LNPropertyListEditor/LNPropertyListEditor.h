@@ -18,7 +18,9 @@ IB_DESIGNABLE
 /**
  * The underlying edited property list.
  */
-@property (nonatomic, copy) id propertyList;
+@property (nonatomic, copy) id<NSCopying> propertyList;
+
+@property (nonatomic, getter=isTypeColumnHidden) BOOL typeColumnHidden;
 
 /**
  * The root node of the edited property list.
@@ -120,6 +122,7 @@ typedef NS_ENUM(NSUInteger, LNPropertyListNodeChangeType) {
 - (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canAddNewNodeInNode:(LNPropertyListNode*)node;
 - (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canPasteNode:(LNPropertyListNode*)pastedNode inNode:(LNPropertyListNode*)node;
 
+//This can be either a valid property list or an LNPropertyListNode object.
 - (id)propertyListEditor:(LNPropertyListEditor *)editor defaultPropertyListForAddingInNode:(LNPropertyListNode*)node;
 
 @end

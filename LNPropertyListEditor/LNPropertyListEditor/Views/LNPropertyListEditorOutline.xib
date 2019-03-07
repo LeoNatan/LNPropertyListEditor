@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14111" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14111"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.64"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -56,7 +57,7 @@
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
                                                 <connections>
-                                                    <action selector="delete:" target="-1" id="SJ7-eQ-Lbt"/>
+                                                    <action selector="delete:" target="-2" id="AYM-YS-GDk"/>
                                                 </connections>
                                             </button>
                                             <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uC8-sB-LLp">
@@ -70,7 +71,7 @@
                                                     <font key="font" metaFont="system"/>
                                                 </buttonCell>
                                                 <connections>
-                                                    <action selector="add:" target="-1" id="D8D-bf-ods"/>
+                                                    <action selector="add:" target="-2" id="q33-io-TKC"/>
                                                 </connections>
                                             </button>
                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="fSs-8t-em3" userLabel="Key Title">
@@ -177,7 +178,7 @@
                                     </tableCellView>
                                 </prototypeCellViews>
                             </tableColumn>
-                            <tableColumn identifier="Value" editable="NO" width="507" minWidth="200" maxWidth="10000000" id="ocb-ja-fwj">
+                            <tableColumn identifier="Value" editable="NO" width="510" minWidth="200" maxWidth="10000000" id="ocb-ja-fwj">
                                 <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Value">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -187,11 +188,11 @@
                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                 <prototypeCellViews>
                                     <tableCellView identifier="ValueCell" id="rKh-Fg-3qw" customClass="LNPropertyListCellView">
-                                        <rect key="frame" x="280" y="1" width="507" height="17"/>
+                                        <rect key="frame" x="280" y="1" width="510" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Axh-Xk-Scw" userLabel="Value Title">
-                                                <rect key="frame" x="0.0" y="2" width="507" height="14"/>
+                                                <rect key="frame" x="0.0" y="2" width="510" height="14"/>
                                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" title="Value" id="Gaq-fl-VGF">
                                                     <font key="font" metaFont="smallSystem"/>
                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -209,11 +210,11 @@
                                         </connections>
                                     </tableCellView>
                                     <tableCellView identifier="BoolCell" id="TJI-m7-gdE" customClass="LNPropertyListCellView">
-                                        <rect key="frame" x="280" y="21" width="507" height="17"/>
+                                        <rect key="frame" x="280" y="21" width="510" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <popUpButton translatesAutoresizingMaskIntoConstraints="NO" id="okM-IP-jIc" userLabel="Type Button">
-                                                <rect key="frame" x="-8" y="0.0" width="515" height="18"/>
+                                                <rect key="frame" x="-8" y="0.0" width="518" height="18"/>
                                                 <popUpButtonCell key="cell" type="bevel" title="NO" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" imageScaling="proportionallyDown" inset="2" selectedItem="h7F-ry-9JB" id="c8n-Vg-c0j" customClass="LNPropertyListPopUpButtonCell">
                                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="smallSystem"/>
@@ -244,7 +245,7 @@
                                         </connections>
                                     </tableCellView>
                                     <tableCellView identifier="DateCell" id="BrW-CZ-E8U" customClass="LNPropertyListCellView">
-                                        <rect key="frame" x="280" y="41" width="507" height="17"/>
+                                        <rect key="frame" x="280" y="41" width="510" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <customView placeholderIntrinsicWidth="279" placeholderIntrinsicHeight="17" translatesAutoresizingMaskIntoConstraints="NO" id="cut-BW-s5Y" customClass="LNPropertyListDatePicker">
@@ -268,16 +269,15 @@
                         <connections>
                             <outlet property="dataSource" destination="-2" id="EWg-DS-7ta"/>
                             <outlet property="delegate" destination="-2" id="ddG-e7-Eg2"/>
-                            <outlet property="menu" destination="vpK-HX-z6u" id="PC7-jN-Zqn"/>
                         </connections>
                     </outlineView>
                 </subviews>
             </clipView>
-            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="TjQ-Kt-1SA">
+            <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="TjQ-Kt-1SA">
                 <rect key="frame" x="1" y="551" width="791" height="16"/>
                 <autoresizingMask key="autoresizingMask"/>
             </scroller>
-            <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="jzL-BT-wFl">
+            <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="jzL-BT-wFl">
                 <rect key="frame" x="224" y="17" width="15" height="102"/>
                 <autoresizingMask key="autoresizingMask"/>
             </scroller>
@@ -365,12 +365,6 @@
             </items>
             <point key="canvasLocation" x="-579" y="-1006.5"/>
         </menu>
-        <colorWell id="N6b-WL-0u5">
-            <rect key="frame" x="0.0" y="0.0" width="44" height="23"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <color key="color" red="0.05813049898" green="0.055541899059999997" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-            <point key="canvasLocation" x="-512" y="-135"/>
-        </colorWell>
     </objects>
     <resources>
         <image name="minus" width="11" height="11"/>
