@@ -11,6 +11,7 @@
 
 typedef struct {
 	unsigned int delegate_willChangeNode : 1;
+	unsigned int delegate_didChangeNode : 1;
 	unsigned int delegate_canEditKeyOfNode : 1;
 	unsigned int delegate_canEditTypeOfNode : 1;
 	unsigned int delegate_canEditValueOfNode : 1;

@@ -99,6 +99,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	_delegate = delegate;
 	
 	_flags.delegate_willChangeNode = [delegate respondsToSelector:@selector(propertyListEditor:willChangeNode:changeType:previousKey:)];
+	_flags.delegate_didChangeNode = [delegate respondsToSelector:@selector(propertyListEditor:didChangeNode:changeType:previousKey:)];
 	_flags.delegate_canEditKeyOfNode = [delegate respondsToSelector:@selector(propertyListEditor:canEditKeyOfNode:)];
 	_flags.delegate_canEditTypeOfNode = [delegate respondsToSelector:@selector(propertyListEditor:canEditTypeOfNode:)];
 	_flags.delegate_canEditValueOfNode = [delegate respondsToSelector:@selector(propertyListEditor:canEditValueOfNode:)];
@@ -168,6 +169,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
 		[target _updateKey:oldKey ofNode:node];
 	}];
+	
+	if(_flags.delegate_didChangeNode)
+	{
+		[self.delegate propertyListEditor:self didChangeNode:node changeType:LNPropertyListNodeChangeTypeMove previousKey:oldKey];
+	}
 }
 
 - (void)_setType:(LNPropertyListNodeType)type children:(id)children value:(id)value forSender:(id)sender
@@ -203,6 +209,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
 		[target _setType:oldType children:oldChildren value:oldValue forSender:@(row)];
 	}];
+	
+	if(_flags.delegate_didChangeNode)
+	{
+		[self.delegate propertyListEditor:self didChangeNode:node changeType:LNPropertyListNodeChangeTypeUpdate previousKey:node.key];
+	}
 }
 
 - (void)_convertToType:(LNPropertyListNodeType)newType forSender:(id)sender
@@ -249,6 +260,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
 		[target _updateValue:oldValue ofNode:node reloadItem:YES];
 	}];
+	
+	if(_flags.delegate_didChangeNode)
+	{
+		[self.delegate propertyListEditor:self didChangeNode:node changeType:LNPropertyListNodeChangeTypeUpdate previousKey:node.key];
+	}
 }
 
 - (void)_insertNode:(LNPropertyListNode*)insertedNode sender:(id)sender
@@ -322,6 +338,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
 		[target delete:@(insertedRow)];
 	}];
+	
+	if(_flags.delegate_didChangeNode)
+	{
+		[self.delegate propertyListEditor:self didChangeNode:insertedNode changeType:LNPropertyListNodeChangeTypeInsert previousKey:nil];
+	}
 }
 
 - (void)_deleteNodeWithSender:(id)sender
@@ -381,6 +402,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 			selectedRow -= 1;
 		}
 		[_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedRow] byExtendingSelection:NO];
+	}
+	
+	if(_flags.delegate_didChangeNode)
+	{
+		[self.delegate propertyListEditor:self didChangeNode:deletedNode changeType:LNPropertyListNodeChangeTypeDelete previousKey:deletedNode.key];
 	}
 }
 
