@@ -134,6 +134,6 @@ typedef NS_ENUM(NSUInteger, LNPropertyListNodeChangeType) {
 
 - (NSString*)propertyListEditor:(LNPropertyListEditor *)editor displayNameForNode:(LNPropertyListNode*)node;
 - (id)propertyListEditor:(LNPropertyListEditor *)editor transformValueForDisplay:(LNPropertyListNode*)node;
-- (NSString*)propertyListEditor:(LNPropertyListEditor *)editor transformValueForStorage:(LNPropertyListNode*)node displayValue:(id)displayValue;
+- (id)propertyListEditor:(LNPropertyListEditor *)editor transformValueForStorage:(LNPropertyListNode*)node displayValue:(id)displayValue;
 
 @end
