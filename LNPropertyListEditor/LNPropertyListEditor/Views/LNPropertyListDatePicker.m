@@ -12,6 +12,13 @@
 static NSPopover* __LNPropertyListDatePickerPopover;
 static NSDatePicker* __LNPropertyListPopoverDatePicker;
 
+@interface LNPropertyListDatePicker ()
+
+@property (class, nonatomic, readonly, retain) NSDatePicker* __datePicker;
+@property (class, nonatomic, readonly, retain) NSPopover* __datePickerPopover;
+
+@end
+
 @interface _LNPropertyListDatePickerInnerCell : NSCell
 
 @property (nonatomic, copy) NSArray<NSCell*>* childCells;
@@ -42,11 +49,11 @@ static NSDatePicker* __LNPropertyListPopoverDatePicker;
 	
 	if(rv)
 	{
-		__LNPropertyListPopoverDatePicker.dateValue = self.dateValue;
-		__LNPropertyListPopoverDatePicker.target = self.target;
-		__LNPropertyListPopoverDatePicker.action = self.action;
+		LNPropertyListDatePicker.__datePicker.dateValue = self.dateValue;
+		LNPropertyListDatePicker.__datePicker.target = self.target;
+		LNPropertyListDatePicker.__datePicker.action = self.action;
 		
-		[__LNPropertyListDatePickerPopover showRelativeToRect:self.bounds ofView:self preferredEdge:NSRectEdgeMinY];
+		[LNPropertyListDatePicker.__datePickerPopover showRelativeToRect:self.bounds ofView:self preferredEdge:NSRectEdgeMinY];
 		
 	}
 	
@@ -60,10 +67,10 @@ static NSDatePicker* __LNPropertyListPopoverDatePicker;
 	if(rv)
 	{
 		[self unbind:NSValueBinding];
-		__LNPropertyListPopoverDatePicker.target = nil;
-		__LNPropertyListPopoverDatePicker.action = nil;
+		LNPropertyListDatePicker.__datePicker.target = nil;
+		LNPropertyListDatePicker.__datePicker.action = nil;
 		
-		[__LNPropertyListDatePickerPopover close];
+		[LNPropertyListDatePicker.__datePickerPopover close];
 	}
 	
 	return rv;
@@ -79,7 +86,7 @@ IB_DESIGNABLE
 	NSDatePicker* _timePicker;
 }
 
-+ (void)load
++ (NSDatePicker*)__datePicker
 {
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
@@ -89,13 +96,23 @@ IB_DESIGNABLE
 		__LNPropertyListPopoverDatePicker.bordered = NO;
 		__LNPropertyListPopoverDatePicker.drawsBackground = NO;
 		[__LNPropertyListPopoverDatePicker sizeToFit];
-		
+	});
+	
+	return __LNPropertyListPopoverDatePicker;
+}
+
++ (NSPopover*)__datePickerPopover
+{
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
 		NSViewController* vc = [NSViewController new];
-		vc.view = __LNPropertyListPopoverDatePicker;
+		vc.view = LNPropertyListDatePicker.__datePicker;
 		
 		__LNPropertyListDatePickerPopover = [NSPopover new];
 		__LNPropertyListDatePickerPopover.contentViewController = vc;
 	});
+	
+	return __LNPropertyListDatePickerPopover;
 }
 
 - (void)prepareForInterfaceBuilder
@@ -170,9 +187,9 @@ IB_DESIGNABLE
 	
 	_datePicker.dateValue = self.dateValue;
 	_timePicker.dateValue = self.dateValue;
-	if(__LNPropertyListPopoverDatePicker.target == self)
+	if(LNPropertyListDatePicker.__datePicker.target == self)
 	{
-		__LNPropertyListPopoverDatePicker.dateValue = self.dateValue;
+		LNPropertyListDatePicker.__datePicker.dateValue = self.dateValue;
 	}
 	
 	if(sendAction)
