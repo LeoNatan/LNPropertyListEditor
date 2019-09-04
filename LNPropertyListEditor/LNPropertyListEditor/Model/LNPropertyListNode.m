@@ -8,8 +8,6 @@
 
 #import "LNPropertyListNode-Private.h"
 
-static NSNumberFormatter* __numberFormatter;
-
 @implementation LNPropertyListNode
 
 + (BOOL)supportsSecureCoding
@@ -17,13 +15,15 @@ static NSNumberFormatter* __numberFormatter;
 	return YES;
 }
 
-+ (void)load
++ (NSNumberFormatter*)_numberFormatter
 {
+	static NSNumberFormatter* __numberFormatter;
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
 		__numberFormatter = [NSNumberFormatter new];
 		__numberFormatter.numberStyle = NSNumberFormatterNoStyle;
 	});
+	return __numberFormatter;
 }
 
 + (LNPropertyListNodeType)_typeForObject:(id)obj
@@ -156,7 +156,7 @@ static NSNumberFormatter* __numberFormatter;
 		case LNPropertyListNodeTypeData:
 			return nil;
 		case LNPropertyListNodeTypeNumber:
-			return [__numberFormatter numberFromString:str];
+			return [LNPropertyListNode._numberFormatter numberFromString:str];
 		case LNPropertyListNodeTypeString:
 			return str;
 	}
@@ -182,7 +182,7 @@ static NSNumberFormatter* __numberFormatter;
 		case LNPropertyListNodeTypeData:
 			return @"<Data>";
 		case LNPropertyListNodeTypeNumber:
-			return [__numberFormatter stringFromNumber:valueToTranslate];
+			return [LNPropertyListNode._numberFormatter stringFromNumber:valueToTranslate];
 		case LNPropertyListNodeTypeString:
 			return valueToTranslate;
 	}
