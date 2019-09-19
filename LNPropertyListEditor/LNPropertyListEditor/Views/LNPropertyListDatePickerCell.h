@@ -8,6 +8,16 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface LNPropertyListDatePickerCell : NSDatePickerCell
+@interface NSDatePickerCell ()
+
+- (BOOL)_textFieldWithStepperTrackMouse:(id)arg1 inRect:(NSRect)arg2 ofView:(id)arg3 untilMouseUp:(BOOL)arg4;
+
+@end
+
+@interface LNLeadingZerosDatePickerCell : NSDatePickerCell
+
+@end
+
+@interface LNPropertyListDatePickerCell : LNLeadingZerosDatePickerCell
 
 @end

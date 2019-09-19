@@ -29,6 +29,11 @@
 
 #pragma mark LNPropertyListEditorDelegate
 
+//- (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canEditValueOfNode:(LNPropertyListNode*)node
+//{
+//	return NO;
+//}
+
 - (void)propertyListEditor:(LNPropertyListEditor *)editor willChangeNode:(LNPropertyListNode *)node changeType:(LNPropertyListNodeChangeType)changeType previousKey:(NSString *)previousKey
 {
 	switch(changeType)

@@ -9,11 +9,12 @@
 #import "LNPropertyListDatePickerCell.h"
 #import <objc/runtime.h>
 
-static thread_local BOOL __drawingDatePicker;
+static NSDatePickerCell* __strong __drawingDatePickerCell;
 
 @interface NSDatePickerCell ()
 
 - (void)_setForcesLeadingZeroes:(BOOL)arg1;
+- (NSColor*)_textColorBasedOnEnabledState;
 
 @end
 
@@ -33,9 +34,9 @@ static thread_local BOOL __drawingDatePicker;
 
 + (NSBezierPath *)__ln_bezierPathWithRoundedRect:(NSRect)rect xRadius:(CGFloat)xRadius yRadius:(CGFloat)yRadius
 {
-	if(__drawingDatePicker == YES)
+	if(__drawingDatePickerCell != nil)
 	{
-		[[NSColor.alternateSelectedControlColor highlightWithLevel:0.35] set];
+//		[[__drawingDatePickerCell._textColorBasedOnEnabledState blendedColorWithFraction:0.6 ofColor:NSColor.alternateSelectedControlColor] set];
 	}
 	
 	NSBezierPath* rv = [self __ln_bezierPathWithRoundedRect:rect xRadius:xRadius yRadius:yRadius];
@@ -45,7 +46,7 @@ static thread_local BOOL __drawingDatePicker;
 
 @end
 
-@implementation LNPropertyListDatePickerCell
+@implementation LNLeadingZerosDatePickerCell
 
 - (instancetype)init
 {
@@ -59,18 +60,39 @@ static thread_local BOOL __drawingDatePicker;
 	return self;
 }
 
+@end
+
+@implementation LNPropertyListDatePickerCell
+
+- (BOOL)_isFirstResponder
+{
+	return self.controlView.window.firstResponder == self.controlView;
+}
+
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
-	__drawingDatePicker = YES;
+	__drawingDatePickerCell = self;
+	if(self._isFirstResponder)
+	{
+		[NSColor.textBackgroundColor setFill];
+		[[NSBezierPath bezierPathWithRect:cellFrame] fill];
+	}
+	
 	[super drawWithFrame:cellFrame inView:controlView];
-	__drawingDatePicker = NO;
+	
+	__drawingDatePickerCell = nil;
 }
 
 //This is faster than setting the text color when the background color changes.
 - (NSColor*)_textColorBasedOnEnabledState
 {
-	return self.isEnabled ? self.backgroundStyle == NSBackgroundStyleEmphasized ? NSColor.alternateSelectedControlTextColor : NSColor.controlTextColor : self.backgroundStyle == NSBackgroundStyleEmphasized ? [NSColor valueForKey:@"_alternateDisabledSelectedControlTextColor"] : NSColor.disabledControlTextColor;
+	
+	return self.isEnabled ? self.backgroundStyle == NSBackgroundStyleEmphasized ? self._isFirstResponder ? NSColor.controlTextColor : NSColor.alternateSelectedControlTextColor : NSColor.controlTextColor : self.backgroundStyle == NSBackgroundStyleEmphasized ? [NSColor valueForKey:@"_alternateDisabledSelectedControlTextColor"] : NSColor.disabledControlTextColor;
+}
 
+- (BOOL)_shouldShowFocusRingInView:(id)arg1
+{
+	return YES;
 }
 
 @end

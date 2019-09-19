@@ -1,12 +1,8 @@
 # LNPropertyListEditor
 
-A property list editor for macOS, similar to Xcode's. Has full support for macOS Mojave light and dark appearance:
-
-![Property list editor](Supplements/Screenshot_1.png "Property list editor")
+A property list editor for macOS, similar to Xcode's. Has full support for macOS Mojave light and dark appearance.
 
 ![Property list editor](Supplements/Screenshot_1_Dark.png "Property list editor")
-
-![Property list editor](Supplements/Screenshot_2.png "Property list editor")
 
 ![Property list editor](Supplements/Screenshot_2_Dark.png "Property list editor")
 

@@ -7,17 +7,8 @@
 //
 
 #import "LNPropertyListDatePicker.h"
+#import "_LNPropertyListDatePicker.h"
 #import "LNPropertyListDatePickerCell.h"
-
-static NSPopover* __LNPropertyListDatePickerPopover;
-static NSDatePicker* __LNPropertyListPopoverDatePicker;
-
-@interface LNPropertyListDatePicker ()
-
-@property (class, nonatomic, readonly, retain) NSDatePicker* __datePicker;
-@property (class, nonatomic, readonly, retain) NSPopover* __datePickerPopover;
-
-@end
 
 @interface _LNPropertyListDatePickerInnerCell : NSCell
 
@@ -39,80 +30,11 @@ static NSDatePicker* __LNPropertyListPopoverDatePicker;
 
 @end
 
-@interface _LNPropertyListDatePicker : NSDatePicker @end
-
-@implementation _LNPropertyListDatePicker
-
-- (BOOL)becomeFirstResponder
-{
-	BOOL rv = [super becomeFirstResponder];
-	
-	if(rv)
-	{
-		LNPropertyListDatePicker.__datePicker.dateValue = self.dateValue;
-		LNPropertyListDatePicker.__datePicker.target = self.target;
-		LNPropertyListDatePicker.__datePicker.action = self.action;
-		
-		[LNPropertyListDatePicker.__datePickerPopover showRelativeToRect:self.bounds ofView:self preferredEdge:NSRectEdgeMinY];
-		
-	}
-	
-	return rv;
-}
-
-- (BOOL)resignFirstResponder
-{
-	BOOL rv = [super resignFirstResponder];
-	
-	if(rv)
-	{
-		[self unbind:NSValueBinding];
-		LNPropertyListDatePicker.__datePicker.target = nil;
-		LNPropertyListDatePicker.__datePicker.action = nil;
-		
-		[LNPropertyListDatePicker.__datePickerPopover close];
-	}
-	
-	return rv;
-}
-
-@end
-
-
 IB_DESIGNABLE
 @implementation LNPropertyListDatePicker
 {
-	NSDatePicker* _datePicker;
+	_LNPropertyListDatePicker* _datePicker;
 	NSDatePicker* _timePicker;
-}
-
-+ (NSDatePicker*)__datePicker
-{
-	static dispatch_once_t onceToken;
-	dispatch_once(&onceToken, ^{
-		__LNPropertyListPopoverDatePicker = [NSDatePicker new];
-		__LNPropertyListPopoverDatePicker.datePickerStyle = NSClockAndCalendarDatePickerStyle;
-		__LNPropertyListPopoverDatePicker.datePickerElements = NSTimeZoneDatePickerElementFlag | NSYearMonthDayDatePickerElementFlag | NSEraDatePickerElementFlag;
-		__LNPropertyListPopoverDatePicker.bordered = NO;
-		__LNPropertyListPopoverDatePicker.drawsBackground = NO;
-		[__LNPropertyListPopoverDatePicker sizeToFit];
-	});
-	
-	return __LNPropertyListPopoverDatePicker;
-}
-
-+ (NSPopover*)__datePickerPopover
-{
-	static dispatch_once_t onceToken;
-	dispatch_once(&onceToken, ^{
-		NSViewController* vc = [NSViewController new];
-		vc.view = LNPropertyListDatePicker.__datePicker;
-		
-		__LNPropertyListDatePickerPopover = [NSPopover new];
-		__LNPropertyListDatePickerPopover.contentViewController = vc;
-	});
-	
-	return __LNPropertyListDatePickerPopover;
 }
 
 - (void)prepareForInterfaceBuilder
@@ -135,10 +57,10 @@ IB_DESIGNABLE
 	NSFont* font = [NSFont monospacedDigitSystemFontOfSize:NSFont.smallSystemFontSize weight:NSFontWeightRegular];
 	
 	_datePicker = [_LNPropertyListDatePicker new];
-	_datePicker.cell = [LNPropertyListDatePickerCell new];
+	_datePicker.cell = [LNLeadingZerosDatePickerCell new];
 	_datePicker.font = font;
-	_datePicker.datePickerStyle = NSTextFieldDatePickerStyle;
-	_datePicker.datePickerElements = NSYearMonthDayDatePickerElementFlag | NSEraDatePickerElementFlag;
+	_datePicker.datePickerStyle = NSDatePickerStyleTextField;
+	_datePicker.datePickerElements = NSDatePickerElementFlagYearMonthDay | NSDatePickerElementFlagEra;
 	_datePicker.bordered = NO;
 	_datePicker.drawsBackground = NO;
 	_datePicker.translatesAutoresizingMaskIntoConstraints = NO;
@@ -148,8 +70,8 @@ IB_DESIGNABLE
 	_timePicker = [NSDatePicker new];
 	_timePicker.cell = [LNPropertyListDatePickerCell new];
 	_timePicker.font = font;
-	_timePicker.datePickerStyle = NSTextFieldDatePickerStyle;
-	_timePicker.datePickerElements = NSHourMinuteSecondDatePickerElementFlag | NSTimeZoneDatePickerElementFlag;
+	_timePicker.datePickerStyle = NSDatePickerStyleTextField;
+	_timePicker.datePickerElements = NSDatePickerElementFlagHourMinuteSecond | NSDatePickerElementFlagTimeZone;
 	_timePicker.bordered = NO;
 	_timePicker.drawsBackground = NO;
 	_timePicker.translatesAutoresizingMaskIntoConstraints = NO;
@@ -171,14 +93,17 @@ IB_DESIGNABLE
 	[NSLayoutConstraint activateConstraints:@[
 											  [self.heightAnchor constraintEqualToAnchor:_datePicker.heightAnchor],
 											  [self.leadingAnchor constraintEqualToAnchor:_datePicker.leadingAnchor],
-											  [self.centerYAnchor constraintEqualToAnchor:_datePicker.centerYAnchor],
+											  [self.centerYAnchor constraintEqualToAnchor:_datePicker.centerYAnchor constant:-1.5],
 											  [_timePicker.leadingAnchor constraintEqualToAnchor:_datePicker.trailingAnchor constant:2],
-											  [self.centerYAnchor constraintEqualToAnchor:_timePicker.centerYAnchor],
+											  [self.centerYAnchor constraintEqualToAnchor:_timePicker.centerYAnchor constant:-1.5],
 											  [self.trailingAnchor constraintEqualToAnchor:_timePicker.trailingAnchor],
 											  ]];
 	
 	[self setContentHuggingPriority:NSLayoutPriorityRequired forOrientation:NSLayoutConstraintOrientationHorizontal];
 	[self setContentCompressionResistancePriority:NSLayoutPriorityRequired forOrientation:NSLayoutConstraintOrientationHorizontal];
+	
+	self.wantsLayer = YES;
+	self.layer.masksToBounds = NO;
 }
 
 - (void)_setDateValue:(NSDate *)dateValue sendAction:(BOOL)sendAction
@@ -187,10 +112,8 @@ IB_DESIGNABLE
 	
 	_datePicker.dateValue = self.dateValue;
 	_timePicker.dateValue = self.dateValue;
-	if(LNPropertyListDatePicker.__datePicker.target == self)
-	{
-		LNPropertyListDatePicker.__datePicker.dateValue = self.dateValue;
-	}
+	_datePicker.visualDatePicker.dateValue = self.dateValue;
+	_datePicker.textDatePicker.dateValue = self.dateValue;
 	
 	if(sendAction)
 	{
@@ -211,6 +134,11 @@ IB_DESIGNABLE
 - (IBAction)_internalDatePickerValueChanged:(id)sender
 {
 	[self _setDateValue:[sender dateValue] sendAction:YES];
+}
+
+- (BOOL)resignFirstResponder
+{
+	return [super resignFirstResponder];
 }
 
 @end
