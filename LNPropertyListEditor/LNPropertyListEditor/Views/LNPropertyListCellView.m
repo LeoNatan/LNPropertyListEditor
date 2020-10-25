@@ -24,6 +24,11 @@
 	{
 		[NSLayoutConstraint deactivateConstraints:@[self.buttonsConstraint]];
 	}
+    
+    if(@available(macOS 11.0, *))
+    {
+        _typeButtonLeadingConstraint.constant = -2;
+    }
 }
 
 - (void)prepareForReuse

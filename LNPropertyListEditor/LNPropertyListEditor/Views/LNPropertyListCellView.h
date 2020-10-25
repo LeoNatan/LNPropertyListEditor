@@ -13,6 +13,7 @@
 
 @property (nonatomic, strong) IBOutlet LNPropertyListDatePicker *datePicker;
 @property (nonatomic, strong) IBOutlet NSPopUpButton *typeButton;
+@property (nonatomic, strong) IBOutlet NSLayoutConstraint *typeButtonLeadingConstraint;
 @property (nonatomic, weak) IBOutlet NSButton *minusButton;
 @property (nonatomic, weak) IBOutlet NSButton *plusButton;
 @property (nonatomic, strong) IBOutlet NSLayoutConstraint *buttonsConstraint;

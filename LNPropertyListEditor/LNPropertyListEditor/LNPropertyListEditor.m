@@ -88,13 +88,6 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	_typeColumn.hidden = typeColumnHidden;
 }
 
-- (void)layout
-{
-	[super layout];
-
-	[_outlineView sizeLastColumnToFit];
-}
-
 - (void)setDelegate:(id<LNPropertyListEditorDelegate>)delegate
 {
 	_delegate = delegate;
@@ -905,6 +898,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	NSInteger selectionRow = [self.outlineView rowForItem:node];
 	[self.outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectionRow] byExtendingSelection:NO];
 	[self.outlineView scrollRowToVisible:selectionRow];
+}
+
+- (void)outlineViewColumnDidResize:(NSNotification *)notification
+{
+    [_outlineView sizeLastColumnToFit];
 }
 
 #pragma mark NSTextFieldDelegate

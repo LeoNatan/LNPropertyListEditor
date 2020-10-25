@@ -26,4 +26,14 @@
 	[super drawGridInClipRect:finalClipRect];
 }
 
+- (void)layout
+{
+    [super layout];
+    
+    if((self.tableColumns.lastObject.resizingMask & NSTableColumnAutoresizingMask) == NSTableColumnAutoresizingMask)
+    {
+        [self sizeLastColumnToFit];
+    }
+}
+
 @end
