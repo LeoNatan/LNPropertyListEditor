@@ -2,8 +2,8 @@
 //  LNPropertyListEditor.m
 //  LNPropertyListEditor
 //
-//  Created by Leo Natan (Wix) on 4/12/18.
-//  Copyright © 2018 Leo Natan. All rights reserved.
+//  Created by Leo Natan on 4/12/18.
+//  Copyright © 2018-2021 Leo Natan. All rights reserved.
 //
 
 #import "LNPropertyListEditor-Private.h"
@@ -32,7 +32,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 
 - (void)prepareForInterfaceBuilder
 {
-	self.propertyList = @{@"Example Text": @"Text", @"Example Number": @123, @"Example Date": NSDate.date};
+	self.propertyListObject = @{@"Example Text": @"Text", @"Example Number": @123, @"Example Date": NSDate.date};
 }
 
 - (instancetype)initWithFrame:(NSRect)frameRect
@@ -98,9 +98,9 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	_flags.delegate_canEditTypeOfNode = [delegate respondsToSelector:@selector(propertyListEditor:canEditTypeOfNode:)];
 	_flags.delegate_canEditValueOfNode = [delegate respondsToSelector:@selector(propertyListEditor:canEditValueOfNode:)];
 	_flags.delegate_canDeleteNode = [delegate respondsToSelector:@selector(propertyListEditor:canDeleteNode:)];
-	_flags.delegate_canAddNewNodeInNode = [delegate respondsToSelector:@selector(propertyListEditor:canAddNewNodeInNode:)];
-	_flags.delegate_canPasteNode = [delegate respondsToSelector:@selector(propertyListEditor:canPasteNode:inNode:)];
-	_flags.delegate_defaultPropertyListForAddingInNode = [delegate respondsToSelector:@selector(propertyListEditor:defaultPropertyListForAddingInNode:)];
+	_flags.delegate_canAddNewNodeInNode = [delegate respondsToSelector:@selector(propertyListEditor:canAddChildNodeInNode:)];
+	_flags.delegate_canPasteNode = [delegate respondsToSelector:@selector(propertyListEditor:canPasteNode:asChildOfNode:)];
+	_flags.delegate_defaultPropertyListForAddingInNode = [delegate respondsToSelector:@selector(propertyListEditor:defaultPropertyListForChildInNode:)];
 }
 
 - (void)setDataTransformer:(id<LNPropertyListEditorDataTransformer>)dataTransformer
@@ -108,13 +108,13 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	_dataTransformer = dataTransformer;
 	
 	_flags.dataTransformer_displayNameForNode = [dataTransformer respondsToSelector:@selector(propertyListEditor:displayNameForNode:)];
-	_flags.dataTransformer_transformValueForDisplay = [dataTransformer respondsToSelector:@selector(propertyListEditor:transformValueForDisplay:)];
-	_flags.dataTransformer_transformValueForStorage = [dataTransformer respondsToSelector:@selector(propertyListEditor:transformValueForStorage:displayValue:)];
+	_flags.dataTransformer_transformValueForDisplay = [dataTransformer respondsToSelector:@selector(propertyListEditor:displayValueForNode:)];
+	_flags.dataTransformer_transformValueForStorage = [dataTransformer respondsToSelector:@selector(propertyListEditor:storageValueForNode:displayValue:)];
 }
 
-- (void)setPropertyList:(id)propertyList
+- (void)setPropertyListObject:(id)propertyList
 {
-	_rootPropertyListNode = [[LNPropertyListNode alloc] initWithPropertyList:propertyList];
+	_rootPropertyListNode = [[LNPropertyListNode alloc] initWithPropertyListObject:propertyList];
 	[_rootPropertyListNode _sortUsingDescriptors:_outlineView.sortDescriptors];
 	
 	[_outlineView reloadData];
@@ -122,9 +122,9 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	_outlineView.menu = _rootPropertyListNode == nil ? nil : _menuItem;
 }
 
-- (id)propertyList
+- (id)propertyListObject
 {
-	return _rootPropertyListNode.propertyList;
+	return _rootPropertyListNode.propertyListObject;
 }
 
 - (void)reloadNode:(LNPropertyListNode*)node reloadChildren:(BOOL)reloadChildren
@@ -222,7 +222,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	
 	if(_flags.dataTransformer_transformValueForStorage && node.type != LNPropertyListNodeTypeDictionary && node.type != LNPropertyListNodeTypeArray)
 	{
-		valueToUse = [self.dataTransformer propertyListEditor:self transformValueForStorage:node displayValue:value];
+		valueToUse = [self.dataTransformer propertyListEditor:self storageValueForNode:node displayValue:value];
 	}
 	
 	if(valueToUse == nil)
@@ -431,7 +431,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	if(canPaste && _flags.delegate_canPasteNode)
 	{
 		LNPropertyListNode* pasted = [NSKeyedUnarchiver unarchiveObjectWithData:[NSPasteboard.generalPasteboard dataForType:LNPropertyListNodePasteboardType]];
-		canPaste = [self.delegate propertyListEditor:self canPasteNode:pasted inNode:node];
+		canPaste = [self.delegate propertyListEditor:self canPasteNode:pasted asChildOfNode:node];
 	}
 	return canPaste;
 }
@@ -463,7 +463,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 			nodeToAddIn = self.rootPropertyListNode;
 		}
 		
-		return [self.delegate propertyListEditor:self canAddNewNodeInNode:nodeToAddIn];
+		return [self.delegate propertyListEditor:self canAddChildNodeInNode:nodeToAddIn];
 	}
 	
 	return YES;
@@ -484,7 +484,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 			nodeToAddIn = self.rootPropertyListNode;
 		}
 		
-		return [self.delegate propertyListEditor:self canPasteNode:pasted inNode:nodeToAddIn];
+		return [self.delegate propertyListEditor:self canPasteNode:pasted asChildOfNode:nodeToAddIn];
 	}
 	
 	return YES;
@@ -609,7 +609,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 			nodeToAddIn = self.rootPropertyListNode;
 		}
 		
-		insertedPropertyListObject = [self.delegate propertyListEditor:self defaultPropertyListForAddingInNode:nodeToAddIn];
+		insertedPropertyListObject = [self.delegate propertyListEditor:self defaultPropertyListForChildInNode:nodeToAddIn];
 	}
 	
 	if(insertedPropertyListObject == nil)
@@ -636,7 +636,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	}
 	else
 	{
-		insertedNode = [[LNPropertyListNode alloc] initWithPropertyList:insertedPropertyList];
+		insertedNode = [[LNPropertyListNode alloc] initWithPropertyListObject:insertedPropertyList];
 	}
 	
 	[self _insertNode:insertedNode sender:sender];
@@ -812,7 +812,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 		
 		if(_flags.dataTransformer_transformValueForDisplay && item.type != LNPropertyListNodeTypeArray && item.type != LNPropertyListNodeTypeDictionary)
 		{
-			item._cachedDisplayValue = [self.dataTransformer propertyListEditor:self transformValueForDisplay:item];
+			item._cachedDisplayValue = [self.dataTransformer propertyListEditor:self displayValueForNode:item];
 			value = [LNPropertyListNode stringForType:[LNPropertyListNode _typeForObject:item._cachedDisplayValue]];
 		}
 		

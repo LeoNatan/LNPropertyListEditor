@@ -8,29 +8,29 @@
 
 /* Begin PBXBuildFile section */
 		391FF02B2084060000005D0F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 391FF02A2084060000005D0F /* Assets.xcassets */; };
-		391FF02F208412CC00005D0F /* LNPropertyListRowView.h in Headers */ = {isa = PBXBuildFile; fileRef = 391FF02D208412CC00005D0F /* LNPropertyListRowView.h */; };
+		391FF02F208412CC00005D0F /* LNPropertyListRowView.h in Headers */ = {isa = PBXBuildFile; fileRef = 391FF02D208412CC00005D0F /* LNPropertyListRowView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		391FF030208412CC00005D0F /* LNPropertyListRowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 391FF02E208412CC00005D0F /* LNPropertyListRowView.m */; };
-		391FF0332084270400005D0F /* LNPropertyListOutlineView.h in Headers */ = {isa = PBXBuildFile; fileRef = 391FF0312084270400005D0F /* LNPropertyListOutlineView.h */; };
+		391FF0332084270400005D0F /* LNPropertyListOutlineView.h in Headers */ = {isa = PBXBuildFile; fileRef = 391FF0312084270400005D0F /* LNPropertyListOutlineView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		391FF0342084270400005D0F /* LNPropertyListOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 391FF0322084270400005D0F /* LNPropertyListOutlineView.m */; };
 		393E1872207F61C2002E6136 /* LNPropertyListEditorOutline.xib in Resources */ = {isa = PBXBuildFile; fileRef = 393E1871207F61C2002E6136 /* LNPropertyListEditorOutline.xib */; };
 		393E1875207F64A0002E6136 /* LNPropertyListEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 393E1873207F64A0002E6136 /* LNPropertyListEditor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		393E1876207F64A0002E6136 /* LNPropertyListEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E1874207F64A0002E6136 /* LNPropertyListEditor.m */; };
 		393E1879207F68B4002E6136 /* LNPropertyListNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 393E1877207F68B4002E6136 /* LNPropertyListNode.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		393E187A207F68B4002E6136 /* LNPropertyListNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E1878207F68B4002E6136 /* LNPropertyListNode.m */; };
-		393E1882207FAD26002E6136 /* LNPropertyListNode-Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 393E1881207FAD26002E6136 /* LNPropertyListNode-Private.h */; };
-		393E1885207FAEC6002E6136 /* LNPropertyListCellView.h in Headers */ = {isa = PBXBuildFile; fileRef = 393E1883207FAEC6002E6136 /* LNPropertyListCellView.h */; };
+		393E1882207FAD26002E6136 /* LNPropertyListNode-Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 393E1881207FAD26002E6136 /* LNPropertyListNode-Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		393E1885207FAEC6002E6136 /* LNPropertyListCellView.h in Headers */ = {isa = PBXBuildFile; fileRef = 393E1883207FAEC6002E6136 /* LNPropertyListCellView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		393E1886207FAEC6002E6136 /* LNPropertyListCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 393E1884207FAEC6002E6136 /* LNPropertyListCellView.m */; };
-		3941486F2095E85900A21F96 /* LNPropertyListDatePickerCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 3941486D2095E85900A21F96 /* LNPropertyListDatePickerCell.h */; };
+		3941486F2095E85900A21F96 /* LNPropertyListDatePickerCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 3941486D2095E85900A21F96 /* LNPropertyListDatePickerCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		394148702095E85900A21F96 /* LNPropertyListDatePickerCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3941486E2095E85900A21F96 /* LNPropertyListDatePickerCell.mm */; };
-		3946906C20976ED300B4A457 /* LNPropertyListDatePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3946906A20976ED300B4A457 /* LNPropertyListDatePicker.h */; };
+		3946906C20976ED300B4A457 /* LNPropertyListDatePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3946906A20976ED300B4A457 /* LNPropertyListDatePicker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3946906D20976ED300B4A457 /* LNPropertyListDatePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3946906B20976ED300B4A457 /* LNPropertyListDatePicker.m */; };
-		39D1528F23289668009124C8 /* LNPropertyListDatePickerPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 39D1528D23289668009124C8 /* LNPropertyListDatePickerPanel.h */; };
+		39D1528F23289668009124C8 /* LNPropertyListDatePickerPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 39D1528D23289668009124C8 /* LNPropertyListDatePickerPanel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39D1529023289668009124C8 /* LNPropertyListDatePickerPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1528E23289668009124C8 /* LNPropertyListDatePickerPanel.m */; };
-		39D152962328A9C4009124C8 /* _LNPropertyListDatePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 39D152942328A9C4009124C8 /* _LNPropertyListDatePicker.h */; };
+		39D152962328A9C4009124C8 /* _LNPropertyListDatePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 39D152942328A9C4009124C8 /* _LNPropertyListDatePicker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39D152972328A9C4009124C8 /* _LNPropertyListDatePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D152952328A9C4009124C8 /* _LNPropertyListDatePicker.m */; };
-		39DE8E942092030500ED16B4 /* LNPropertyListPopUpButtonCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8E922092030500ED16B4 /* LNPropertyListPopUpButtonCell.h */; };
+		39DE8E942092030500ED16B4 /* LNPropertyListPopUpButtonCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8E922092030500ED16B4 /* LNPropertyListPopUpButtonCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39DE8E952092030500ED16B4 /* LNPropertyListPopUpButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8E932092030500ED16B4 /* LNPropertyListPopUpButtonCell.m */; };
-		39DE8E9C2092214400ED16B4 /* LNPropertyListEditor-Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8E9B2092214300ED16B4 /* LNPropertyListEditor-Private.h */; };
+		39DE8E9C2092214400ED16B4 /* LNPropertyListEditor-Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8E9B2092214300ED16B4 /* LNPropertyListEditor-Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -147,15 +147,15 @@
 				393E1882207FAD26002E6136 /* LNPropertyListNode-Private.h in Headers */,
 				39D1528F23289668009124C8 /* LNPropertyListDatePickerPanel.h in Headers */,
 				391FF0332084270400005D0F /* LNPropertyListOutlineView.h in Headers */,
-				393E1875207F64A0002E6136 /* LNPropertyListEditor.h in Headers */,
 				391FF02F208412CC00005D0F /* LNPropertyListRowView.h in Headers */,
-				393E1879207F68B4002E6136 /* LNPropertyListNode.h in Headers */,
 				393E1885207FAEC6002E6136 /* LNPropertyListCellView.h in Headers */,
 				39DE8E9C2092214400ED16B4 /* LNPropertyListEditor-Private.h in Headers */,
 				39DE8E942092030500ED16B4 /* LNPropertyListPopUpButtonCell.h in Headers */,
 				3946906C20976ED300B4A457 /* LNPropertyListDatePicker.h in Headers */,
 				3941486F2095E85900A21F96 /* LNPropertyListDatePickerCell.h in Headers */,
 				39D152962328A9C4009124C8 /* _LNPropertyListDatePicker.h in Headers */,
+				393E1875207F64A0002E6136 /* LNPropertyListEditor.h in Headers */,
+				393E1879207F68B4002E6136 /* LNPropertyListNode.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

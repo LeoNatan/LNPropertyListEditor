@@ -2,8 +2,8 @@
 //  LNPropertyListNode.m
 //  LNPropertyListEditor
 //
-//  Created by Leo Natan (Wix) on 4/12/18.
-//  Copyright © 2018 Leo Natan. All rights reserved.
+//  Created by Leo Natan on 4/12/18.
+//  Copyright © 2018-2021 Leo Natan. All rights reserved.
 //
 
 #import "LNPropertyListNode-Private.h"
@@ -283,7 +283,7 @@
 	return self;
 }
 
-- (instancetype)initWithPropertyList:(id)obj
+- (instancetype)initWithPropertyListObject:(id)obj
 {
 	return [self initWithObject:obj];
 }
@@ -326,7 +326,7 @@
 	NSMutableDictionary* rv = [NSMutableDictionary new];
 	
 	[self.children enumerateObjectsUsingBlock:^(LNPropertyListNode * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-		rv[obj.key] = obj.propertyList;
+		rv[obj.key] = obj.propertyListObject;
 	}];
 	
 	return rv.copy;
@@ -337,13 +337,13 @@
 	NSMutableArray* rv = [NSMutableArray new];
 	
 	[self.children enumerateObjectsUsingBlock:^(LNPropertyListNode * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-		[rv addObject:obj.propertyList];
+		[rv addObject:obj.propertyListObject];
 	}];
 	
 	return rv.copy;
 }
 
-- (id)propertyList
+- (id)propertyListObject
 {
 	if(self.type == LNPropertyListNodeTypeDictionary)
 	{

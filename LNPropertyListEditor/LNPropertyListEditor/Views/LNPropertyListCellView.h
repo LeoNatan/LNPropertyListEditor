@@ -2,12 +2,12 @@
 //  LNPropertyListCellView.h
 //  LNPropertyListEditor
 //
-//  Created by Leo Natan (Wix) on 4/12/18.
-//  Copyright © 2018 Leo Natan. All rights reserved.
+//  Created by Leo Natan on 4/12/18.
+//  Copyright © 2018-2021 Leo Natan. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>
-#import "LNPropertyListDatePicker.h"
+#import <LNPropertyListEditor/LNPropertyListDatePicker.h>
 
 @interface LNPropertyListCellView : NSTableCellView
 

@@ -2,8 +2,8 @@
 //  LNPropertyListDatePickerCell.mm
 //  LNPropertyListEditor
 //
-//  Created by Leo Natan (Wix) on 4/29/18.
-//  Copyright © 2018 Leo Natan. All rights reserved.
+//  Created by Leo Natan on 4/29/18.
+//  Copyright © 2018-2021 Leo Natan. All rights reserved.
 //
 
 #import "LNPropertyListDatePickerCell.h"
@@ -86,7 +86,6 @@ static NSDatePickerCell* __strong __drawingDatePickerCell;
 //This is faster than setting the text color when the background color changes.
 - (NSColor*)_textColorBasedOnEnabledState
 {
-	
 	return self.isEnabled ? self.backgroundStyle == NSBackgroundStyleEmphasized ? self._isFirstResponder ? NSColor.controlTextColor : NSColor.alternateSelectedControlTextColor : NSColor.controlTextColor : self.backgroundStyle == NSBackgroundStyleEmphasized ? [NSColor valueForKey:@"_alternateDisabledSelectedControlTextColor"] : NSColor.disabledControlTextColor;
 }
 

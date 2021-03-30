@@ -2,8 +2,8 @@
 //  LNPropertyListOutlineView.m
 //  LNPropertyListEditor
 //
-//  Created by Leo Natan (Wix) on 4/16/18.
-//  Copyright © 2018 Leo Natan. All rights reserved.
+//  Created by Leo Natan on 4/16/18.
+//  Copyright © 2018-2021 Leo Natan. All rights reserved.
 //
 
 #import "LNPropertyListOutlineView.h"

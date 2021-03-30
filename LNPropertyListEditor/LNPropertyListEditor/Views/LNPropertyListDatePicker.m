@@ -2,8 +2,8 @@
 //  LNPropertyListDatePicker.m
 //  LNPropertyListEditor
 //
-//  Created by Leo Natan (Wix) on 4/30/18.
-//  Copyright © 2018 Leo Natan. All rights reserved.
+//  Created by Leo Natan on 4/30/18.
+//  Copyright © 2018-2021 Leo Natan. All rights reserved.
 //
 
 #import "LNPropertyListDatePicker.h"
@@ -57,7 +57,7 @@ IB_DESIGNABLE
 	NSFont* font = [NSFont monospacedDigitSystemFontOfSize:NSFont.smallSystemFontSize weight:NSFontWeightRegular];
 	
 	_datePicker = [_LNPropertyListDatePicker new];
-	_datePicker.cell = [LNLeadingZerosDatePickerCell new];
+	_datePicker.cell = [LNPropertyListDatePickerCell new];
 	_datePicker.font = font;
 	_datePicker.datePickerStyle = NSDatePickerStyleTextField;
 	_datePicker.datePickerElements = NSDatePickerElementFlagYearMonthDay | NSDatePickerElementFlagEra;

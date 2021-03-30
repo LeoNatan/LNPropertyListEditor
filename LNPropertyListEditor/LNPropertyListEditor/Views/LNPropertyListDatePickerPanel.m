@@ -2,8 +2,8 @@
 //  LNPropertyListDatePickerPanel.m
 //  LNPropertyListEditor
 //
-//  Created by Leo Natan (Wix) on 9/11/19.
-//  Copyright © 2019 Leo Natan. All rights reserved.
+//  Created by Leo Natan on 9/11/19.
+//  Copyright © 2018-2021 Leo Natan. All rights reserved.
 //
 
 #import "LNPropertyListDatePickerPanel.h"
