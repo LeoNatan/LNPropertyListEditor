@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <LNPropertyListEditor/LNPropertyListEditor-Private.h>
+#import "LNPropertyListEditor-Private.h"
 #import "LNPropertyListNode.h"
 
 @interface LNPropertyListRowView : NSTableRowView

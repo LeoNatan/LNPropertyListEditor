@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.3
 
 import PackageDescription
 
@@ -25,13 +25,17 @@ let package = Package(
 			path: "LNPropertyListEditor",
 			exclude: [
 				"LNPropertyListEditorExample",
-				"Supplements"
+				"Supplements",
+				"LNPropertyListEditor/Info.plist"
+			],
+			resources: [
+				.process("LNPropertyListEditor/Assets.xcassets"),
+				.process("LNPropertyListEditor/Views/LNPropertyListEditorOutline.xib")
 			],
 			publicHeadersPath: "include",
 			cSettings: [
 				.headerSearchPath("."),
-				.headerSearchPath("Model"),
-				.headerSearchPath("Views"),
+				.headerSearchPath("LNPropertyListEditor"),
 			]),
 	]
 )

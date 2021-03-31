@@ -61,7 +61,28 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 
 - (void)_commonInit
 {
-	[[[NSNib alloc] initWithNibNamed:@"LNPropertyListEditorOutline" bundle:[NSBundle bundleForClass:self.class]] instantiateWithOwner:self topLevelObjects:nil];
+	NSBundle* bundleToUse;
+	
+	NSURL* spmBundleURL = [[NSBundle mainBundle] URLForResource:@"LNPropertyListEditor_LNPropertyListEditor" withExtension:@"bundle"];
+	if(spmBundleURL != nil)
+	{
+		bundleToUse = [NSBundle bundleWithURL:spmBundleURL];
+	}
+	else
+	{
+		spmBundleURL = [[NSBundle bundleForClass:self.class] URLForResource:@"LNPropertyListEditor_LNPropertyListEditor" withExtension:@"bundle"];
+		if(spmBundleURL != nil)
+		{
+			bundleToUse = [NSBundle bundleWithURL:spmBundleURL];
+		}
+	}
+
+	if(bundleToUse == nil)
+	{
+		bundleToUse = [NSBundle bundleForClass:self.class];
+	}
+
+	[[[NSNib alloc] initWithNibNamed:@"LNPropertyListEditorOutline" bundle:bundleToUse] instantiateWithOwner:self topLevelObjects:nil];
 	
 	_outlineView.enclosingScrollView.translatesAutoresizingMaskIntoConstraints = NO;
 	_outlineView.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"key" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]];

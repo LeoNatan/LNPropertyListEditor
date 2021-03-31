@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <LNPropertyListEditor/LNPropertyListDatePicker.h>
+#import "LNPropertyListDatePicker.h"
 
 @interface LNPropertyListCellView : NSTableCellView
 

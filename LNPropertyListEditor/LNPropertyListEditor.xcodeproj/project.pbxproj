@@ -92,49 +92,41 @@
 		393E183B207F6119002E6136 /* LNPropertyListEditor */ = {
 			isa = PBXGroup;
 			children = (
-				393E187B207F68B7002E6136 /* Model */,
-				393E1880207FA52B002E6136 /* Views */,
-				393E1873207F64A0002E6136 /* LNPropertyListEditor.h */,
-				39DE8E9B2092214300ED16B4 /* LNPropertyListEditor-Private.h */,
-				393E1874207F64A0002E6136 /* LNPropertyListEditor.m */,
-				393E183D207F6119002E6136 /* Info.plist */,
 				391FF02A2084060000005D0F /* Assets.xcassets */,
+				3954022126150727005EEA38 /* Implementation */,
+				393E1877207F68B4002E6136 /* LNPropertyListNode.h */,
+				393E1873207F64A0002E6136 /* LNPropertyListEditor.h */,
+				393E183D207F6119002E6136 /* Info.plist */,
 			);
 			path = LNPropertyListEditor;
 			sourceTree = "<group>";
 		};
-		393E187B207F68B7002E6136 /* Model */ = {
+		3954022126150727005EEA38 /* Implementation */ = {
 			isa = PBXGroup;
 			children = (
-				393E1877207F68B4002E6136 /* LNPropertyListNode.h */,
-				393E1881207FAD26002E6136 /* LNPropertyListNode-Private.h */,
-				393E1878207F68B4002E6136 /* LNPropertyListNode.m */,
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
-		393E1880207FA52B002E6136 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				393E1871207F61C2002E6136 /* LNPropertyListEditorOutline.xib */,
-				391FF0312084270400005D0F /* LNPropertyListOutlineView.h */,
-				391FF0322084270400005D0F /* LNPropertyListOutlineView.m */,
-				391FF02D208412CC00005D0F /* LNPropertyListRowView.h */,
-				391FF02E208412CC00005D0F /* LNPropertyListRowView.m */,
+				39D152942328A9C4009124C8 /* _LNPropertyListDatePicker.h */,
+				39D152952328A9C4009124C8 /* _LNPropertyListDatePicker.m */,
 				393E1883207FAEC6002E6136 /* LNPropertyListCellView.h */,
 				393E1884207FAEC6002E6136 /* LNPropertyListCellView.m */,
-				39DE8E922092030500ED16B4 /* LNPropertyListPopUpButtonCell.h */,
-				39DE8E932092030500ED16B4 /* LNPropertyListPopUpButtonCell.m */,
+				3946906A20976ED300B4A457 /* LNPropertyListDatePicker.h */,
+				3946906B20976ED300B4A457 /* LNPropertyListDatePicker.m */,
 				3941486D2095E85900A21F96 /* LNPropertyListDatePickerCell.h */,
 				3941486E2095E85900A21F96 /* LNPropertyListDatePickerCell.mm */,
 				39D1528D23289668009124C8 /* LNPropertyListDatePickerPanel.h */,
 				39D1528E23289668009124C8 /* LNPropertyListDatePickerPanel.m */,
-				39D152942328A9C4009124C8 /* _LNPropertyListDatePicker.h */,
-				39D152952328A9C4009124C8 /* _LNPropertyListDatePicker.m */,
-				3946906A20976ED300B4A457 /* LNPropertyListDatePicker.h */,
-				3946906B20976ED300B4A457 /* LNPropertyListDatePicker.m */,
+				39DE8E9B2092214300ED16B4 /* LNPropertyListEditor-Private.h */,
+				393E1874207F64A0002E6136 /* LNPropertyListEditor.m */,
+				393E1871207F61C2002E6136 /* LNPropertyListEditorOutline.xib */,
+				393E1881207FAD26002E6136 /* LNPropertyListNode-Private.h */,
+				393E1878207F68B4002E6136 /* LNPropertyListNode.m */,
+				391FF0312084270400005D0F /* LNPropertyListOutlineView.h */,
+				391FF0322084270400005D0F /* LNPropertyListOutlineView.m */,
+				39DE8E922092030500ED16B4 /* LNPropertyListPopUpButtonCell.h */,
+				39DE8E932092030500ED16B4 /* LNPropertyListPopUpButtonCell.m */,
+				391FF02D208412CC00005D0F /* LNPropertyListRowView.h */,
+				391FF02E208412CC00005D0F /* LNPropertyListRowView.m */,
 			);
-			path = Views;
+			path = Implementation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -367,6 +359,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = NO;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -392,6 +385,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = NO;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
