@@ -30,7 +30,8 @@ let package = Package(
 			publicHeadersPath: "include",
 			cSettings: [
 				.headerSearchPath("."),
-				.headerSearchPath("Private"),
+				.headerSearchPath("Model"),
+				.headerSearchPath("Views"),
 			]),
 	]
 )
