@@ -192,21 +192,8 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	}
 }
 
-- (void)_setType:(LNPropertyListNodeType)type children:(id)children value:(id)value forSender:(id)sender
+- (void)_setType:(LNPropertyListNodeType)type children:(id)children value:(id)value forNode:(LNPropertyListNode*)node
 {
-	NSInteger row = [self _rowForSender:sender beep:YES];
-	if(row == -1)
-	{
-		return;
-	}
-	
-	LNPropertyListNode* node = [_outlineView itemAtRow:row];
-	
-	if(node.type == type)
-	{
-		return;
-	}
-	
 	LNPropertyListNodeType oldType = node.type;
 	id oldValue = node.value;
 	id oldChildren = node.children;
@@ -223,13 +210,31 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	[_outlineView reloadItem:node reloadChildren:YES];
 	
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
-		[target _setType:oldType children:oldChildren value:oldValue forSender:@(row)];
+		[target _setType:oldType children:oldChildren value:oldValue forNode:node];
 	}];
 	
 	if(_flags.delegate_didChangeNode)
 	{
 		[self.delegate propertyListEditor:self didChangeNode:node changeType:LNPropertyListNodeChangeTypeUpdate previousKey:node.key];
 	}
+}
+
+- (void)_setType:(LNPropertyListNodeType)type children:(id)children value:(id)value forSender:(id)sender
+{
+	NSInteger row = [self _rowForSender:sender beep:YES];
+	if(row == -1)
+	{
+		return;
+	}
+	
+	LNPropertyListNode* node = [_outlineView itemAtRow:row];
+	
+	if(node.type == type)
+	{
+		return;
+	}
+	
+	[self _setType:type children:children value:value forNode:node];
 }
 
 - (void)_convertToType:(LNPropertyListNodeType)newType forSender:(id)sender
@@ -283,34 +288,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	}
 }
 
-- (void)_insertNode:(LNPropertyListNode*)insertedNode sender:(id)sender
+- (void)_insertNode:(LNPropertyListNode*)insertedNode inParentNode:(LNPropertyListNode*)parentNode index:(NSUInteger)insertionRow
 {
-	NSInteger row = [self _rowForSender:sender beep:NO];
-	if(row == -1 && [sender isKindOfClass:[NSNumber class]] == NO)
-	{
-		row = _rootPropertyListNode.children.count - 1;
-	}
-	
-	[_outlineView beginUpdates];
-	
-	LNPropertyListNode* node = [_outlineView itemAtRow:row];
-	
-	NSUInteger insertionRow;
-	
-	LNPropertyListNode* parentNode;
-	if([_outlineView isItemExpanded:node])
-	{
-		parentNode = node ?: _rootPropertyListNode;
-		insertionRow = 0;
-	}
-	else
-	{
-		parentNode = [node parent];
-		insertionRow = [parentNode.children indexOfObject:node] + 1;
-	}
-	LNPropertyListNode* parentNodeInOutline = parentNode != _rootPropertyListNode ? parentNode : nil;
-	
 	insertedNode.parent = parentNode;
+	
+	LNPropertyListNode* parentNodeInOutline = parentNode != _rootPropertyListNode ? parentNode : nil;
 	
 	if(parentNode.type == LNPropertyListNodeTypeDictionary)
 	{
@@ -352,7 +334,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	[_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:insertedRow] byExtendingSelection:NO];
 	
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
-		[target delete:@(insertedRow)];
+		[target _deleteNode:insertedNode];
 	}];
 	
 	if(_flags.delegate_didChangeNode)
@@ -361,32 +343,54 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	}
 }
 
-- (void)_deleteNodeWithSender:(id)sender
+- (void)_insertNode:(LNPropertyListNode*)insertedNode sender:(id)sender
 {
-	NSInteger selectedRow = _outlineView.selectedRow;
-	
-	NSInteger row = [self _rowForSender:sender beep:YES];
-	if(row == -1)
+	NSInteger row = [self _rowForSender:sender beep:NO];
+	if(row == -1 && [sender isKindOfClass:[NSNumber class]] == NO)
 	{
-		return;
+		row = _rootPropertyListNode.children.count - 1;
 	}
 	
-	if([self _validateCanDeleteForSender:sender] == NO)
+	[_outlineView beginUpdates];
+	
+	LNPropertyListNode* node = [_outlineView itemAtRow:row];
+	
+	NSUInteger insertionRow;
+	
+	LNPropertyListNode* parentNode;
+	if([_outlineView isItemExpanded:node])
+	{
+		parentNode = node ?: _rootPropertyListNode;
+		insertionRow = 0;
+	}
+	else
+	{
+		parentNode = [node parent];
+		insertionRow = [parentNode.children indexOfObject:node] + 1;
+	}
+	
+	[self _insertNode:insertedNode inParentNode:parentNode index:insertionRow];
+}
+
+- (void)_deleteNode:(LNPropertyListNode*)deletedNode
+{
+	if([self canDeleteNode:deletedNode] == NO)
 	{
 		NSBeep();
 		return;
 	}
 	
-	[_outlineView beginUpdates];
+	NSInteger selectedRow = _outlineView.selectedRow;
 	
-	LNPropertyListNode* deletedNode = [_outlineView itemAtRow:row];
+	[_outlineView beginUpdates];
 	
 	if(_flags.delegate_willChangeNode)
 	{
 		[self.delegate propertyListEditor:self willChangeNode:deletedNode changeType:LNPropertyListNodeChangeTypeDelete previousKey:deletedNode.key];
 	}
 	
-	LNPropertyListNode* parentNodeInOutline = deletedNode.parent != _rootPropertyListNode ? deletedNode.parent : nil;
+	LNPropertyListNode* parentNode = deletedNode.parent;
+	LNPropertyListNode* parentNodeInOutline = parentNode != _rootPropertyListNode ? deletedNode.parent : nil;
 	
 	NSUInteger deletionIndex = [deletedNode.parent.children indexOfObject:deletedNode];
 	
@@ -408,7 +412,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	[self->_outlineView endUpdates];
 	
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
-		[target _insertNode:deletedNode sender:@(row - 1)];
+		[target _insertNode:deletedNode inParentNode:parentNode index:deletionIndex];
 	}];
 	
 	if(selectedRow != -1)
@@ -424,6 +428,19 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	{
 		[self.delegate propertyListEditor:self didChangeNode:deletedNode changeType:LNPropertyListNodeChangeTypeDelete previousKey:deletedNode.key];
 	}
+}
+
+- (void)_deleteNodeWithSender:(id)sender
+{
+	NSInteger row = [self _rowForSender:sender beep:YES];
+	if(row == -1)
+	{
+		return;
+	}
+	
+	LNPropertyListNode* deletedNode = [_outlineView itemAtRow:row];
+	
+	[self _deleteNode:deletedNode];
 }
 
 #pragma mark Private
@@ -525,11 +542,6 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 
 - (NSInteger)_rowForSender:(id)sender beep:(BOOL)beep
 {
-	if([sender isKindOfClass:[NSNumber class]])
-	{
-		return [sender integerValue];
-	}
-	
 	NSInteger row = -1;
 	
 	if([sender isKindOfClass:[NSMenuItem class]])
