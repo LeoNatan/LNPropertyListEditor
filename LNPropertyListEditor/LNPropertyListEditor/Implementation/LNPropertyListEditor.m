@@ -97,6 +97,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 											  ]];
 	
 	_undoManager = [NSUndoManager new];
+	_undoManager.groupsByEvent = NO;
 }
 
 - (BOOL)isTypeColumnHidden
@@ -182,9 +183,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	LNPropertyListCellView* cellView = [[_outlineView rowViewAtRow:[_outlineView rowForItem:node] makeIfNecessary:NO] viewAtColumn:0];
 	[cellView setControlWithString:key setToolTip:YES];
 	
+	[_undoManager beginUndoGrouping];
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
 		[target _updateKey:oldKey ofNode:node];
 	}];
+	[_undoManager endUndoGrouping];
 	
 	if(_flags.delegate_didChangeNode)
 	{
@@ -209,9 +212,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	
 	[_outlineView reloadItem:node reloadChildren:YES];
 	
+	[_undoManager beginUndoGrouping];
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
 		[target _setType:oldType children:oldChildren value:oldValue forNode:node];
 	}];
+	[_undoManager endUndoGrouping];
 	
 	if(_flags.delegate_didChangeNode)
 	{
@@ -278,9 +283,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 		[_outlineView reloadItem:node];
 	}
 	
+	[_undoManager beginUndoGrouping];
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
 		[target _updateValue:oldValue ofNode:node reloadItem:YES];
 	}];
+	[_undoManager endUndoGrouping];
 	
 	if(_flags.delegate_didChangeNode)
 	{
@@ -333,9 +340,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	
 	[_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:insertedRow] byExtendingSelection:NO];
 	
+	[_undoManager beginUndoGrouping];
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
 		[target _deleteNode:insertedNode];
 	}];
+	[_undoManager endUndoGrouping];
 	
 	if(_flags.delegate_didChangeNode)
 	{
@@ -411,9 +420,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	
 	[self->_outlineView endUpdates];
 	
+	[_undoManager beginUndoGrouping];
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
 		[target _insertNode:deletedNode inParentNode:parentNode index:deletionIndex];
 	}];
+	[_undoManager endUndoGrouping];
 	
 	if(selectedRow != -1)
 	{
@@ -432,6 +443,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 
 - (void)_deleteNodeWithSender:(id)sender
 {
+	if([(NSView*)self.window.firstResponder isDescendantOf:self])
+	{
+		[self.window makeFirstResponder:self.outlineView];
+	}
+	
 	NSInteger row = [self _rowForSender:sender beep:YES];
 	if(row == -1)
 	{
@@ -683,6 +699,11 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 
 - (IBAction)copy:(id)sender
 {
+	if([(NSView*)self.window.firstResponder isDescendantOf:self])
+	{
+		[self.window makeFirstResponder:self.outlineView];
+	}
+	
 	NSInteger row = [self _rowForSender:sender beep:YES];
 	if(row == -1)
 	{
