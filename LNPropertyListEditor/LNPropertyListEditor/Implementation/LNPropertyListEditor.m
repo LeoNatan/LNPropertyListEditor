@@ -85,7 +85,7 @@
 	_outlineView.enclosingScrollView.translatesAutoresizingMaskIntoConstraints = NO;
 	_outlineView.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"key" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]];
 	
-	[_outlineView registerForDraggedTypes:@[@"com.LeoNatan.LNPropertyList.node"]];
+	[_outlineView registerForDraggedTypes:@[LNPropertyListNodePasteboardType]];
 	[_outlineView setDraggingSourceOperationMask:NSDragOperationCopy forLocal:NO];
 	
 	[self addSubview:_outlineView.enclosingScrollView];
@@ -508,7 +508,7 @@
 
 - (BOOL)_validateCanPasteForSender:(id)sender
 {
-	BOOL canPaste = [NSPasteboard.generalPasteboard canReadItemWithDataConformingToTypes:@[LNPropertyListNodePasteboardType]];
+	BOOL canPaste = [NSPasteboard.generalPasteboard canReadItemWithDataConformingToTypes:@[LNPropertyListNodePasteboardType, LNPropertyListNodeXcodeKeyType]];
 	NSInteger row = [self _rowForSender:sender beep:NO];
 	id node = [self.outlineView itemAtRow:row] ?: self.rootPropertyListNode;
 	if(canPaste && _flags.delegate_canAddNewNodeInNode)
@@ -517,7 +517,7 @@
 	}
 	if(canPaste && _flags.delegate_canPasteNode)
 	{
-		LNPropertyListNode* pasted = [NSKeyedUnarchiver unarchiveObjectWithData:[NSPasteboard.generalPasteboard dataForType:LNPropertyListNodePasteboardType]];
+		LNPropertyListNode* pasted = [LNPropertyListNode _nodeFromPasteboard:NSPasteboard.generalPasteboard];
 		canPaste = [self.delegate propertyListEditor:self canPasteNode:pasted asChildOfNode:node];
 	}
 	return canPaste;
@@ -809,7 +809,7 @@
 		return;
 	}
 	
-	LNPropertyListNode* node = [[LNPropertyListNode alloc] initWithPasteboardPropertyList:[NSPasteboard.generalPasteboard dataForType:LNPropertyListNodePasteboardType] ofType:LNPropertyListNodePasteboardType];
+	LNPropertyListNode* node = [LNPropertyListNode _nodeFromPasteboard:NSPasteboard.generalPasteboard];
 	
 	[self _insertNode:node sender:sender];
 }

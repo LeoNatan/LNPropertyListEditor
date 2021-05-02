@@ -12,6 +12,7 @@
 #import <AppKit/AppKit.h>
 
 extern NSString* const LNPropertyListNodePasteboardType;
+extern NSString* const LNPropertyListNodeXcodeKeyType;
 
 @interface LNPropertyListNode () <NSPasteboardReading>
 
@@ -26,7 +27,10 @@ extern NSString* const LNPropertyListNodePasteboardType;
 + (NSString*)stringKeyOfNode:(LNPropertyListNode*)node;
 + (NSString*)stringValueOfNode:(LNPropertyListNode*)node;
 
++ (instancetype)_nodeFromPasteboard:(NSPasteboard*)pasteboard;
 + (void)_clearPasteboardMapping;
+
+- (void)_setObject:(id)object;
 
 - (void)_sortUsingDescriptors:(NSArray<NSSortDescriptor *> *)descriptors;
 

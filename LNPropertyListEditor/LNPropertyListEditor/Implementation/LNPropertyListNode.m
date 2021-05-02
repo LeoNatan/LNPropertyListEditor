@@ -12,6 +12,7 @@
 #define NS(x) ((__bridge id)x)
 
 NSString* const LNPropertyListNodePasteboardType = @"com.LeoNatan.LNPropertyList.node";
+NSString* const LNPropertyListNodeXcodeKeyType = @"com.apple.xcode.plist.key";
 static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 
 @implementation LNPropertyListNode
@@ -238,24 +239,39 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 	
 	if(self)
 	{
-		self.type = LNPropertyListNodeTypeDictionary;
-		self.children = [NSMutableArray new];
-		
-		[dictionary enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-			LNPropertyListNode* childNode = [[LNPropertyListNode alloc] initWithObject:obj];
-			childNode.key = key;
-			childNode.parent = self;
-			[self.children addObject:childNode];
-		}];
+		[self _setAsDictionary:dictionary];
 	}
 	
 	return self;
+}
+
+- (void)_setAsDictionary:(NSDictionary<NSString*, id>*)dictionary
+{
+	self.type = LNPropertyListNodeTypeDictionary;
+	self.children = [NSMutableArray new];
+	
+	[dictionary enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+		LNPropertyListNode* childNode = [[LNPropertyListNode alloc] initWithObject:obj];
+		childNode.key = key;
+		childNode.parent = self;
+		[self.children addObject:childNode];
+	}];
 }
 
 - (instancetype)initWithArray:(NSArray<id>*)array
 {
 	self = [super init];
 	
+	if(self)
+	{
+		[self _setAsArray:array];
+	}
+	
+	return self;
+}
+
+- (void)_setAsArray:(NSArray<id>*)array
+{
 	self.type = LNPropertyListNodeTypeArray;
 	self.children = [NSMutableArray new];
 	
@@ -264,8 +280,6 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 		childNode.parent = self;
 		[self.children addObject:childNode];
 	}];
-	
-	return self;
 }
 
 - (instancetype)initWithObject:(id)obj
@@ -275,26 +289,38 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 		return nil;
 	}
 	
-	LNPropertyListNodeType type = [LNPropertyListNode _typeForObject:obj];
-	
-	if(type == LNPropertyListNodeTypeDictionary)
-	{
-		return [self initWithDictionary:obj];
-	}
-	if(type == LNPropertyListNodeTypeArray)
-	{
-		return [self initWithArray:obj];
-	}
-	
 	self = [super init];
 	
 	if(self)
 	{
-		self.type = type;
-		self.value = obj;
+		[self _setObject:obj];
 	}
 	
 	return self;
+}
+
+- (void)_setObject:(id)obj
+{
+	if(obj == nil)
+	{
+		return;
+	}
+	
+	LNPropertyListNodeType type = [LNPropertyListNode _typeForObject:obj];
+	
+	if(type == LNPropertyListNodeTypeDictionary)
+	{
+		[self _setAsDictionary:obj];
+	}
+	else if(type == LNPropertyListNodeTypeArray)
+	{
+		[self _setAsArray:obj];
+	}
+	else
+	{
+		self.type = type;
+		self.value = obj;
+	}
 }
 
 - (instancetype)initWithPropertyListObject:(id)obj
@@ -412,6 +438,29 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 	[_pasteboardNodeMapping removeAllObjects];
 }
 
++ (instancetype)_nodeFromPasteboard:(NSPasteboard *)pasteboard
+{
+	NSPasteboardType type = LNPropertyListNodePasteboardType;
+	NSData* data = [pasteboard dataForType:type];
+	BOOL needsValueReading = NO;
+	if(data == nil)
+	{
+		type = LNPropertyListNodeXcodeKeyType;
+		data = [pasteboard dataForType:type];
+		needsValueReading = YES;
+	}
+	
+	LNPropertyListNode* rv = [[LNPropertyListNode alloc] initWithPasteboardPropertyList:data ofType:type];
+	
+	if(needsValueReading)
+	{
+		id obj = [NSPropertyListSerialization propertyListWithData:[pasteboard dataForType:NSPasteboardTypeString] options:0 format:nil error:NULL];
+		[rv _setObject:obj];
+	}
+	
+	return rv;
+}
+
 #pragma mark NSCopying
 
 - (id)copyWithZone:(NSZone *)zone
@@ -429,12 +478,12 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 
 + (nonnull NSArray<NSPasteboardType> *)readableTypesForPasteboard:(nonnull NSPasteboard *)pasteboard
 {
-	return @[LNPropertyListNodePasteboardType];
+	return @[LNPropertyListNodePasteboardType, LNPropertyListNodeXcodeKeyType];
 }
 
 - (nullable instancetype)initWithPasteboardPropertyList:(NSData*)propertyList ofType:(NSPasteboardType)type
 {
-	id rv = nil;
+	LNPropertyListNode* rv = nil;
 	
 	if([type isEqualToString:LNPropertyListNodePasteboardType])
 	{
@@ -446,6 +495,12 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 		{
 			rv = [NSKeyedUnarchiver unarchivedObjectOfClass:LNPropertyListNode.class fromData:info[@"data"] error:NULL];
 		}
+	}
+	
+	if([type isEqualToString:LNPropertyListNodeXcodeKeyType])
+	{
+		rv = [LNPropertyListNode new];
+		rv.key = [NSPropertyListSerialization propertyListWithData:propertyList options:0 format:nil error:NULL];
 	}
 	
 	return rv;
@@ -476,7 +531,7 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 
 - (NSArray<NSPasteboardType> *)writableTypesForPasteboard:(NSPasteboard *)pasteboard
 {
-	return @[LNPropertyListNodePasteboardType, NS(kUTTypeUTF8PlainText)];
+	return @[LNPropertyListNodePasteboardType, LNPropertyListNodeXcodeKeyType, NS(kUTTypeUTF8PlainText)];
 }
 
 - (id)pasteboardPropertyListForType:(NSPasteboardType)type
@@ -498,6 +553,11 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 	{
 		NSError* error = nil;
 		return [NSPropertyListSerialization dataWithPropertyList:_node.propertyListObject format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
+	}
+	
+	if([type isEqualToString:LNPropertyListNodeXcodeKeyType])
+	{
+		return [_node.key dataUsingEncoding:NSUTF8StringEncoding];
 	}
 	
 	return nil;
