@@ -23,7 +23,7 @@ typedef NS_ENUM(NSUInteger, LNPropertyListNodeType) {
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface LNPropertyListNode : NSObject <NSSecureCoding>
+@interface LNPropertyListNode : NSObject <NSSecureCoding, NSCopying>
 
 /// Returns a property list node representing the specified object.
 /// @param obj An object to be represented by the node.

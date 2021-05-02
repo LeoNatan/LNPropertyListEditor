@@ -9,7 +9,11 @@
 #import <Foundation/Foundation.h>
 #import "LNPropertyListNode.h"
 
-@interface LNPropertyListNode ()
+#import <AppKit/AppKit.h>
+
+extern NSString* const LNPropertyListNodePasteboardType;
+
+@interface LNPropertyListNode () <NSPasteboardReading>
 
 @property (nonatomic, strong) id _cachedDisplayKey;
 @property (nonatomic, strong) id _cachedDisplayValue;
@@ -22,6 +26,16 @@
 + (NSString*)stringKeyOfNode:(LNPropertyListNode*)node;
 + (NSString*)stringValueOfNode:(LNPropertyListNode*)node;
 
++ (void)_clearPasteboardMapping;
+
 - (void)_sortUsingDescriptors:(NSArray<NSSortDescriptor *> *)descriptors;
+
+- (id<NSPasteboardWriting>)pasteboardWriter;
+
+@end
+
+@interface LNPropertyListNodePasteboardWriter : NSObject <NSPasteboardWriting>
+
+- (instancetype)initWithNode:(LNPropertyListNode*)node;
 
 @end

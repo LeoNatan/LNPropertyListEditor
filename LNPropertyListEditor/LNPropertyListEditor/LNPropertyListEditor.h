@@ -62,6 +62,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param pastedNode The pasted node.
 /// @param node The current node.
 - (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canPasteNode:(LNPropertyListNode*)pastedNode asChildOfNode:(LNPropertyListNode*)node;
+/// Asks the delegate if the specified node can be moved as a child node of the specified node, at the specified index.
+/// @param editor The property list editor.
+/// @param movedNode The pasted node.
+/// @param parentNode The current node.
+/// @param index The index to paste at.
+- (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canMoveNode:(LNPropertyListNode*)movedNode toParentNode:(LNPropertyListNode*)parentNode atIndex:(NSInteger)index;
 
 /// Asks the delegate for a default value for a child node in the specified node.
 /// @param editor The property list editor.

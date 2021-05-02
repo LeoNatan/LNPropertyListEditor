@@ -7,8 +7,22 @@
 //
 
 #import "LNPropertyListNode-Private.h"
+#import <CoreServices/CoreServices.h>
+
+#define NS(x) ((__bridge id)x)
+
+NSString* const LNPropertyListNodePasteboardType = @"com.LeoNatan.LNPropertyList.node";
+static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 
 @implementation LNPropertyListNode
+
++ (void)load
+{
+	@autoreleasepool
+	{
+		_pasteboardNodeMapping = [NSMapTable strongToWeakObjectsMapTable];
+	}
+}
 
 + (BOOL)supportsSecureCoding
 {
@@ -382,6 +396,111 @@
 	}
 	
 	[self.children sortUsingDescriptors:descriptors];
+	
+	[self.children enumerateObjectsUsingBlock:^(LNPropertyListNode * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+		[obj _sortUsingDescriptors:descriptors];
+	}];
+}
+
+- (id)pasteboardWriter
+{
+	return [[LNPropertyListNodePasteboardWriter alloc] initWithNode:self];
+}
+
++ (void)_clearPasteboardMapping
+{
+	[_pasteboardNodeMapping removeAllObjects];
+}
+
+#pragma mark NSCopying
+
+- (id)copyWithZone:(NSZone *)zone
+{
+	LNPropertyListNode* rv = [LNPropertyListNode new];
+	rv.key = self.key;
+	rv.type = self.type;
+	rv.value = self.value;
+	rv.children = self.children.mutableCopy;
+	
+	return rv;
+}
+
+#pragma mark NSPasteboardReading
+
++ (nonnull NSArray<NSPasteboardType> *)readableTypesForPasteboard:(nonnull NSPasteboard *)pasteboard
+{
+	return @[LNPropertyListNodePasteboardType];
+}
+
+- (nullable instancetype)initWithPasteboardPropertyList:(NSData*)propertyList ofType:(NSPasteboardType)type
+{
+	id rv = nil;
+	
+	if([type isEqualToString:LNPropertyListNodePasteboardType])
+	{
+		NSDictionary* info = [NSPropertyListSerialization propertyListWithData:propertyList options:0 format:nil error:NULL];
+		NSString* UDIDString = info[@"UDID"];
+		rv = [_pasteboardNodeMapping objectForKey:UDIDString];
+		
+		if(rv == nil)
+		{
+			rv = [NSKeyedUnarchiver unarchivedObjectOfClass:LNPropertyListNode.class fromData:info[@"data"] error:NULL];
+		}
+	}
+	
+	return rv;
+}
+
+@end
+
+#pragma mark NSPasteboardWriting
+
+@implementation LNPropertyListNodePasteboardWriter
+{
+	LNPropertyListNode* _node;
+	NSMutableArray* _UUIDs;
+}
+
+- (instancetype)initWithNode:(LNPropertyListNode*)node
+{
+	self = [super init];
+	
+	if(self)
+	{
+		_UUIDs = [NSMutableArray new];
+		_node = node;
+	}
+	
+	return self;
+}
+
+- (NSArray<NSPasteboardType> *)writableTypesForPasteboard:(NSPasteboard *)pasteboard
+{
+	return @[LNPropertyListNodePasteboardType, NS(kUTTypeUTF8PlainText)];
+}
+
+- (id)pasteboardPropertyListForType:(NSPasteboardType)type
+{
+	if([type isEqualToString:LNPropertyListNodePasteboardType])
+	{
+		NSString* UUIDString = NSUUID.UUID.UUIDString;
+		
+		[_UUIDs addObject:UUIDString];
+		[_pasteboardNodeMapping setObject:_node forKey:UUIDString];
+		
+		return [NSPropertyListSerialization dataWithPropertyList:@{
+			@"UDID": UUIDString,
+			@"data": [NSKeyedArchiver archivedDataWithRootObject:_node requiringSecureCoding:NO error:NULL]
+		} format:NSPropertyListXMLFormat_v1_0 options:0 error:NULL];
+	}
+	
+	if([type isEqualToString:NS(kUTTypeUTF8PlainText)])
+	{
+		NSError* error = nil;
+		return [NSPropertyListSerialization dataWithPropertyList:_node.propertyListObject format:NSPropertyListXMLFormat_v1_0 options:0 error:&error];
+	}
+	
+	return nil;
 }
 
 @end

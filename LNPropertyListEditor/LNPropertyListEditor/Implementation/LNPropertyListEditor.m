@@ -13,8 +13,6 @@
 
 @import ObjectiveC;
 
-static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNPropertyListNode";
-
 @interface LNPropertyListEditor () <NSOutlineViewDataSource, NSOutlineViewDelegate, NSTextFieldDelegate>
 {
 	IBOutlet NSMenu* _menuItem;
@@ -87,6 +85,9 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	_outlineView.enclosingScrollView.translatesAutoresizingMaskIntoConstraints = NO;
 	_outlineView.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"key" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]];
 	
+	[_outlineView registerForDraggedTypes:@[@"com.LeoNatan.LNPropertyList.node"]];
+	[_outlineView setDraggingSourceOperationMask:NSDragOperationCopy forLocal:NO];
+	
 	[self addSubview:_outlineView.enclosingScrollView];
 	
 	[NSLayoutConstraint activateConstraints:@[
@@ -123,6 +124,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	_flags.delegate_canAddNewNodeInNode = [delegate respondsToSelector:@selector(propertyListEditor:canAddChildNodeInNode:)];
 	_flags.delegate_canPasteNode = [delegate respondsToSelector:@selector(propertyListEditor:canPasteNode:asChildOfNode:)];
 	_flags.delegate_defaultPropertyListForAddingInNode = [delegate respondsToSelector:@selector(propertyListEditor:defaultPropertyListForChildInNode:)];
+	_flags.delegate_canMoveNode = [delegate respondsToSelector:@selector(propertyListEditor:canMoveNode:toParentNode:atIndex:)];
 }
 
 - (void)setDataTransformer:(id<LNPropertyListEditorDataTransformer>)dataTransformer
@@ -295,7 +297,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	}
 }
 
-- (void)_insertNode:(LNPropertyListNode*)insertedNode inParentNode:(LNPropertyListNode*)parentNode index:(NSUInteger)insertionRow
+- (void)_insertNode:(LNPropertyListNode*)insertedNode inParentNode:(LNPropertyListNode*)parentNode index:(NSInteger)insertionIndex groupUndoOperation:(BOOL)groupUndo
 {
 	insertedNode.parent = parentNode;
 	
@@ -305,7 +307,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	{
 		if(insertedNode.key == nil)
 		{
-			insertedNode.key = @"Key";
+			insertedNode.key = @"New item";
 		}
 		
 		NSUInteger count = 2;
@@ -313,13 +315,18 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 		
 		while([self _nodeContainsChildrenWithKey:insertedNode.key inNode:parentNode excludingNode:insertedNode])
 		{
-			insertedNode.key = [NSString stringWithFormat:@"%@ %lu", originalKey, count];
+			insertedNode.key = [NSString stringWithFormat:@"%@ - %lu", originalKey, count];
 			count += 1;
 		}
 	}
 	
-	[parentNode.children insertObject:insertedNode atIndex:insertionRow];
-	[_outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:insertionRow] inParent:parentNodeInOutline withAnimation:NSTableViewAnimationEffectNone];
+	if(insertionIndex == -1)
+	{
+		insertionIndex = parentNode.children.count;
+	}
+	
+	[parentNode.children insertObject:insertedNode atIndex:insertionIndex];
+	[_outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:insertionIndex] inParent:parentNodeInOutline withAnimation:NSTableViewAnimationEffectNone];
 	
 	if(_flags.delegate_willChangeNode)
 	{
@@ -329,7 +336,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	[_outlineView reloadItem:parentNode];
 	if(parentNode.type == LNPropertyListNodeTypeArray)
 	{
-		[[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(insertionRow, parentNode.children.count - insertionRow)] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+		[[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(insertionIndex, parentNode.children.count - insertionIndex)] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
 			[self->_outlineView reloadItem:parentNode.children[idx]];
 		}];
 	}
@@ -340,11 +347,17 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	
 	[_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:insertedRow] byExtendingSelection:NO];
 	
-	[_undoManager beginUndoGrouping];
+	if(groupUndo)
+	{
+		[_undoManager beginUndoGrouping];
+	}
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
-		[target _deleteNode:insertedNode];
+		[target _deleteNode:insertedNode groupUndoOperation:groupUndo];
 	}];
-	[_undoManager endUndoGrouping];
+	if(groupUndo)
+	{
+		[_undoManager endUndoGrouping];
+	}
 	
 	if(_flags.delegate_didChangeNode)
 	{
@@ -378,11 +391,17 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 		insertionRow = [parentNode.children indexOfObject:node] + 1;
 	}
 	
-	[self _insertNode:insertedNode inParentNode:parentNode index:insertionRow];
+	[self _insertNode:insertedNode inParentNode:parentNode index:insertionRow groupUndoOperation:YES];
 }
 
-- (void)_deleteNode:(LNPropertyListNode*)deletedNode
+- (void)_deleteNode:(LNPropertyListNode*)deletedNode groupUndoOperation:(BOOL)groupUndo
 {
+	if(deletedNode.parent == nil)
+	{
+		//Not part of the tree, end the delete operation.
+		return;
+	}
+	
 	if([self canDeleteNode:deletedNode] == NO)
 	{
 		NSBeep();
@@ -420,11 +439,17 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	
 	[self->_outlineView endUpdates];
 	
-	[_undoManager beginUndoGrouping];
+	if(groupUndo)
+	{
+		[_undoManager beginUndoGrouping];
+	}
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
-		[target _insertNode:deletedNode inParentNode:parentNode index:deletionIndex];
+		[target _insertNode:deletedNode inParentNode:parentNode index:deletionIndex groupUndoOperation:groupUndo];
 	}];
-	[_undoManager endUndoGrouping];
+	if(groupUndo)
+	{
+		[_undoManager endUndoGrouping];
+	}
 	
 	if(selectedRow != -1)
 	{
@@ -456,7 +481,15 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	
 	LNPropertyListNode* deletedNode = [_outlineView itemAtRow:row];
 	
-	[self _deleteNode:deletedNode];
+	[self _deleteNode:deletedNode groupUndoOperation:YES];
+}
+
+- (void)_moveNode:(LNPropertyListNode*)node intoParentNode:(LNPropertyListNode*)parentNode index:(NSInteger)parentIndex
+{
+	[_undoManager beginUndoGrouping];
+	[self _deleteNode:node groupUndoOperation:NO];
+	[self _insertNode:node inParentNode:parentNode index:parentIndex groupUndoOperation:NO];
+	[_undoManager endUndoGrouping];
 }
 
 #pragma mark Private
@@ -552,6 +585,51 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	}
 	
 	return YES;
+}
+
+- (NSDragOperation)canDragNode:(LNPropertyListNode*)dragged toParentNode:(LNPropertyListNode*)parentNode atIndex:(NSInteger)index wantsCopy:(BOOL)wantsCopy
+{
+	NSDragOperation expectedOperation = wantsCopy ? NSDragOperationCopy : NSDragOperationMove;
+	
+	if(dragged.parent == nil)
+	{
+		BOOL canInsert = _flags.delegate_canAddNewNodeInNode ? [self.delegate propertyListEditor:self canAddChildNodeInNode:parentNode] : YES;
+		
+		//Dragged from outside
+		return canInsert ? NSDragOperationCopy : NSDragOperationNone;
+	}
+	
+	if(wantsCopy == NO && _flags.delegate_canMoveNode)
+	{
+		if([self.delegate propertyListEditor:self canMoveNode:dragged toParentNode:parentNode atIndex:index])
+		{
+			return NSDragOperationMove;
+		}
+	}
+	
+	BOOL canDelete = YES;
+	BOOL canInsert = YES;
+	
+	if(wantsCopy == NO && _flags.delegate_canDeleteNode)
+	{
+		canDelete = [self.delegate propertyListEditor:self canDeleteNode:dragged];
+	}
+	
+	if(_flags.delegate_canAddNewNodeInNode)
+	{
+		canInsert = [self.delegate propertyListEditor:self canAddChildNodeInNode:dragged];
+	}
+	
+	if(canInsert && canDelete)
+	{
+		return expectedOperation;
+	}
+	else if(canInsert && !canDelete)
+	{
+		return NSDragOperationCopy;
+	}
+	
+	return NSDragOperationNone;
 }
 
 #pragma mark Outlets
@@ -712,8 +790,15 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 	
 	LNPropertyListNode* node = [_outlineView itemAtRow:row];
 	
+	id<NSPasteboardWriting> pbWriter = node.pasteboardWriter;
+	
 	[NSPasteboard.generalPasteboard clearContents];
-	[NSPasteboard.generalPasteboard setData:[NSKeyedArchiver archivedDataWithRootObject:node] forType:LNPropertyListNodePasteboardType];
+	for (NSPasteboardType type in [pbWriter writableTypesForPasteboard:NSPasteboard.generalPasteboard])
+	{
+		[NSPasteboard.generalPasteboard setData:[node.pasteboardWriter pasteboardPropertyListForType:type] forType:type];
+	}
+	
+	[LNPropertyListNode _clearPasteboardMapping];
 }
 
 - (IBAction)paste:(id)sender
@@ -724,7 +809,7 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 		return;
 	}
 	
-	LNPropertyListNode* node = [NSKeyedUnarchiver unarchiveObjectWithData:[NSPasteboard.generalPasteboard dataForType:LNPropertyListNodePasteboardType]];
+	LNPropertyListNode* node = [[LNPropertyListNode alloc] initWithPasteboardPropertyList:[NSPasteboard.generalPasteboard dataForType:LNPropertyListNodePasteboardType] ofType:LNPropertyListNodePasteboardType];
 	
 	[self _insertNode:node sender:sender];
 }
@@ -957,6 +1042,75 @@ static NSPasteboardType LNPropertyListNodePasteboardType = @"com.LeoNatan.LNProp
 - (void)outlineViewColumnDidResize:(NSNotification *)notification
 {
     [_outlineView sizeLastColumnToFit];
+}
+
+- (id<NSPasteboardWriting>)outlineView:(NSOutlineView *)outlineView pasteboardWriterForItem:(LNPropertyListNode*)item
+{
+	NSParameterAssert([item isKindOfClass:LNPropertyListNode.class]);
+	
+	return [item pasteboardWriter];
+}
+
+- (NSDragOperation)outlineView:(NSOutlineView *)outlineView validateDrop:(id<NSDraggingInfo>)info proposedItem:(LNPropertyListNode*)item proposedChildIndex:(NSInteger)index
+{
+	item = item ?: _rootPropertyListNode;
+	NSParameterAssert([item isKindOfClass:LNPropertyListNode.class]);
+	if(item.type != LNPropertyListNodeTypeArray && item.type != LNPropertyListNodeTypeDictionary)
+	{
+		return NSDragOperationNone;
+	}
+	
+	if(index == -1)
+	{
+		index = item.children.count;
+	}
+	
+	__block NSDragOperation rv = NSDragOperationNone;
+	
+	[info enumerateDraggingItemsWithOptions:0 forView:nil classes:@[LNPropertyListNode.class] searchOptions:@{} usingBlock:^(NSDraggingItem * _Nonnull draggingItem, NSInteger idx, BOOL * _Nonnull stop) {
+		rv = [self canDragNode:draggingItem.item toParentNode:item ?: _rootPropertyListNode atIndex:index wantsCopy:info.draggingSourceOperationMask == NSDragOperationCopy];
+	}];
+	
+	return rv;
+}
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView acceptDrop:(id<NSDraggingInfo>)info item:(LNPropertyListNode*)item childIndex:(NSInteger)index
+{
+	item = item ?: _rootPropertyListNode;
+	NSParameterAssert([item isKindOfClass:LNPropertyListNode.class]);
+	if(item.type != LNPropertyListNodeTypeArray && item.type != LNPropertyListNodeTypeDictionary)
+	{
+		return NO;
+	}
+	
+	if(index == -1)
+	{
+		index = item.children.count;
+	}
+	
+	[info enumerateDraggingItemsWithOptions:0 forView:nil classes:@[LNPropertyListNode.class] searchOptions:@{} usingBlock:^(NSDraggingItem * _Nonnull draggingItem, NSInteger idx, BOOL * _Nonnull stop) {
+		LNPropertyListNode* draggedItem = draggingItem.item;
+		if(draggedItem.parent == item && [item.children indexOfObject:draggedItem] == index)
+		{
+			return;
+		}
+		
+		if(info.draggingSourceOperationMask == NSDragOperationCopy)
+		{
+			[self _insertNode:draggedItem.copy inParentNode:item index:index groupUndoOperation:YES];
+		}
+		else
+		{
+			[self _moveNode:draggedItem intoParentNode:item index:index];
+		}
+	}];
+	
+	return YES;
+}
+
+- (void)outlineView:(NSOutlineView *)outlineView draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation
+{
+	[LNPropertyListNode _clearPasteboardMapping];
 }
 
 #pragma mark NSTextFieldDelegate
