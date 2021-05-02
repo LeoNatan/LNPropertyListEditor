@@ -9,6 +9,19 @@
 		<string>3</string>
 		<string>4</string>
 	</array>
+	<key>testDict</key>
+	<dict>
+		<key>Key 5</key>
+		<string>zxc</string>
+		<key>Key 4</key>
+		<string>456</string>
+		<key>Key 3</key>
+		<string>qwe</string>
+		<key>Key 2</key>
+		<string>123</string>
+		<key>Key</key>
+		<string>asd</string>
+	</dict>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
 	<key>NSHumanReadableCopyright</key>
