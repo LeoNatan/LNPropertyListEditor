@@ -88,6 +88,10 @@
 	[_outlineView registerForDraggedTypes:@[LNPropertyListNodePasteboardType]];
 	[_outlineView setDraggingSourceOperationMask:NSDragOperationCopy forLocal:NO];
 	
+	[_outlineView setTarget:self];
+	[_outlineView setAction:@selector(_outlineViewSingleClick)];
+	[_outlineView setDoubleAction:@selector(_outlineViewDoubleClick)];
+	
 	[self addSubview:_outlineView.enclosingScrollView];
 	
 	[NSLayoutConstraint activateConstraints:@[
@@ -902,6 +906,39 @@
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(LNPropertyListNode*)item
 {
 	return item.type == LNPropertyListNodeTypeArray || item.type == LNPropertyListNodeTypeDictionary;
+}
+
+- (void)_outlineViewSingleClick
+{
+	LNPropertyListNode* node = [_outlineView itemAtRow:_outlineView.clickedRow];
+	
+	if(node == nil)
+	{
+		return;
+	}
+	
+	if(node.type == LNPropertyListNodeTypeDate)
+	{
+		LNPropertyListCellView* view = [_outlineView viewAtColumn:_outlineView.clickedColumn row:_outlineView.clickedRow makeIfNecessary:NO];
+		[self.window makeFirstResponder:view.datePicker];
+	}
+}
+
+- (void)_outlineViewDoubleClick
+{
+	LNPropertyListNode* node = [_outlineView itemAtRow:_outlineView.clickedRow];
+	
+	if(node == nil)
+	{
+		return;
+	}
+	
+	if(node.type == LNPropertyListNodeTypeDate)
+	{
+		return;
+	}
+	
+	[_outlineView editColumn:_outlineView.clickedColumn row:_outlineView.clickedRow withEvent:NSApp.currentEvent select:YES];
 }
 
 #pragma mark NSOutlineViewDelegate
