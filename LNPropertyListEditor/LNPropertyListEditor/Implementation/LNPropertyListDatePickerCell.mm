@@ -64,7 +64,7 @@ static NSDatePickerCell* __strong __drawingDatePickerCell;
 
 @implementation LNPropertyListDatePickerCell
 
-- (BOOL)_isFirstResponder
+- (BOOL)_ln_isFirstResponder
 {
 	return self.controlView.window.firstResponder == self.controlView;
 }
@@ -72,7 +72,7 @@ static NSDatePickerCell* __strong __drawingDatePickerCell;
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
 	__drawingDatePickerCell = self;
-	if(self._isFirstResponder)
+	if(self._ln_isFirstResponder && self.drawsBackgroundOnFirstResponder)
 	{
 		[NSColor.textBackgroundColor setFill];
 		[[NSBezierPath bezierPathWithRect:cellFrame] fill];
@@ -86,7 +86,7 @@ static NSDatePickerCell* __strong __drawingDatePickerCell;
 //This is faster than setting the text color when the background color changes.
 - (NSColor*)_textColorBasedOnEnabledState
 {
-	return self.isEnabled ? self.backgroundStyle == NSBackgroundStyleEmphasized ? self._isFirstResponder ? NSColor.controlTextColor : NSColor.alternateSelectedControlTextColor : NSColor.controlTextColor : self.backgroundStyle == NSBackgroundStyleEmphasized ? [NSColor valueForKey:@"_alternateDisabledSelectedControlTextColor"] : NSColor.disabledControlTextColor;
+	return self.isEnabled ? self.backgroundStyle == NSBackgroundStyleEmphasized ? self._ln_isFirstResponder ? NSColor.controlTextColor : NSColor.alternateSelectedControlTextColor : NSColor.controlTextColor : self.backgroundStyle == NSBackgroundStyleEmphasized ? [NSColor valueForKey:@"_alternateDisabledSelectedControlTextColor"] : NSColor.disabledControlTextColor;
 }
 
 - (BOOL)_shouldShowFocusRingInView:(id)arg1

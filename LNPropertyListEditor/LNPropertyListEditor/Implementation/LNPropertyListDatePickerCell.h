@@ -16,6 +16,8 @@
 
 @interface LNLeadingZerosDatePickerCell : NSDatePickerCell
 
+@property (nonatomic) BOOL drawsBackgroundOnFirstResponder;
+
 @end
 
 @interface LNPropertyListDatePickerCell : LNLeadingZerosDatePickerCell

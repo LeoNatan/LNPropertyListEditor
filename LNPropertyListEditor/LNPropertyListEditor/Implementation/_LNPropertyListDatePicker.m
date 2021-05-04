@@ -39,7 +39,7 @@
 		_visualDatePicker = [NSDatePicker new];
 		_visualDatePicker.translatesAutoresizingMaskIntoConstraints = NO;
 		_visualDatePicker.datePickerStyle = NSDatePickerStyleClockAndCalendar;
-		_visualDatePicker.datePickerElements = NSDatePickerElementFlagTimeZone | NSDatePickerElementFlagYearMonthDay | NSDatePickerElementFlagEra;
+		_visualDatePicker.datePickerElements = NSDatePickerElementFlagTimeZone | NSDatePickerElementFlagHourMinuteSecond | NSDatePickerElementFlagYearMonthDay | NSDatePickerElementFlagEra;
 		_visualDatePicker.bordered = NO;
 		[_visualDatePicker sizeToFit];
 		_visualDatePicker.dateValue = self.dateValue;
@@ -135,6 +135,8 @@
 - (void)propertyListDatePickerPanelDidClose:(LNPropertyListDatePickerPanel*)panel
 {
 	_datePickerPanel = nil;
+	_textDatePicker = nil;
+	_visualDatePicker = nil;
 	
 	[self.window makeKeyWindow];
 	[self.window makeFirstResponder:self.superview];

@@ -34,7 +34,7 @@ IB_DESIGNABLE
 @implementation LNPropertyListDatePicker
 {
 	_LNPropertyListDatePicker* _datePicker;
-	NSDatePicker* _timePicker;
+	_LNPropertyListDatePicker* _timePicker;
 }
 
 - (void)prepareForInterfaceBuilder
@@ -67,8 +67,9 @@ IB_DESIGNABLE
 	_datePicker.target = self;
 	_datePicker.action = @selector(_internalDatePickerValueChanged:);
 	
-	_timePicker = [NSDatePicker new];
-	_timePicker.cell = [LNPropertyListDatePickerCell new];
+	_timePicker = [_LNPropertyListDatePicker new];
+	LNPropertyListDatePickerCell* timePickerCell = [LNPropertyListDatePickerCell new];
+	_timePicker.cell = timePickerCell;
 	_timePicker.font = font;
 	_timePicker.datePickerStyle = NSDatePickerStyleTextField;
 	_timePicker.datePickerElements = NSDatePickerElementFlagHourMinuteSecond | NSDatePickerElementFlagTimeZone;
@@ -114,6 +115,8 @@ IB_DESIGNABLE
 	_timePicker.dateValue = self.dateValue;
 	_datePicker.visualDatePicker.dateValue = self.dateValue;
 	_datePicker.textDatePicker.dateValue = self.dateValue;
+	_timePicker.visualDatePicker.dateValue = self.dateValue;
+	_timePicker.textDatePicker.dateValue = self.dateValue;
 	
 	if(sendAction)
 	{
