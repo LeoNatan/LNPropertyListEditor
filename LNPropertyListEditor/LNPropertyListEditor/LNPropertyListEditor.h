@@ -112,9 +112,17 @@ IB_DESIGNABLE
 /// The root node of the edited property list.
 @property (nonatomic, readonly) LNPropertyListNode* rootPropertyListNode;
 /// Reloads the specified node and, optionally, its children.
-/// @param node The node to reload.
+/// @param node The node to reload, or `nil` to reload the root node.
 /// @param reloadChildren Pass `true` to reload the node's children as well.
-- (void)reloadNode:(LNPropertyListNode*)node reloadChildren:(BOOL)reloadChildren;
+- (void)reloadNode:(nullable LNPropertyListNode*)node reloadChildren:(BOOL)reloadChildren;
+/// Expands the specified node and, optionally, its children.
+/// @param node The node to reload, or `nil` to expand the root node.
+/// @param expandChildren Pass `true` to reload the node's children as well.
+- (void)expandNode:(nullable LNPropertyListNode*)node expandChildren:(BOOL)expandChildren;
+/// Collapses the specified node and, optionally, its children.
+/// @param node The node to reload, or `nil` to collapse the root node.
+/// @param collapseChildren Pass `true` to reload the node's children as well.
+- (void)collapseNode:(nullable LNPropertyListNode*)node collapseChildren:(BOOL)collapseChildren;
 
 /// The property list editor delegate.
 @property (nonatomic, weak) id<LNPropertyListEditorDelegate> delegate;

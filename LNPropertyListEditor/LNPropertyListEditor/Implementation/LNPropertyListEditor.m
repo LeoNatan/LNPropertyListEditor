@@ -157,7 +157,32 @@
 
 - (void)reloadNode:(LNPropertyListNode*)node reloadChildren:(BOOL)reloadChildren
 {
+	if(node == self.rootPropertyListNode)
+	{
+		node = nil;
+	}
+	
 	[_outlineView reloadItem:node reloadChildren:reloadChildren];
+}
+
+- (void)expandNode:(LNPropertyListNode *)node expandChildren:(BOOL)expandChildren
+{
+	if(node == self.rootPropertyListNode)
+	{
+		node = nil;
+	}
+	
+	[_outlineView expandItem:node expandChildren:expandChildren];
+}
+
+- (void)collapseNode:(LNPropertyListNode *)node collapseChildren:(BOOL)collapseChildren
+{
+	if(node == self.rootPropertyListNode)
+	{
+		node = nil;
+	}
+	
+	[_outlineView collapseItem:node collapseChildren:collapseChildren];
 }
 
 - (IBAction)_dateChanged:(NSDatePicker*)sender
