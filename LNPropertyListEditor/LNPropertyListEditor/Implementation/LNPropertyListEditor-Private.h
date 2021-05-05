@@ -9,6 +9,8 @@
 #import <Cocoa/Cocoa.h>
 #import "LNPropertyListEditor.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef struct {
 	unsigned int delegate_willChangeNode : 1;
 	unsigned int delegate_didChangeNode : 1;
@@ -32,7 +34,12 @@ typedef struct {
 @property (nonatomic) __LNPropertyListEditor_flags flags;
 @property (nonatomic, weak) IBOutlet NSOutlineView* outlineView;
 
+/// The current sort descriptors of the underlying outline view.
+@property (nullable, nonatomic, copy) NSArray<NSSortDescriptor*>* outlineViewSortDescriptors;
+
 - (BOOL)canInsertAtNode:(LNPropertyListNode*)node;
 - (BOOL)canDeleteNode:(LNPropertyListNode*)node;
 
 @end
+
+NS_ASSUME_NONNULL_END

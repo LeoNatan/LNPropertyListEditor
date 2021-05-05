@@ -109,24 +109,31 @@ IB_DESIGNABLE
 @interface LNPropertyListEditor : NSView
 
 /// The underlying edited property list object.
+///
+/// Setting this property with @c allowsColumnSorting enabled will result in the model being sorted on load.
 @property (nonatomic, copy) id propertyListObject;
 
 /// Sets the type column as hidden.
 @property (nonatomic, getter=isTypeColumnHidden) BOOL typeColumnHidden;
 
+/// Controls whether column sorting is enabled.
+///
+/// Sorting a column by the user will result in nodes being sorted in the model.
+@property (nonatomic) BOOL allowsColumnSorting;
+
 /// The root node of the edited property list.
 @property (nonatomic, readonly) LNPropertyListNode* rootPropertyListNode;
 /// Reloads the specified node and, optionally, its children.
-/// @param node The node to reload, or `nil` to reload the root node.
-/// @param reloadChildren Pass `true` to reload the node's children as well.
+/// @param node The node to reload, or @c nil to reload the root node.
+/// @param reloadChildren Pass @c true to reload the node's children as well.
 - (void)reloadNode:(nullable LNPropertyListNode*)node reloadChildren:(BOOL)reloadChildren;
 /// Expands the specified node and, optionally, its children.
-/// @param node The node to reload, or `nil` to expand the root node.
-/// @param expandChildren Pass `true` to reload the node's children as well.
+/// @param node The node to reload, or @c nil to expand the root node.
+/// @param expandChildren Pass @c true to reload the node's children as well.
 - (void)expandNode:(nullable LNPropertyListNode*)node expandChildren:(BOOL)expandChildren;
 /// Collapses the specified node and, optionally, its children.
-/// @param node The node to reload, or `nil` to collapse the root node.
-/// @param collapseChildren Pass `true` to reload the node's children as well.
+/// @param node The node to reload, or @c nil to collapse the root node.
+/// @param collapseChildren Pass @c true to reload the node's children as well.
 - (void)collapseNode:(nullable LNPropertyListNode*)node collapseChildren:(BOOL)collapseChildren;
 
 /// The property list editor delegate.

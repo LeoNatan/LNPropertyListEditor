@@ -18,8 +18,13 @@
 	IBOutlet NSMenu* _menuItem;
 	
 	IBOutlet NSTableColumn* _keyColumn;
+	NSSortDescriptor* _keyColumnSortDescriptorPrototype;
+	
 	IBOutlet NSTableColumn* _typeColumn;
+	NSSortDescriptor* _typeColumnSortDescriptorPrototype;
+	
 	IBOutlet NSTableColumn* _valueColumn;
+	NSSortDescriptor* _valueColumnSortDescriptorPrototype;
 	
 	NSUndoManager* _undoManager;
 }
@@ -83,7 +88,8 @@
 	[[[NSNib alloc] initWithNibNamed:@"LNPropertyListEditorOutline" bundle:bundleToUse] instantiateWithOwner:self topLevelObjects:nil];
 	
 	_outlineView.enclosingScrollView.translatesAutoresizingMaskIntoConstraints = NO;
-	_outlineView.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"key" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]];
+	_outlineViewSortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"key" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]];
+	_outlineView.sortDescriptors = _outlineViewSortDescriptors;
 	
 	[_outlineView registerForDraggedTypes:@[LNPropertyListNodePasteboardType]];
 	[_outlineView setDraggingSourceOperationMask:NSDragOperationCopy forLocal:NO];
@@ -91,6 +97,12 @@
 	[_outlineView setTarget:self];
 	[_outlineView setAction:@selector(_outlineViewSingleClick)];
 	[_outlineView setDoubleAction:@selector(_outlineViewDoubleClick)];
+	
+	_keyColumnSortDescriptorPrototype = _keyColumn.sortDescriptorPrototype;
+	_typeColumnSortDescriptorPrototype = _typeColumn.sortDescriptorPrototype;
+	_valueColumnSortDescriptorPrototype = _valueColumn.sortDescriptorPrototype;
+	
+	_allowsColumnSorting = YES;
 	
 	[self addSubview:_outlineView.enclosingScrollView];
 	
@@ -113,6 +125,27 @@
 - (void)setTypeColumnHidden:(BOOL)typeColumnHidden
 {
 	_typeColumn.hidden = typeColumnHidden;
+}
+
+- (void)setAllowsColumnSorting:(BOOL)allowsColumnSorting
+{
+	_allowsColumnSorting = allowsColumnSorting;
+	
+	_keyColumn.sortDescriptorPrototype = _allowsColumnSorting ? _keyColumnSortDescriptorPrototype : nil;
+	_typeColumn.sortDescriptorPrototype = _allowsColumnSorting ? _typeColumnSortDescriptorPrototype : nil;
+	_valueColumn.sortDescriptorPrototype = _allowsColumnSorting ? _valueColumnSortDescriptorPrototype : nil;
+	
+	_outlineView.sortDescriptors = _allowsColumnSorting ? _outlineViewSortDescriptors : nil;
+}
+
+- (void)setOutlineViewSortDescriptors:(NSArray<NSSortDescriptor *> *)outlineViewSortDescriptors
+{
+	_outlineViewSortDescriptors = outlineViewSortDescriptors;
+	
+	if(_allowsColumnSorting)
+	{
+		_outlineView.sortDescriptors = _outlineViewSortDescriptors;
+	}
 }
 
 - (void)setDelegate:(id<LNPropertyListEditorDelegate>)delegate
@@ -144,7 +177,10 @@
 - (void)setPropertyListObject:(id)propertyList
 {
 	_rootPropertyListNode = [[LNPropertyListNode alloc] initWithPropertyListObject:propertyList];
-	[self _sortRootNodeIfPossibleWithSortDescriptors:_outlineView.sortDescriptors];
+	if(_allowsColumnSorting)
+	{
+		[self _sortRootNodeIfPossibleWithSortDescriptors:_outlineView.sortDescriptors];
+	}
 	
 	[_outlineView reloadData];
 	
@@ -1107,6 +1143,11 @@
 
 - (void)_sortRootNodeIfPossibleWithSortDescriptors:(NSArray<NSSortDescriptor *> *)sortDescriptors
 {
+	if(_allowsColumnSorting == NO)
+	{
+		return;
+	}
+	
 	[self.rootPropertyListNode _sortUsingDescriptors:sortDescriptors validator:^BOOL(LNPropertyListNode* node) {
 		if(!_flags.delegate_canReorderChildrenOfNode)
 		{
@@ -1129,6 +1170,13 @@
 
 - (void)outlineView:(NSOutlineView *)outlineView sortDescriptorsDidChange:(NSArray<NSSortDescriptor *> *)oldDescriptors;
 {
+	if(_allowsColumnSorting == NO)
+	{
+		return;
+	}
+	
+	_outlineViewSortDescriptors = outlineView.sortDescriptors;
+	
 	//Make the outline view as the first responder to prevent issues with currently edited text fields.
 	[outlineView.window makeFirstResponder:outlineView];
 	
