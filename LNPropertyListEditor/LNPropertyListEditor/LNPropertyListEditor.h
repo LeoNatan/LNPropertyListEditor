@@ -13,7 +13,8 @@ typedef NS_ENUM(NSUInteger, LNPropertyListNodeChangeType) {
 	LNPropertyListNodeChangeTypeInsert,
 	LNPropertyListNodeChangeTypeDelete,
 	LNPropertyListNodeChangeTypeMove,
-	LNPropertyListNodeChangeTypeUpdate
+	LNPropertyListNodeChangeTypeUpdate,
+	LNPropertyListNodeChangeTypeReorderChildren,
 };
 
 NS_ASSUME_NONNULL_BEGIN
@@ -53,10 +54,14 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param editor The property list editor.
 /// @param node The current node.
 - (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canDeleteNode:(LNPropertyListNode*)node;
-/// Asks the delegate if it is possible add a child node in the specified node.
+/// Asks the delegate if it is possible to add a child node in the specified node.
 /// @param editor The property list editor.
 /// @param node The current node.
 - (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canAddChildNodeInNode:(LNPropertyListNode*)node;
+/// Asks the delegate if it is possible to reorder the children of the specified node.
+/// @param editor The property list editor.
+/// @param node The current node.
+- (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canReorderChildrenOfNode:(LNPropertyListNode*)node;
 /// Asks the delegate if the specified pasted node can be added as a child node of the specified node.
 /// @param editor The property list editor.
 /// @param pastedNode The pasted node.

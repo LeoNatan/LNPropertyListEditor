@@ -129,6 +129,7 @@
 	_flags.delegate_canPasteNode = [delegate respondsToSelector:@selector(propertyListEditor:canPasteNode:asChildOfNode:)];
 	_flags.delegate_defaultPropertyListForAddingInNode = [delegate respondsToSelector:@selector(propertyListEditor:defaultPropertyListForChildInNode:)];
 	_flags.delegate_canMoveNode = [delegate respondsToSelector:@selector(propertyListEditor:canMoveNode:toParentNode:atIndex:)];
+	_flags.delegate_canReorderChildrenOfNode = [delegate respondsToSelector:@selector(propertyListEditor:canReorderChildrenOfNode:)];
 }
 
 - (void)setDataTransformer:(id<LNPropertyListEditorDataTransformer>)dataTransformer
@@ -143,7 +144,7 @@
 - (void)setPropertyListObject:(id)propertyList
 {
 	_rootPropertyListNode = [[LNPropertyListNode alloc] initWithPropertyListObject:propertyList];
-	[_rootPropertyListNode _sortUsingDescriptors:_outlineView.sortDescriptors];
+	[self _sortRootNodeIfPossibleWithSortDescriptors:_outlineView.sortDescriptors];
 	
 	[_outlineView reloadData];
 	
@@ -325,7 +326,7 @@
 	}
 }
 
-- (void)_insertNode:(LNPropertyListNode*)insertedNode inParentNode:(LNPropertyListNode*)parentNode index:(NSInteger)insertionIndex groupUndoOperation:(BOOL)groupUndo
+- (void)_insertNode:(LNPropertyListNode*)insertedNode inParentNode:(LNPropertyListNode*)parentNode index:(NSInteger)insertionIndex notifyDelegate:(BOOL)notifyDelegate groupUndoOperation:(BOOL)groupUndo
 {
 	insertedNode.parent = parentNode;
 	
@@ -356,7 +357,7 @@
 	[parentNode.children insertObject:insertedNode atIndex:insertionIndex];
 	[_outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:insertionIndex] inParent:parentNodeInOutline withAnimation:NSTableViewAnimationEffectNone];
 	
-	if(_flags.delegate_willChangeNode)
+	if(notifyDelegate && _flags.delegate_willChangeNode)
 	{
 		[self.delegate propertyListEditor:self willChangeNode:insertedNode changeType:LNPropertyListNodeChangeTypeInsert previousKey:nil];
 	}
@@ -380,14 +381,14 @@
 		[_undoManager beginUndoGrouping];
 	}
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
-		[target _deleteNode:insertedNode groupUndoOperation:groupUndo];
+		[target _deleteNode:insertedNode notifyDelegate:notifyDelegate groupUndoOperation:groupUndo];
 	}];
 	if(groupUndo)
 	{
 		[_undoManager endUndoGrouping];
 	}
 	
-	if(_flags.delegate_didChangeNode)
+	if(notifyDelegate && _flags.delegate_didChangeNode)
 	{
 		[self.delegate propertyListEditor:self didChangeNode:insertedNode changeType:LNPropertyListNodeChangeTypeInsert previousKey:nil];
 	}
@@ -419,10 +420,10 @@
 		insertionRow = [parentNode.children indexOfObject:node] + 1;
 	}
 	
-	[self _insertNode:insertedNode inParentNode:parentNode index:insertionRow groupUndoOperation:YES];
+	[self _insertNode:insertedNode inParentNode:parentNode index:insertionRow notifyDelegate:YES groupUndoOperation:YES];
 }
 
-- (void)_deleteNode:(LNPropertyListNode*)deletedNode groupUndoOperation:(BOOL)groupUndo
+- (void)_deleteNode:(LNPropertyListNode*)deletedNode notifyDelegate:(BOOL)notifyDelegate groupUndoOperation:(BOOL)groupUndo
 {
 	if(deletedNode.parent == nil)
 	{
@@ -440,7 +441,7 @@
 	
 	[_outlineView beginUpdates];
 	
-	if(_flags.delegate_willChangeNode)
+	if(notifyDelegate && _flags.delegate_willChangeNode)
 	{
 		[self.delegate propertyListEditor:self willChangeNode:deletedNode changeType:LNPropertyListNodeChangeTypeDelete previousKey:deletedNode.key];
 	}
@@ -472,7 +473,7 @@
 		[_undoManager beginUndoGrouping];
 	}
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
-		[target _insertNode:deletedNode inParentNode:parentNode index:deletionIndex groupUndoOperation:groupUndo];
+		[target _insertNode:deletedNode inParentNode:parentNode index:deletionIndex notifyDelegate:notifyDelegate groupUndoOperation:groupUndo];
 	}];
 	if(groupUndo)
 	{
@@ -488,7 +489,7 @@
 		[_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:selectedRow] byExtendingSelection:NO];
 	}
 	
-	if(_flags.delegate_didChangeNode)
+	if(notifyDelegate && _flags.delegate_didChangeNode)
 	{
 		[self.delegate propertyListEditor:self didChangeNode:deletedNode changeType:LNPropertyListNodeChangeTypeDelete previousKey:deletedNode.key];
 	}
@@ -509,15 +510,33 @@
 	
 	LNPropertyListNode* deletedNode = [_outlineView itemAtRow:row];
 	
-	[self _deleteNode:deletedNode groupUndoOperation:YES];
+	[self _deleteNode:deletedNode notifyDelegate:YES groupUndoOperation:YES];
 }
 
 - (void)_moveNode:(LNPropertyListNode*)node intoParentNode:(LNPropertyListNode*)parentNode index:(NSInteger)parentIndex
 {
+	if(_flags.delegate_willChangeNode)
+	{
+		[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeMove previousKey:nil];
+	}
 	[_undoManager beginUndoGrouping];
-	[self _deleteNode:node groupUndoOperation:NO];
-	[self _insertNode:node inParentNode:parentNode index:parentIndex groupUndoOperation:NO];
+	NSInteger indexDelta = 0;
+	if(node.parent == parentNode)
+	{
+		NSInteger beforeIndex = [node.parent.children indexOfObject:node];
+		if(beforeIndex < parentIndex)
+		{
+			indexDelta = -1;
+		}
+	}
+	parentIndex += indexDelta;
+	[self _deleteNode:node notifyDelegate:NO groupUndoOperation:NO];
+	[self _insertNode:node inParentNode:parentNode index:parentIndex notifyDelegate:NO groupUndoOperation:NO];
 	[_undoManager endUndoGrouping];
+	if(_flags.delegate_didChangeNode)
+	{
+		[self.delegate propertyListEditor:self didChangeNode:node changeType:LNPropertyListNodeChangeTypeMove previousKey:nil];
+	}
 }
 
 #pragma mark Private
@@ -1086,13 +1105,35 @@
 	[[self.outlineView rowViewAtRow:[self.outlineView rowForItem:item] makeIfNecessary:NO] updateEditButtons];
 }
 
+- (void)_sortRootNodeIfPossibleWithSortDescriptors:(NSArray<NSSortDescriptor *> *)sortDescriptors
+{
+	[self.rootPropertyListNode _sortUsingDescriptors:sortDescriptors validator:^BOOL(LNPropertyListNode* node) {
+		if(!_flags.delegate_canReorderChildrenOfNode)
+		{
+			return YES;
+		}
+		
+		return [self.delegate propertyListEditor:self canReorderChildrenOfNode:node];
+	} callback:^(LNPropertyListNode* node, BOOL will) {
+		if(will && _flags.delegate_willChangeNode)
+		{
+			[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeReorderChildren previousKey:nil];
+		}
+		
+		if(!will && _flags.delegate_didChangeNode)
+		{
+			[self.delegate propertyListEditor:self didChangeNode:node changeType:LNPropertyListNodeChangeTypeReorderChildren previousKey:nil];
+		}
+	}];
+}
+
 - (void)outlineView:(NSOutlineView *)outlineView sortDescriptorsDidChange:(NSArray<NSSortDescriptor *> *)oldDescriptors;
 {
 	//Make the outline view as the first responder to prevent issues with currently edited text fields.
 	[outlineView.window makeFirstResponder:outlineView];
 	
 	LNPropertyListNode* node = [outlineView itemAtRow:outlineView.selectedRow];
-	[self.rootPropertyListNode _sortUsingDescriptors:outlineView.sortDescriptors];
+	[self _sortRootNodeIfPossibleWithSortDescriptors:outlineView.sortDescriptors];
 	[self.outlineView reloadItem:nil reloadChildren:YES];
 	
 	NSInteger selectionRow = [self.outlineView rowForItem:node];
@@ -1158,7 +1199,7 @@
 		
 		if(info.draggingSourceOperationMask == NSDragOperationCopy)
 		{
-			[self _insertNode:draggedItem.copy inParentNode:item index:index groupUndoOperation:YES];
+			[self _insertNode:draggedItem.copy inParentNode:item index:index notifyDelegate:YES groupUndoOperation:YES];
 		}
 		else
 		{

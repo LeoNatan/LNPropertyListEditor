@@ -414,18 +414,25 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 	return [self.children filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"key == %@", key]].firstObject;
 }
 
-- (void)_sortUsingDescriptors:(NSArray<NSSortDescriptor *> *)descriptors
+- (void)_sortUsingDescriptors:(NSArray<NSSortDescriptor *> *)descriptors validator:(BOOL (^)(LNPropertyListNode*))validator callback:(void (^)(LNPropertyListNode*, BOOL))callback
 {
 	if(self.type != LNPropertyListNodeTypeDictionary && self.type != LNPropertyListNodeTypeArray)
 	{
 		return;
 	}
 	
+	if(validator(self) == NO)
+	{
+		return;
+	}
+	
+	callback(self, YES);
 	[self.children sortUsingDescriptors:descriptors];
 	
 	[self.children enumerateObjectsUsingBlock:^(LNPropertyListNode * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-		[obj _sortUsingDescriptors:descriptors];
+		[obj _sortUsingDescriptors:descriptors validator:validator callback:callback];
 	}];
+	callback(self, NO);
 }
 
 - (id)pasteboardWriter

@@ -39,20 +39,21 @@
 	switch(changeType)
 	{
 		case LNPropertyListNodeChangeTypeMove:
-			NSLog(@"➡️");
+			NSLog(@"➡️ Moved %@", node);
 			break;
 		case LNPropertyListNodeChangeTypeInsert:
-			NSLog(@"🎉");
+			NSLog(@"🎉 Inserted %@", node);
 			break;
 		case LNPropertyListNodeChangeTypeDelete:
-			NSLog(@"🗑");
+			NSLog(@"🗑 Deleted %@", node);
 			break;
 		case LNPropertyListNodeChangeTypeUpdate:
-			NSLog(@"🔄");
+			NSLog(@"🔄 Updated %@", node);
+			break;
+		case LNPropertyListNodeChangeTypeReorderChildren:
+			NSLog(@"📚 Children Reordered %@", node);
 			break;
 	}
-	
-	NSLog(@"%@", [editor.rootPropertyListNode childNodeContainingDescendantNode:node]);
 }
 
 @end

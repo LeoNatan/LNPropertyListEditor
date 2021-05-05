@@ -34,7 +34,7 @@ extern NSString* const LNPropertyListNodeXcodeKeyType;
 
 - (void)_setObject:(id)object;
 
-- (void)_sortUsingDescriptors:(NSArray<NSSortDescriptor *> *)descriptors;
+- (void)_sortUsingDescriptors:(NSArray<NSSortDescriptor *> *)descriptors validator:(BOOL (^)(LNPropertyListNode*))validator callback:(void (^)(LNPropertyListNode*, BOOL))callback;
 
 - (id<NSPasteboardWriting>)pasteboardWriter;
 

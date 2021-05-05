@@ -19,6 +19,7 @@ typedef struct {
 	unsigned int delegate_canAddNewNodeInNode : 1;
 	unsigned int delegate_canMoveNode : 1;
 	unsigned int delegate_canPasteNode : 1;
+	unsigned int delegate_canReorderChildrenOfNode : 1;
 	unsigned int delegate_defaultPropertyListForAddingInNode : 1;
 	
 	unsigned int dataTransformer_displayNameForNode : 1;
