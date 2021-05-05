@@ -211,8 +211,7 @@
 		[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeMove previousKey:oldKey];
 	}
 	
-	LNPropertyListCellView* cellView = [[_outlineView rowViewAtRow:[_outlineView rowForItem:node] makeIfNecessary:NO] viewAtColumn:0];
-	[cellView setControlWithString:key setToolTip:YES];
+	[_outlineView reloadItem:node];
 	
 	[_undoManager beginUndoGrouping];
 	[_undoManager registerUndoWithTarget:self handler:^(LNPropertyListEditor* _Nonnull target) {
