@@ -33,6 +33,8 @@
 		39DE8E942092030500ED16B4 /* LNPropertyListPopUpButtonCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8E922092030500ED16B4 /* LNPropertyListPopUpButtonCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39DE8E952092030500ED16B4 /* LNPropertyListPopUpButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8E932092030500ED16B4 /* LNPropertyListPopUpButtonCell.m */; };
 		39DE8E9C2092214400ED16B4 /* LNPropertyListEditor-Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8E9B2092214300ED16B4 /* LNPropertyListEditor-Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		39F537F3264305AF00AB263A /* NSObject+LNPropertyListValueSorting.h in Headers */ = {isa = PBXBuildFile; fileRef = 39F537F1264305AF00AB263A /* NSObject+LNPropertyListValueSorting.h */; };
+		39F537F4264305AF00AB263A /* NSObject+LNPropertyListValueSorting.m in Sources */ = {isa = PBXBuildFile; fileRef = 39F537F2264305AF00AB263A /* NSObject+LNPropertyListValueSorting.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +66,8 @@
 		39DE8E922092030500ED16B4 /* LNPropertyListPopUpButtonCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LNPropertyListPopUpButtonCell.h; sourceTree = "<group>"; };
 		39DE8E932092030500ED16B4 /* LNPropertyListPopUpButtonCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LNPropertyListPopUpButtonCell.m; sourceTree = "<group>"; };
 		39DE8E9B2092214300ED16B4 /* LNPropertyListEditor-Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LNPropertyListEditor-Private.h"; sourceTree = "<group>"; };
+		39F537F1264305AF00AB263A /* NSObject+LNPropertyListValueSorting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+LNPropertyListValueSorting.h"; sourceTree = "<group>"; };
+		39F537F2264305AF00AB263A /* NSObject+LNPropertyListValueSorting.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+LNPropertyListValueSorting.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,6 +135,8 @@
 				39DE8E932092030500ED16B4 /* LNPropertyListPopUpButtonCell.m */,
 				391FF02D208412CC00005D0F /* LNPropertyListRowView.h */,
 				391FF02E208412CC00005D0F /* LNPropertyListRowView.m */,
+				39F537F1264305AF00AB263A /* NSObject+LNPropertyListValueSorting.h */,
+				39F537F2264305AF00AB263A /* NSObject+LNPropertyListValueSorting.m */,
 			);
 			path = Implementation;
 			sourceTree = "<group>";
@@ -150,6 +156,7 @@
 				39DE8E9C2092214400ED16B4 /* LNPropertyListEditor-Private.h in Headers */,
 				39DE8E942092030500ED16B4 /* LNPropertyListPopUpButtonCell.h in Headers */,
 				3946906C20976ED300B4A457 /* LNPropertyListDatePicker.h in Headers */,
+				39F537F3264305AF00AB263A /* NSObject+LNPropertyListValueSorting.h in Headers */,
 				3941486F2095E85900A21F96 /* LNPropertyListDatePickerCell.h in Headers */,
 				39D152962328A9C4009124C8 /* _LNPropertyListDatePicker.h in Headers */,
 				393E1875207F64A0002E6136 /* LNPropertyListEditor.h in Headers */,
@@ -237,6 +244,7 @@
 				3925913B263C52B100AF78D3 /* LNPropertyListCellTextField.m in Sources */,
 				394148702095E85900A21F96 /* LNPropertyListDatePickerCell.mm in Sources */,
 				393E1876207F64A0002E6136 /* LNPropertyListEditor.m in Sources */,
+				39F537F4264305AF00AB263A /* NSObject+LNPropertyListValueSorting.m in Sources */,
 				39DE8E952092030500ED16B4 /* LNPropertyListPopUpButtonCell.m in Sources */,
 				39D1529023289668009124C8 /* LNPropertyListDatePickerPanel.m in Sources */,
 			);

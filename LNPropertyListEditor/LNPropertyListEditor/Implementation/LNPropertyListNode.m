@@ -416,7 +416,7 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 
 - (void)_sortUsingDescriptors:(NSArray<NSSortDescriptor *> *)descriptors
 {
-	if(self.type != LNPropertyListNodeTypeDictionary)
+	if(self.type != LNPropertyListNodeTypeDictionary && self.type != LNPropertyListNodeTypeArray)
 	{
 		return;
 	}

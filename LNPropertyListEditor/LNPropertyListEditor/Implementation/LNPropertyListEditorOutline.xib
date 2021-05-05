@@ -183,6 +183,7 @@
                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                 </tableHeaderCell>
                                 <customCell key="dataCell" alignment="left" id="oI8-IV-PHs"/>
+                                <sortDescriptor key="sortDescriptorPrototype" selector="_ln_compareValue:" sortKey="value"/>
                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                 <prototypeCellViews>
                                     <tableCellView identifier="ValueCell" id="rKh-Fg-3qw" customClass="LNPropertyListCellView">

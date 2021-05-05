@@ -30,7 +30,7 @@
 
 - (void)prepareForInterfaceBuilder
 {
-	self.propertyListObject = @{@"Example Text": @"Text", @"Example Number": @123, @"Example Date": NSDate.date};
+	self.propertyListObject = @{@"Example Text": @"Text", @"Example Number": @123, @"Example Date": NSDate.date, @"Example Boolean": @YES};
 }
 
 - (instancetype)initWithFrame:(NSRect)frameRect
