@@ -551,21 +551,26 @@
 
 - (void)_moveNode:(LNPropertyListNode*)node intoParentNode:(LNPropertyListNode*)parentNode index:(NSInteger)parentIndex
 {
+	if(node.parent == parentNode)
+	{
+		NSInteger beforeIndex = [node.parent.children indexOfObject:node];
+		
+		if(beforeIndex < parentIndex)
+		{
+			parentIndex -= 1;
+		}
+		
+		if(beforeIndex == parentIndex)
+		{
+			return;
+		}
+	}
+	
 	if(_flags.delegate_willChangeNode)
 	{
 		[self.delegate propertyListEditor:self willChangeNode:node changeType:LNPropertyListNodeChangeTypeMove previousKey:nil];
 	}
 	[_undoManager beginUndoGrouping];
-	NSInteger indexDelta = 0;
-	if(node.parent == parentNode)
-	{
-		NSInteger beforeIndex = [node.parent.children indexOfObject:node];
-		if(beforeIndex < parentIndex)
-		{
-			indexDelta = -1;
-		}
-	}
-	parentIndex += indexDelta;
 	[self _deleteNode:node notifyDelegate:NO groupUndoOperation:NO];
 	[self _insertNode:node inParentNode:parentNode index:parentIndex notifyDelegate:NO groupUndoOperation:NO];
 	[_undoManager endUndoGrouping];
