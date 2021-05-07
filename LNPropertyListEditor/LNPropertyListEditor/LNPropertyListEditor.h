@@ -9,12 +9,19 @@
 #import <Cocoa/Cocoa.h>
 #import <LNPropertyListEditor/LNPropertyListNode.h>
 
+#define LN_DEPRECATED_API(x) __attribute__((deprecated(x)))
+
 typedef NS_ENUM(NSUInteger, LNPropertyListNodeChangeType) {
+	/// Specifies that a node was inserted.
 	LNPropertyListNodeChangeTypeInsert,
+	/// Specifies that a node was deleted.
 	LNPropertyListNodeChangeTypeDelete,
+	/// Specifies that a node was moved.
 	LNPropertyListNodeChangeTypeMove,
+	/// Specifies that an object was updated.
 	LNPropertyListNodeChangeTypeUpdate,
-	LNPropertyListNodeChangeTypeReorderChildren,
+	
+	LNPropertyListNodeChangeTypeReorderChildren LN_DEPRECATED_API("Use LNPropertyListNodeChangeTypeUpdate isntead.") = LNPropertyListNodeChangeTypeUpdate,
 };
 
 NS_ASSUME_NONNULL_BEGIN

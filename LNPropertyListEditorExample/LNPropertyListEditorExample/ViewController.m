@@ -34,24 +34,21 @@
 //	return NO;
 //}
 
-- (void)propertyListEditor:(LNPropertyListEditor *)editor willChangeNode:(LNPropertyListNode *)node changeType:(LNPropertyListNodeChangeType)changeType previousKey:(NSString *)previousKey
+- (void)propertyListEditor:(LNPropertyListEditor *)editor didChangeNode:(LNPropertyListNode *)node changeType:(LNPropertyListNodeChangeType)changeType previousKey:(NSString *)previousKey
 {
 	switch(changeType)
 	{
-		case LNPropertyListNodeChangeTypeMove:
-			NSLog(@"➡️ Moved %@", node);
-			break;
 		case LNPropertyListNodeChangeTypeInsert:
 			NSLog(@"🎉 Inserted %@", node);
 			break;
 		case LNPropertyListNodeChangeTypeDelete:
 			NSLog(@"🗑 Deleted %@", node);
 			break;
+		case LNPropertyListNodeChangeTypeMove:
+			NSLog(@"➡️ Moved %@", node);
+			break;
 		case LNPropertyListNodeChangeTypeUpdate:
 			NSLog(@"🔄 Updated %@", node);
-			break;
-		case LNPropertyListNodeChangeTypeReorderChildren:
-			NSLog(@"📚 Children Reordered %@", node);
 			break;
 	}
 }
