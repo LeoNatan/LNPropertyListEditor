@@ -195,7 +195,8 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 		case LNPropertyListNodeTypeDate:
 			return nil;
 		case LNPropertyListNodeTypeData:
-			return @"<Data>";
+			return [NSByteCountFormatter stringFromByteCount:[valueToTranslate length] countStyle:NSByteCountFormatterCountStyleMemory];
+//			return [valueToTranslate description];
 		case LNPropertyListNodeTypeNumber:
 			return [LNPropertyListNode._numberFormatter stringFromNumber:valueToTranslate];
 		case LNPropertyListNodeTypeString:

@@ -1124,7 +1124,7 @@
 			identifier = @"ValueCell";
 		}
 		
-		editable = !(type == LNPropertyListNodeTypeArray || type == LNPropertyListNodeTypeDictionary);
+		editable = !(type == LNPropertyListNodeTypeArray || type == LNPropertyListNodeTypeDictionary || type == LNPropertyListNodeTypeData);
 		value = [LNPropertyListNode stringValueOfNode:item];
 		
 		if(editable && _flags.delegate_canEditValueOfNode)
