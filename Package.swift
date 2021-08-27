@@ -20,17 +20,31 @@ let package = Package(
 	dependencies: [],
 	targets: [
 		.target(
-			name: "LNPropertyListEditor",
+			name: "LNPropertyListEditor_HexFiend",
 			dependencies: [],
+			path: "HexFiendFramework",
+			exclude: [
+				
+			],
+			resources: [],
+			publicHeadersPath: "include",
+			cSettings: [
+				.define("HF_NO_PRIVILEGED_FILE_OPERATIONS", to: "1"),
+				.headerSearchPath("include"),
+				.headerSearchPath("src"),
+			]),
+		.target(
+			name: "LNPropertyListEditor",
+			dependencies: [
+				"LNPropertyListEditor_HexFiend"
+			],
 			path: "LNPropertyListEditor",
 			exclude: [
-				"LNPropertyListEditorExample",
-				"Supplements",
 				"LNPropertyListEditor/Info.plist"
 			],
 			resources: [
 				.process("LNPropertyListEditor/Assets.xcassets"),
-				.process("LNPropertyListEditor/Views/LNPropertyListEditorOutline.xib")
+				.process("LNPropertyListEditor/Implementation/LNPropertyListEditorOutline.xib")
 			],
 			publicHeadersPath: "include",
 			cSettings: [

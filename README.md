@@ -97,7 +97,7 @@ func propertyListEditor(_ editor: LNPropertyListEditor, didChange node: LNProper
 }
 ```
 
-For full documentation, see the LNPropertyListEditor.h header.
+For full documentation, see the `LNPropertyListEditor.h` header.
 
 #### Data Transformer
 
@@ -116,4 +116,11 @@ func propertyListEditor(_ editor: LNPropertyListEditor, displayNameFor node: LNP
 }
 ```
 
-For full documentation, see the LNPropertyListEditor.h header.
+For full documentation, see the `LNPropertyListEditor.h` header.
+
+## Acknowledgements
+
+The framework uses:
+
+* [HexFiend](https://github.com/HexFiend/HexFiend) © ridiculous_fish, 2011-2020
+

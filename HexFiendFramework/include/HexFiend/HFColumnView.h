@@ -1,0 +1,1 @@
+../../../HexFiend/framework/sources/HFColumnView.h

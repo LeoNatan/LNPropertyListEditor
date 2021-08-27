@@ -38,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param changeType The change type.
 /// @param previousKey The previous key, in case the key property has been updated.
 - (void)propertyListEditor:(LNPropertyListEditor *)editor willChangeNode:(LNPropertyListNode *)node changeType:(LNPropertyListNodeChangeType)changeType previousKey:(nullable NSString *)previousKey;
+
 /// Notifies the delegate that a node has changed.
 /// @param editor The property list editor.
 /// @param node The node that has changed.
@@ -49,31 +50,38 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param editor The property list editor.
 /// @param node The current node.
 - (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canEditKeyOfNode:(LNPropertyListNode*)node;
+
 /// Asks the delegate if the type of the specified node can be edited.
 /// @param editor The property list editor.
 /// @param node The current node.
 - (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canEditTypeOfNode:(LNPropertyListNode*)node;
+
 /// Asks the delegate if the value of the specified node can be edited.
 /// @param editor The property list editor.
 /// @param node The current node.
 - (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canEditValueOfNode:(LNPropertyListNode*)node;
+
 /// Asks the delegate if the specified node can be deleted.
 /// @param editor The property list editor.
 /// @param node The current node.
 - (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canDeleteNode:(LNPropertyListNode*)node;
+
 /// Asks the delegate if it is possible to add a child node in the specified node.
 /// @param editor The property list editor.
 /// @param node The current node.
 - (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canAddChildNodeInNode:(LNPropertyListNode*)node;
+
 /// Asks the delegate if it is possible to reorder the children of the specified node.
 /// @param editor The property list editor.
 /// @param node The current node.
 - (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canReorderChildrenOfNode:(LNPropertyListNode*)node;
+
 /// Asks the delegate if the specified pasted node can be added as a child node of the specified node.
 /// @param editor The property list editor.
 /// @param pastedNode The pasted node.
 /// @param node The current node.
 - (BOOL)propertyListEditor:(LNPropertyListEditor *)editor canPasteNode:(LNPropertyListNode*)pastedNode asChildOfNode:(LNPropertyListNode*)node;
+
 /// Asks the delegate if the specified node can be moved as a child node of the specified node, at the specified index.
 /// @param editor The property list editor.
 /// @param movedNode The pasted node.
@@ -98,12 +106,14 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param editor The property list editor.
 /// @param node The current node.
 - (nullable NSString*)propertyListEditor:(LNPropertyListEditor *)editor displayNameForNode:(LNPropertyListNode*)node;
+
 /// Provides a display value for the specified node.
 /// @param editor The property list editor.
 /// @param node The current node.
 ///
 /// This can be either a valid property list or an LNPropertyListNode object.
 - (nullable id)propertyListEditor:(LNPropertyListEditor *)editor displayValueForNode:(LNPropertyListNode*)node;
+
 /// Provides a storage value for the specified node and display value
 /// @param editor The property list editor.
 /// @param node The current node.

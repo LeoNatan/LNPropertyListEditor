@@ -18,6 +18,7 @@ extern NSString* const LNPropertyListNodeXcodeKeyType;
 
 @property (nonatomic, strong) id _cachedDisplayKey;
 @property (nonatomic, strong) id _cachedDisplayValue;
+@property (nonatomic, readonly) LNPropertyListNodeType _appropriateType;
 
 + (NSNumberFormatter*)_numberFormatter;
 

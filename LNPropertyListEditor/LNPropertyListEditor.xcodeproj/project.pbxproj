@@ -26,16 +26,51 @@
 		394148702095E85900A21F96 /* LNPropertyListDatePickerCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3941486E2095E85900A21F96 /* LNPropertyListDatePickerCell.mm */; };
 		3946906C20976ED300B4A457 /* LNPropertyListDatePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3946906A20976ED300B4A457 /* LNPropertyListDatePicker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3946906D20976ED300B4A457 /* LNPropertyListDatePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3946906B20976ED300B4A457 /* LNPropertyListDatePicker.m */; };
+		39D1276E26D9255D007E64D1 /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1276B26D9254C007E64D1 /* HexFiend.framework */; };
+		39D1276F26D9255D007E64D1 /* HexFiend.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1276B26D9254C007E64D1 /* HexFiend.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		39D1528F23289668009124C8 /* LNPropertyListDatePickerPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 39D1528D23289668009124C8 /* LNPropertyListDatePickerPanel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39D1529023289668009124C8 /* LNPropertyListDatePickerPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1528E23289668009124C8 /* LNPropertyListDatePickerPanel.m */; };
 		39D152962328A9C4009124C8 /* _LNPropertyListDatePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 39D152942328A9C4009124C8 /* _LNPropertyListDatePicker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39D152972328A9C4009124C8 /* _LNPropertyListDatePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D152952328A9C4009124C8 /* _LNPropertyListDatePicker.m */; };
+		39D55F2026D82C100013B105 /* LNPropertyListDataEditorPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 39D55F1E26D82C100013B105 /* LNPropertyListDataEditorPanel.h */; };
+		39D55F2126D82C100013B105 /* LNPropertyListDataEditorPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D55F1F26D82C100013B105 /* LNPropertyListDataEditorPanel.m */; };
 		39DE8E942092030500ED16B4 /* LNPropertyListPopUpButtonCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8E922092030500ED16B4 /* LNPropertyListPopUpButtonCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39DE8E952092030500ED16B4 /* LNPropertyListPopUpButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 39DE8E932092030500ED16B4 /* LNPropertyListPopUpButtonCell.m */; };
 		39DE8E9C2092214400ED16B4 /* LNPropertyListEditor-Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 39DE8E9B2092214300ED16B4 /* LNPropertyListEditor-Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39F537F3264305AF00AB263A /* NSObject+LNPropertyListValueSorting.h in Headers */ = {isa = PBXBuildFile; fileRef = 39F537F1264305AF00AB263A /* NSObject+LNPropertyListValueSorting.h */; };
 		39F537F4264305AF00AB263A /* NSObject+LNPropertyListValueSorting.m in Sources */ = {isa = PBXBuildFile; fileRef = 39F537F2264305AF00AB263A /* NSObject+LNPropertyListValueSorting.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		39D1276A26D9254C007E64D1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 39D1276626D9254C007E64D1 /* HexFiend.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2A5473BE36E204DC14FF8C9C;
+			remoteInfo = HexFiend;
+		};
+		39D1276C26D92552007E64D1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 39D1276626D9254C007E64D1 /* HexFiend.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 68C279F96A1255D4C25C79AE;
+			remoteInfo = HexFiend;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		39D55F1D26D829970013B105 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				39D1276F26D9255D007E64D1 /* HexFiend.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		391FF02A2084060000005D0F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -59,10 +94,13 @@
 		3941486E2095E85900A21F96 /* LNPropertyListDatePickerCell.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LNPropertyListDatePickerCell.mm; sourceTree = "<group>"; };
 		3946906A20976ED300B4A457 /* LNPropertyListDatePicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LNPropertyListDatePicker.h; sourceTree = "<group>"; };
 		3946906B20976ED300B4A457 /* LNPropertyListDatePicker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LNPropertyListDatePicker.m; sourceTree = "<group>"; };
+		39D1276626D9254C007E64D1 /* HexFiend.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = HexFiend.xcodeproj; path = ../HexFiendFramework/HexFiend.xcodeproj; sourceTree = "<group>"; };
 		39D1528D23289668009124C8 /* LNPropertyListDatePickerPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LNPropertyListDatePickerPanel.h; sourceTree = "<group>"; };
 		39D1528E23289668009124C8 /* LNPropertyListDatePickerPanel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LNPropertyListDatePickerPanel.m; sourceTree = "<group>"; };
 		39D152942328A9C4009124C8 /* _LNPropertyListDatePicker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _LNPropertyListDatePicker.h; sourceTree = "<group>"; };
 		39D152952328A9C4009124C8 /* _LNPropertyListDatePicker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = _LNPropertyListDatePicker.m; sourceTree = "<group>"; };
+		39D55F1E26D82C100013B105 /* LNPropertyListDataEditorPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LNPropertyListDataEditorPanel.h; sourceTree = "<group>"; };
+		39D55F1F26D82C100013B105 /* LNPropertyListDataEditorPanel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LNPropertyListDataEditorPanel.m; sourceTree = "<group>"; };
 		39DE8E922092030500ED16B4 /* LNPropertyListPopUpButtonCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LNPropertyListPopUpButtonCell.h; sourceTree = "<group>"; };
 		39DE8E932092030500ED16B4 /* LNPropertyListPopUpButtonCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LNPropertyListPopUpButtonCell.m; sourceTree = "<group>"; };
 		39DE8E9B2092214300ED16B4 /* LNPropertyListEditor-Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "LNPropertyListEditor-Private.h"; sourceTree = "<group>"; };
@@ -75,6 +113,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39D1276E26D9255D007E64D1 /* HexFiend.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,8 +123,10 @@
 		393E182F207F6119002E6136 = {
 			isa = PBXGroup;
 			children = (
+				39D1276626D9254C007E64D1 /* HexFiend.xcodeproj */,
 				393E183B207F6119002E6136 /* LNPropertyListEditor */,
 				393E183A207F6119002E6136 /* Products */,
+				39D55F1926D829600013B105 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -137,8 +178,25 @@
 				391FF02E208412CC00005D0F /* LNPropertyListRowView.m */,
 				39F537F1264305AF00AB263A /* NSObject+LNPropertyListValueSorting.h */,
 				39F537F2264305AF00AB263A /* NSObject+LNPropertyListValueSorting.m */,
+				39D55F1E26D82C100013B105 /* LNPropertyListDataEditorPanel.h */,
+				39D55F1F26D82C100013B105 /* LNPropertyListDataEditorPanel.m */,
 			);
 			path = Implementation;
+			sourceTree = "<group>";
+		};
+		39D1276726D9254C007E64D1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				39D1276B26D9254C007E64D1 /* HexFiend.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		39D55F1926D829600013B105 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -158,6 +216,7 @@
 				3946906C20976ED300B4A457 /* LNPropertyListDatePicker.h in Headers */,
 				39F537F3264305AF00AB263A /* NSObject+LNPropertyListValueSorting.h in Headers */,
 				3941486F2095E85900A21F96 /* LNPropertyListDatePickerCell.h in Headers */,
+				39D55F2026D82C100013B105 /* LNPropertyListDataEditorPanel.h in Headers */,
 				39D152962328A9C4009124C8 /* _LNPropertyListDatePicker.h in Headers */,
 				393E1875207F64A0002E6136 /* LNPropertyListEditor.h in Headers */,
 				3925913A263C52B100AF78D3 /* LNPropertyListCellTextField.h in Headers */,
@@ -176,10 +235,12 @@
 				393E1835207F6119002E6136 /* Frameworks */,
 				393E1836207F6119002E6136 /* Headers */,
 				393E1837207F6119002E6136 /* Resources */,
+				39D55F1D26D829970013B105 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				39D1276D26D92552007E64D1 /* PBXTargetDependency */,
 			);
 			name = LNPropertyListEditor;
 			productName = LNPlistEditorView;
@@ -211,12 +272,28 @@
 			mainGroup = 393E182F207F6119002E6136;
 			productRefGroup = 393E183A207F6119002E6136 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 39D1276726D9254C007E64D1 /* Products */;
+					ProjectRef = 39D1276626D9254C007E64D1 /* HexFiend.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				393E1838207F6119002E6136 /* LNPropertyListEditor */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		39D1276B26D9254C007E64D1 /* HexFiend.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = HexFiend.framework;
+			remoteRef = 39D1276A26D9254C007E64D1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		393E1837207F6119002E6136 /* Resources */ = {
@@ -238,6 +315,7 @@
 				391FF030208412CC00005D0F /* LNPropertyListRowView.m in Sources */,
 				393E187A207F68B4002E6136 /* LNPropertyListNode.m in Sources */,
 				393E1886207FAEC6002E6136 /* LNPropertyListCellView.m in Sources */,
+				39D55F2126D82C100013B105 /* LNPropertyListDataEditorPanel.m in Sources */,
 				391FF0342084270400005D0F /* LNPropertyListOutlineView.m in Sources */,
 				39D152972328A9C4009124C8 /* _LNPropertyListDatePicker.m in Sources */,
 				3946906D20976ED300B4A457 /* LNPropertyListDatePicker.m in Sources */,
@@ -251,6 +329,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		39D1276D26D92552007E64D1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = HexFiend;
+			targetProxy = 39D1276C26D92552007E64D1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		393E183F207F6119002E6136 /* Debug */ = {
@@ -394,6 +480,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.leonatan.LNPropertyListEditor;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				WARNING_CFLAGS = "-Wno-incomplete-umbrella";
 			};
 			name = Debug;
 		};
@@ -420,6 +507,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.leonatan.LNPropertyListEditor;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				WARNING_CFLAGS = "-Wno-incomplete-umbrella";
 			};
 			name = Release;
 		};

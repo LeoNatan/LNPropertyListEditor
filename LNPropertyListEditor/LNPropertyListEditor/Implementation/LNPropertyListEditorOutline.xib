@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19158" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19158"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -42,7 +42,7 @@
                                 <tableColumnResizingMask key="resizingMask" userResizable="YES"/>
                                 <prototypeCellViews>
                                     <tableCellView identifier="KeyCell" id="t2u-Od-Zzd" customClass="LNPropertyListCellView">
-                                        <rect key="frame" x="11" y="1" width="205" height="17"/>
+                                        <rect key="frame" x="1" y="1" width="205" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VNx-8v-7cy">
@@ -110,7 +110,7 @@
                                 <sortDescriptor key="sortDescriptorPrototype" selector="compare:" sortKey="type"/>
                                 <prototypeCellViews>
                                     <tableCellView identifier="TypeCell" id="Tdk-ZV-3aa" customClass="LNPropertyListCellView">
-                                        <rect key="frame" x="218" y="1" width="75" height="17"/>
+                                        <rect key="frame" x="208" y="1" width="75" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <popUpButton translatesAutoresizingMaskIntoConstraints="NO" id="hJ1-Ji-yiF" userLabel="Type Button">
@@ -187,7 +187,7 @@
                                 <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                 <prototypeCellViews>
                                     <tableCellView identifier="ValueCell" id="rKh-Fg-3qw" customClass="LNPropertyListCellView">
-                                        <rect key="frame" x="295" y="1" width="470" height="17"/>
+                                        <rect key="frame" x="285" y="1" width="470" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Axh-Xk-Scw" userLabel="Value Title" customClass="LNPropertyListCellTextField">
@@ -209,7 +209,7 @@
                                         </connections>
                                     </tableCellView>
                                     <tableCellView identifier="BoolCell" id="TJI-m7-gdE" customClass="LNPropertyListCellView">
-                                        <rect key="frame" x="295" y="21" width="470" height="17"/>
+                                        <rect key="frame" x="285" y="21" width="470" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <popUpButton translatesAutoresizingMaskIntoConstraints="NO" id="okM-IP-jIc" userLabel="Type Button">
@@ -245,7 +245,7 @@
                                         </connections>
                                     </tableCellView>
                                     <tableCellView identifier="DateCell" id="BrW-CZ-E8U" customClass="LNPropertyListCellView">
-                                        <rect key="frame" x="295" y="41" width="470" height="17"/>
+                                        <rect key="frame" x="285" y="41" width="470" height="17"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <customView placeholderIntrinsicWidth="279" placeholderIntrinsicHeight="17" translatesAutoresizingMaskIntoConstraints="NO" id="cut-BW-s5Y" customClass="LNPropertyListDatePicker">

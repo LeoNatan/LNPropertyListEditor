@@ -337,6 +337,11 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 	[aCoder encodeObject:self.children forKey:@"children"];
 }
 
+- (LNPropertyListNodeType)_appropriateType
+{
+	return self._cachedDisplayValue ? [LNPropertyListNode _typeForObject:self._cachedDisplayValue] : self.type;
+}
+
 - (NSString *)description
 {
 	NSMutableString* builder = [NSMutableString stringWithFormat:@"<%@ %p", self.className, self];

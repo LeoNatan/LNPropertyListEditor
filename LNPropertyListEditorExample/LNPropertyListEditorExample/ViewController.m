@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import <LNPropertyListEditor/LNPropertyListEditor.h>
 
-@interface ViewController () <LNPropertyListEditorDelegate> @end
+@interface ViewController () <LNPropertyListEditorDelegate, LNPropertyListEditorDataTransformer> @end
 
 @implementation ViewController
 {
@@ -23,6 +23,7 @@
 	id obj = [NSPropertyListSerialization propertyListWithData:[NSData dataWithContentsOfURL:propertyListURL] options:0 format:nil error:NULL];
 	
 	_plistEditor.delegate = self;
+	_plistEditor.dataTransformer = self;
 	
 	_plistEditor.propertyListObject = obj;
 }
@@ -52,5 +53,27 @@
 			break;
 	}
 }
+
+#pragma mark LNPropertyListEditorDataTransformer
+
+//- (nullable id)propertyListEditor:(LNPropertyListEditor *)editor displayValueForNode:(LNPropertyListNode*)node
+//{
+//	if(node.type == LNPropertyListNodeTypeData)
+//	{
+//		return @"Test";
+//	}
+//	
+//	return nil;
+//}
+//
+//- (nullable id)propertyListEditor:(LNPropertyListEditor *)editor storageValueForNode:(LNPropertyListNode*)node displayValue:(id)displayValue
+//{
+//	if(node.type == LNPropertyListNodeTypeData)
+//	{
+//		return [displayValue dataUsingEncoding:NSUTF8StringEncoding];
+//	}
+//	
+//	return nil;
+//}
 
 @end

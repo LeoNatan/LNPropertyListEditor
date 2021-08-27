@@ -10,6 +10,7 @@
 #import "LNPropertyListNode-Private.h"
 #import "LNPropertyListRowView.h"
 #import "LNPropertyListCellView.h"
+#import "LNPropertyListDataEditorPanel.h"
 
 @import ObjectiveC;
 
@@ -1028,17 +1029,50 @@
 	}
 }
 
+- (void)_editDataNodeIfPossible:(LNPropertyListNode*)node
+{
+	BOOL editable = YES;
+	if(_flags.delegate_canEditValueOfNode)
+	{
+		editable = [self.delegate propertyListEditor:self canEditValueOfNode:node];
+	}
+	
+	if(editable == NO)
+	{
+		return;
+	}
+	
+	LNPropertyListDataEditorPanel* dataEditor = [LNPropertyListDataEditorPanel new];
+	dataEditor.data = node.value;
+	[dataEditor beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse result) {
+		if(result == NSModalResponseCancel)
+		{
+			return;
+		}
+		
+		[self _updateValue:dataEditor.data ofNode:node reloadItem:YES];
+	}];
+}
+
 - (void)_outlineViewDoubleClick
 {
 	LNPropertyListNode* node = [_outlineView itemAtRow:_outlineView.clickedRow];
+	LNPropertyListNodeType type = node._appropriateType;
 	
 	if(node == nil)
 	{
 		return;
 	}
 	
-	if(node.type == LNPropertyListNodeTypeDate)
+	if(type == LNPropertyListNodeTypeDate)
 	{
+		return;
+	}
+	
+	if(type == LNPropertyListNodeTypeData)
+	{
+		[self _editDataNodeIfPossible:node];
+		
 		return;
 	}
 	
@@ -1062,6 +1096,7 @@
 	NSString* identifier;
 	NSString* value;
 	BOOL editable = NO;
+	BOOL isData = NO;
 	
 	if(tableColumn == _keyColumn)
 	{
@@ -1093,7 +1128,7 @@
 		if(_flags.dataTransformer_transformValueForDisplay && item.type != LNPropertyListNodeTypeArray && item.type != LNPropertyListNodeTypeDictionary)
 		{
 			item._cachedDisplayValue = [self.dataTransformer propertyListEditor:self displayValueForNode:item];
-			value = [LNPropertyListNode stringForType:[LNPropertyListNode _typeForObject:item._cachedDisplayValue]];
+			value = [LNPropertyListNode stringForType:item._appropriateType];
 		}
 		
 		if(value == nil)
@@ -1109,7 +1144,7 @@
 	}
 	else if(tableColumn == _valueColumn)
 	{
-		LNPropertyListNodeType type = item._cachedDisplayValue ? [LNPropertyListNode _typeForObject:item._cachedDisplayValue] : item.type;
+		LNPropertyListNodeType type = item._appropriateType;
 		
 		if(type == LNPropertyListNodeTypeBoolean)
 		{
@@ -1124,13 +1159,15 @@
 			identifier = @"ValueCell";
 		}
 		
-		editable = !(type == LNPropertyListNodeTypeArray || type == LNPropertyListNodeTypeDictionary || type == LNPropertyListNodeTypeData);
+		editable = !(type == LNPropertyListNodeTypeArray || type == LNPropertyListNodeTypeDictionary);
 		value = [LNPropertyListNode stringValueOfNode:item];
 		
 		if(editable && _flags.delegate_canEditValueOfNode)
 		{
 			editable = [self.delegate propertyListEditor:self canEditValueOfNode:item];
 		}
+		
+		isData = type == LNPropertyListNodeTypeData;
 	}
 	
 	cellView = [outlineView makeViewWithIdentifier:identifier owner:self];
@@ -1147,7 +1184,7 @@
 		[cellView setControlWithString:value setToolTip:(tableColumn == _keyColumn || (tableColumn == _valueColumn && editable))];
 	}
 	
-	[cellView setControlEditable:editable];
+	[cellView setControlEditable:editable && !isData];
 	
 	cellView.textField.delegate = self;
 	
@@ -1320,7 +1357,7 @@
 	}
 	else if(column == 2)
 	{
-		id newValue = [LNPropertyListNode convertString:textField.stringValue toObjectOfType:node.type];
+		id newValue = [LNPropertyListNode convertString:textField.stringValue toObjectOfType:node._appropriateType];
 		if(newValue != nil)
 		{
 			[self _updateValue:newValue ofNode:node reloadItem:YES];

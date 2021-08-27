@@ -1,0 +1,1 @@
+../../HexFiend/framework/sources/HFBinaryGlyphTable.m
