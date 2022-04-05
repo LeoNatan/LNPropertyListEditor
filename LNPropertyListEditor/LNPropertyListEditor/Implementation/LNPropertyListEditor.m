@@ -232,6 +232,39 @@
 	[self _updateValue:sender.dateValue ofNode:node reloadItem:NO];
 }
 
+- (LNPropertyListNode *)selectedNode
+{
+	NSInteger selectedRow = _outlineView.selectedRow;
+	if(selectedRow == -1)
+	{
+		return nil;
+	}
+	
+	return [_outlineView itemAtRow:selectedRow];
+}
+
+- (void)selectRowForNode:(LNPropertyListNode *)node
+{
+	NSInteger row = [_outlineView rowForItem:node];
+	if(row == -1)
+	{
+		return;
+	}
+	
+	[_outlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+}
+
+- (void)scrollRowForNodeToVisible:(LNPropertyListNode*)node
+{
+	NSInteger row = [_outlineView rowForItem:node];
+	if(row == -1)
+	{
+		return;
+	}
+	
+	[_outlineView scrollRowToVisible:row];
+}
+
 #pragma mark Node change handling
 
 - (void)_updateKey:(NSString*)key ofNode:(LNPropertyListNode*)node

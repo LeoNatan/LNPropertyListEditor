@@ -26,6 +26,16 @@
 	_plistEditor.dataTransformer = self;
 	
 	_plistEditor.propertyListObject = obj;
+	_plistEditor.allowsColumnSorting = YES;
+	
+//	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//		NSLog(@"Selected: %@", _plistEditor.selectedNode);
+//		LNPropertyListNode* node = [_plistEditor.rootPropertyListNode.children filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"key == 'yHelloNumber'"]].firstObject;
+//		
+//		[_plistEditor selectRowForNode:node];
+//		[_plistEditor scrollRowForNodeToVisible:node];
+//		NSLog(@"Selected: %@", _plistEditor.selectedNode);
+//	});
 }
 
 #pragma mark LNPropertyListEditorDelegate

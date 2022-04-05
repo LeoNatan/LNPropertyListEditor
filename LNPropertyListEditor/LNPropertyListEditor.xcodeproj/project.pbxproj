@@ -27,7 +27,7 @@
 		3946906C20976ED300B4A457 /* LNPropertyListDatePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3946906A20976ED300B4A457 /* LNPropertyListDatePicker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3946906D20976ED300B4A457 /* LNPropertyListDatePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 3946906B20976ED300B4A457 /* LNPropertyListDatePicker.m */; };
 		39D1276E26D9255D007E64D1 /* HexFiend.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1276B26D9254C007E64D1 /* HexFiend.framework */; };
-		39D1276F26D9255D007E64D1 /* HexFiend.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1276B26D9254C007E64D1 /* HexFiend.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		39D1276F26D9255D007E64D1 /* HexFiend.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 39D1276B26D9254C007E64D1 /* HexFiend.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		39D1528F23289668009124C8 /* LNPropertyListDatePickerPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 39D1528D23289668009124C8 /* LNPropertyListDatePickerPanel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		39D1529023289668009124C8 /* LNPropertyListDatePickerPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 39D1528E23289668009124C8 /* LNPropertyListDatePickerPanel.m */; };
 		39D152962328A9C4009124C8 /* _LNPropertyListDatePicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 39D152942328A9C4009124C8 /* _LNPropertyListDatePicker.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -53,7 +53,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 39D1276626D9254C007E64D1 /* HexFiend.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 68C279F96A1255D4C25C79AE;
+			remoteGlobalIDString = 1070E7C728563E78C6C95AC7;
 			remoteInfo = HexFiend;
 		};
 /* End PBXContainerItemProxy section */
@@ -253,7 +253,7 @@
 		393E1830207F6119002E6136 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 1330;
 				ORGANIZATIONNAME = "Leo Natan";
 				TargetAttributes = {
 					393E1838207F6119002E6136 = {
@@ -470,6 +470,9 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
+				IBC_ERRORS = NO;
+				IBC_NOTICES = NO;
+				IBC_WARNINGS = NO;
 				INFOPLIST_FILE = LNPropertyListEditor/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -497,6 +500,9 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
+				IBC_ERRORS = NO;
+				IBC_NOTICES = NO;
+				IBC_WARNINGS = NO;
 				INFOPLIST_FILE = LNPropertyListEditor/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (

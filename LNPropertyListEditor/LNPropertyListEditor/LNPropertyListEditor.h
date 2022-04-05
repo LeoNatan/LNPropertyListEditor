@@ -140,6 +140,7 @@ IB_DESIGNABLE
 
 /// The root node of the edited property list.
 @property (nonatomic, readonly) LNPropertyListNode* rootPropertyListNode;
+
 /// Reloads the specified node and, optionally, its children.
 /// @param node The node to reload, or @c nil to reload the root node.
 /// @param reloadChildren Pass @c true to reload the node's children as well.
@@ -153,10 +154,21 @@ IB_DESIGNABLE
 /// @param collapseChildren Pass @c true to reload the node's children as well.
 - (void)collapseNode:(nullable LNPropertyListNode*)node collapseChildren:(BOOL)collapseChildren;
 
+/// The currently selected node, if any.
+@property (nonatomic, strong, readonly, nullable) LNPropertyListNode* selectedNode;
+
+/// Selects the row for the specified node, if possible.
+/// @param node The node to select.
+- (void)selectRowForNode:(LNPropertyListNode*)node;
+
+/// Scrolls the property list editor so the specified node's row is visible.
+/// @param node The node whose row to scroll to
+- (void)scrollRowForNodeToVisible:(LNPropertyListNode*)node;
+
 /// The property list editor delegate.
-@property (nonatomic, weak) id<LNPropertyListEditorDelegate> delegate;
+@property (nonatomic, weak, nullable) id<LNPropertyListEditorDelegate> delegate;
 /// The property list editor data transformer.
-@property (nonatomic, weak) id<LNPropertyListEditorDataTransformer> dataTransformer;
+@property (nonatomic, weak, nullable) id<LNPropertyListEditorDataTransformer> dataTransformer;
 
 /// Adds a new item.
 - (IBAction)add:(nullable id)sender;
