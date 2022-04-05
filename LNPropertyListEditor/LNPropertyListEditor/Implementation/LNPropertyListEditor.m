@@ -89,8 +89,6 @@
 	[[[NSNib alloc] initWithNibNamed:@"LNPropertyListEditorOutline" bundle:bundleToUse] instantiateWithOwner:self topLevelObjects:nil];
 	
 	_outlineView.enclosingScrollView.translatesAutoresizingMaskIntoConstraints = NO;
-	_outlineViewSortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"key" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]];
-	_outlineView.sortDescriptors = _outlineViewSortDescriptors;
 	
 	[_outlineView registerForDraggedTypes:@[LNPropertyListNodePasteboardType]];
 	[_outlineView setDraggingSourceOperationMask:NSDragOperationCopy forLocal:NO];
@@ -103,7 +101,7 @@
 	_typeColumnSortDescriptorPrototype = _typeColumn.sortDescriptorPrototype;
 	_valueColumnSortDescriptorPrototype = _valueColumn.sortDescriptorPrototype;
 	
-	_allowsColumnSorting = YES;
+	self.allowsColumnSorting = NO;
 	
 	[self addSubview:_outlineView.enclosingScrollView];
 	
@@ -135,8 +133,6 @@
 	_keyColumn.sortDescriptorPrototype = _allowsColumnSorting ? _keyColumnSortDescriptorPrototype : nil;
 	_typeColumn.sortDescriptorPrototype = _allowsColumnSorting ? _typeColumnSortDescriptorPrototype : nil;
 	_valueColumn.sortDescriptorPrototype = _allowsColumnSorting ? _valueColumnSortDescriptorPrototype : nil;
-	
-	_outlineView.sortDescriptors = _allowsColumnSorting ? _outlineViewSortDescriptors : nil;
 }
 
 - (void)setOutlineViewSortDescriptors:(NSArray<NSSortDescriptor *> *)outlineViewSortDescriptors
@@ -180,6 +176,8 @@
 	_rootPropertyListNode = [[LNPropertyListNode alloc] initWithPropertyListObject:propertyList];
 	if(_allowsColumnSorting)
 	{
+		_outlineViewSortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"key" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]];
+		_outlineView.sortDescriptors = _outlineViewSortDescriptors;
 		[self _sortRootNodeIfPossibleWithSortDescriptors:_outlineView.sortDescriptors];
 	}
 	

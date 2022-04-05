@@ -127,7 +127,7 @@ IB_DESIGNABLE
 
 /// The underlying edited property list object.
 ///
-/// Setting this property with @c allowsColumnSorting enabled will result in the model being sorted on load.
+/// Setting this property with @c allowsColumnSorting enabled will result in the model being sorted by keys on load.
 @property (nonatomic, copy) id propertyListObject;
 
 /// Sets the type column as hidden.
