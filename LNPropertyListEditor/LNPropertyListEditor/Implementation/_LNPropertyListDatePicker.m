@@ -32,33 +32,24 @@
 
 @implementation _LNPropertyListDatePicker
 
-- (BOOL)becomeFirstResponder
+- (instancetype)init
 {
-	if(_datePickerPanel == nil)
+	self = [super init];
+	
+	if(self)
 	{
 		_visualDatePicker = [NSDatePicker new];
 		_visualDatePicker.translatesAutoresizingMaskIntoConstraints = NO;
 		_visualDatePicker.datePickerStyle = NSDatePickerStyleClockAndCalendar;
 		_visualDatePicker.datePickerElements = NSDatePickerElementFlagTimeZone | NSDatePickerElementFlagHourMinuteSecond | NSDatePickerElementFlagYearMonthDay | NSDatePickerElementFlagEra;
 		_visualDatePicker.bordered = NO;
-		[_visualDatePicker sizeToFit];
-		_visualDatePicker.dateValue = self.dateValue;
-		_visualDatePicker.target = self.target;
-		_visualDatePicker.action = self.action;
 		
 		_LNForwardingDatePicker* forwardingPicker = [_LNForwardingDatePicker new];
 		forwardingPicker.expectedNextResponder = self.nextResponder;
 		_textDatePicker = forwardingPicker;
 		_textDatePicker.translatesAutoresizingMaskIntoConstraints = NO;
 		_textDatePicker.cell = [LNLeadingZerosDatePickerCell new];
-		_textDatePicker.font = self.font;
-		_textDatePicker.datePickerStyle = self.datePickerStyle;
-		_textDatePicker.datePickerElements = self.datePickerElements;
 		_textDatePicker.bordered = NO;
-		[_textDatePicker sizeToFit];
-		_textDatePicker.dateValue = self.dateValue;
-		_textDatePicker.target = self.target;
-		_textDatePicker.action = self.action;
 		
 		NSViewController* vc = [NSViewController new];
 		LNPropertyListDatePickerPanelBackgroundView* view = [LNPropertyListDatePickerPanelBackgroundView new];
@@ -67,7 +58,7 @@
 		vc.view = view;
 		[vc.view addSubview:_visualDatePicker];
 		[vc.view addSubview:_textDatePicker];
-	
+		
 		[NSLayoutConstraint activateConstraints:@[
 			[vc.view.leadingAnchor constraintEqualToAnchor:_textDatePicker.leadingAnchor],
 			[vc.view.topAnchor constraintEqualToAnchor:_textDatePicker.topAnchor],
@@ -81,6 +72,24 @@
 		_datePickerPanel.contentViewController = vc;
 		_datePickerPanel.datePickerPanelDelegate = self;
 	}
+	
+	return self;
+}
+
+- (BOOL)becomeFirstResponder
+{
+	_visualDatePicker.dateValue = self.dateValue;
+	_visualDatePicker.target = self.target;
+	_visualDatePicker.action = self.action;
+	[_visualDatePicker sizeToFit];
+	
+	_textDatePicker.font = self.font;
+	_textDatePicker.datePickerStyle = self.datePickerStyle;
+	_textDatePicker.datePickerElements = self.datePickerElements;
+	_textDatePicker.dateValue = self.dateValue;
+	_textDatePicker.target = self.target;
+	_textDatePicker.action = self.action;
+	[_textDatePicker sizeToFit];
 	
 	[self.window addChildWindow:_datePickerPanel ordered:NSWindowAbove];
 	[self _repositionPanel];
@@ -134,10 +143,6 @@
 
 - (void)propertyListDatePickerPanelDidClose:(LNPropertyListDatePickerPanel*)panel
 {
-	_datePickerPanel = nil;
-	_textDatePicker = nil;
-	_visualDatePicker = nil;
-	
 	[self.window makeKeyWindow];
 	[self.window makeFirstResponder:self.superview];
 }

@@ -34,10 +34,13 @@
 
 @implementation LNPropertyListEditor
 
+#if DEBUG
 - (void)prepareForInterfaceBuilder
 {
-	self.propertyListObject = @{@"Example Text": @"Text", @"Example Number": @123, @"Example Date": NSDate.date, @"Example Boolean": @YES};
+	self.allowsColumnSorting = YES;
+	self.propertyListObject = @{@"Example Text": @"Text", @"Example Number": @123, @"Example Date": NSDate.date, @"Example Boolean": @YES, @"Example Dictionary": @{@"a": @1, @"b": @2, @"c": @3}, @"Example Array": @[@"1", @"2", @"3"]};
 }
+#endif
 
 - (instancetype)initWithFrame:(NSRect)frameRect
 {
@@ -1054,18 +1057,26 @@
 
 - (void)_outlineViewSingleClick
 {
-	LNPropertyListNode* node = [_outlineView itemAtRow:_outlineView.clickedRow];
-	
-	if(node == nil)
+	NSInteger clickedColumnIndex = _outlineView.clickedColumn;
+	if(clickedColumnIndex == -1)
+	{
+		return;
+	}
+	NSTableColumn* clickedColumn = _outlineView.tableColumns[clickedColumnIndex];
+	if(clickedColumn != _valueColumn)
 	{
 		return;
 	}
 	
-	if(node.type == LNPropertyListNodeTypeDate)
+	LNPropertyListNode* node = [_outlineView itemAtRow:_outlineView.clickedRow];
+	
+	if(node == nil || node.type != LNPropertyListNodeTypeDate)
 	{
-		LNPropertyListCellView* view = [_outlineView viewAtColumn:_outlineView.clickedColumn row:_outlineView.clickedRow makeIfNecessary:NO];
-		[self.window makeFirstResponder:view.datePicker];
+		return;
 	}
+	
+	LNPropertyListCellView* view = [_outlineView viewAtColumn:_outlineView.clickedColumn row:_outlineView.clickedRow makeIfNecessary:NO];
+	[self.window makeFirstResponder:view.datePicker];
 }
 
 - (void)_editDataNodeIfPossible:(LNPropertyListNode*)node
@@ -1095,6 +1106,23 @@
 
 - (void)_outlineViewDoubleClick
 {
+	NSInteger clickedColumnIndex = _outlineView.clickedColumn;
+	if(clickedColumnIndex == -1)
+	{
+		return;
+	}
+	NSTableColumn* clickedColumn = _outlineView.tableColumns[clickedColumnIndex];
+	if(clickedColumn == _keyColumn)
+	{
+		[_outlineView editColumn:_outlineView.clickedColumn row:_outlineView.clickedRow withEvent:NSApp.currentEvent select:YES];
+		return;
+	}
+	
+	if(clickedColumn == _typeColumn)
+	{
+		return;
+	}
+	
 	LNPropertyListNode* node = [_outlineView itemAtRow:_outlineView.clickedRow];
 	LNPropertyListNodeType type = node._appropriateType;
 	

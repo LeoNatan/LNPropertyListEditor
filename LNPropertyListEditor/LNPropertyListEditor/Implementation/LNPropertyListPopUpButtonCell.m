@@ -40,7 +40,10 @@ static NSAppearance* __darkAppearanceCache;
 
 - (BOOL)trackMouse:(NSEvent *)event inRect:(NSRect)cellFrame ofView:(NSView *)controlView untilMouseUp:(BOOL)flag
 {
-	[self.controlView.window makeFirstResponder:self.controlView.superview];
+	if(NSProcessInfo.processInfo.operatingSystemVersion.majorVersion < 11)
+	{
+		[self.controlView.window makeFirstResponder:self.controlView.superview];
+	}
 	
 	return [super trackMouse:event inRect:cellFrame ofView:controlView untilMouseUp:flag];
 }

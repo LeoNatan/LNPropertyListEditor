@@ -29,6 +29,7 @@ let package = Package(
 			resources: [],
 			publicHeadersPath: "include",
 			cSettings: [
+				.unsafeFlags(["-w"]),
 				.define("HF_NO_PRIVILEGED_FILE_OPERATIONS", to: "1"),
 				.headerSearchPath("include"),
 				.headerSearchPath("src"),
