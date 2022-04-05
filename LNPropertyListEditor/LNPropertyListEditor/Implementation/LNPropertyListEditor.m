@@ -173,7 +173,15 @@
 
 - (void)setPropertyListObject:(id)propertyList
 {
-	_rootPropertyListNode = [[LNPropertyListNode alloc] initWithPropertyListObject:propertyList];
+	if([propertyList isKindOfClass:LNPropertyListNode.class])
+	{
+		_rootPropertyListNode = [propertyList copy];
+	}
+	else
+	{
+		_rootPropertyListNode = [[LNPropertyListNode alloc] initWithPropertyListObject:propertyList];
+	}
+	
 	if(_allowsColumnSorting)
 	{
 		_outlineViewSortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"key" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)]];
