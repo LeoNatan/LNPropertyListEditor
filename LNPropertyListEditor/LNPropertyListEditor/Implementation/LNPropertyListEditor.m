@@ -26,8 +26,6 @@
 	
 	IBOutlet NSTableColumn* _valueColumn;
 	NSSortDescriptor* _valueColumnSortDescriptorPrototype;
-	
-	NSUndoManager* _undoManager;
 }
 
 @end
@@ -1107,14 +1105,16 @@
 - (void)_outlineViewDoubleClick
 {
 	NSInteger clickedColumnIndex = _outlineView.clickedColumn;
-	if(clickedColumnIndex == -1)
+	NSInteger clickedRow = _outlineView.clickedRow;
+	if(clickedColumnIndex == -1 || clickedRow == -1)
 	{
 		return;
 	}
+	
 	NSTableColumn* clickedColumn = _outlineView.tableColumns[clickedColumnIndex];
 	if(clickedColumn == _keyColumn)
 	{
-		[_outlineView editColumn:_outlineView.clickedColumn row:_outlineView.clickedRow withEvent:NSApp.currentEvent select:YES];
+		[_outlineView editColumn:_outlineView.clickedColumn row:clickedRow withEvent:NSApp.currentEvent select:YES];
 		return;
 	}
 	
@@ -1123,7 +1123,7 @@
 		return;
 	}
 	
-	LNPropertyListNode* node = [_outlineView itemAtRow:_outlineView.clickedRow];
+	LNPropertyListNode* node = [_outlineView itemAtRow:clickedRow];
 	LNPropertyListNodeType type = node._appropriateType;
 	
 	if(node == nil)

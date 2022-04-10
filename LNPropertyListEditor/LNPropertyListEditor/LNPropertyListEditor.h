@@ -21,7 +21,7 @@ typedef NS_ENUM(NSUInteger, LNPropertyListNodeChangeType) {
 	/// Specifies that an object was updated.
 	LNPropertyListNodeChangeTypeUpdate,
 	
-	LNPropertyListNodeChangeTypeReorderChildren LN_DEPRECATED_API("Use LNPropertyListNodeChangeTypeUpdate isntead.") = LNPropertyListNodeChangeTypeUpdate,
+	LNPropertyListNodeChangeTypeReorderChildren LN_DEPRECATED_API("Use LNPropertyListNodeChangeType.update instead.") = LNPropertyListNodeChangeTypeUpdate,
 };
 
 NS_ASSUME_NONNULL_BEGIN
@@ -169,6 +169,11 @@ IB_DESIGNABLE
 @property (nonatomic, weak, nullable) id<LNPropertyListEditorDelegate> delegate;
 /// The property list editor data transformer.
 @property (nonatomic, weak, nullable) id<LNPropertyListEditorDataTransformer> dataTransformer;
+
+/// The property list editor's undo manager.
+///
+/// Use this property only for registering as an observer of various @c NSUndoManager notifications; do not make changes to the various properties.
+@property (nonatomic, strong, readonly) NSUndoManager* undoManager;
 
 /// Adds a new item.
 - (IBAction)add:(nullable id)sender;
