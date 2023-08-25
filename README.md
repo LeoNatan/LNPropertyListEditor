@@ -1,6 +1,10 @@
 # LNPropertyListEditor
 
-A property list editor for macOS, similar to Xcode's. Has full support for macOS Mojave light and dark appearance.
+A property list editor for macOS, similar to the one implemented in Xcode, but with several quality of life additions, such as a visual date/time picker and a full hex editor for data objects.
+
+The framework has full support for macOS light and dark appearance.
+
+By implementing the `LNPropertyListEditorDataTransformer` protocol, you can significantly augment the way property list data is presented in the editor and represented on-disk.
 
 ![Property list editor](Supplements/Screenshot_1_Dark.png "Property list editor")
 
