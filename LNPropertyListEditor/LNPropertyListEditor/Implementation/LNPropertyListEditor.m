@@ -942,12 +942,12 @@
 	id<NSPasteboardWriting> pbWriter = node.pasteboardWriter;
 	
 	[NSPasteboard.generalPasteboard clearContents];
+	[LNPropertyListNode _clearPasteboardMapping];
+
 	for (NSPasteboardType type in [pbWriter writableTypesForPasteboard:NSPasteboard.generalPasteboard])
 	{
 		[NSPasteboard.generalPasteboard setData:[node.pasteboardWriter pasteboardPropertyListForType:type] forType:type];
 	}
-	
-	[LNPropertyListNode _clearPasteboardMapping];
 }
 
 - (IBAction)paste:(id)sender
