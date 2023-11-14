@@ -11,7 +11,12 @@
 
 #define NS(x) ((__bridge id)x)
 
-NSString* const LNPropertyListNodePasteboardType = @"com.LeoNatan.LNPropertyList.node";
+/// A  property list node that should be written to the pasteboard with reference semantics.
+///
+/// This is designed to be used primarily for drag operations where a specific reference is being manipulated.
+NSString* const LNPropertyListNodePasteboardReferenceType = @"com.LeoNatan.LNPropertyList.node.reference";
+/// A  property list node that should be written to the pasteboard with value semantics.
+NSString* const LNPropertyListNodePasteboardValueType = @"com.LeoNatan.LNPropertyList.node.value";
 NSString* const LNPropertyListNodeXcodeKeyType = @"com.apple.xcode.plist.key";
 static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 
@@ -453,8 +458,15 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 
 + (instancetype)_nodeFromPasteboard:(NSPasteboard *)pasteboard
 {
-	NSPasteboardType type = LNPropertyListNodePasteboardType;
+	NSPasteboardType type = LNPropertyListNodePasteboardValueType;
 	NSData* data = [pasteboard dataForType:type];
+
+	if(data == nil)
+	{
+		type = LNPropertyListNodePasteboardReferenceType;
+		data = [pasteboard dataForType:type];
+	}
+
 	BOOL needsValueReading = NO;
 	if(data == nil)
 	{
@@ -499,19 +511,26 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 
 + (nonnull NSArray<NSPasteboardType> *)readableTypesForPasteboard:(nonnull NSPasteboard *)pasteboard
 {
-	return @[LNPropertyListNodePasteboardType, LNPropertyListNodeXcodeKeyType];
+	return @[LNPropertyListNodePasteboardReferenceType, LNPropertyListNodePasteboardValueType, LNPropertyListNodeXcodeKeyType];
 }
 
 - (nullable instancetype)initWithPasteboardPropertyList:(NSData*)propertyList ofType:(NSPasteboardType)type
 {
 	LNPropertyListNode* rv = nil;
 	
-	if([type isEqualToString:LNPropertyListNodePasteboardType])
+	if([type isEqualToString:LNPropertyListNodePasteboardReferenceType] || [type isEqualToString:LNPropertyListNodePasteboardValueType])
 	{
 		NSDictionary* info = [NSPropertyListSerialization propertyListWithData:propertyList options:0 format:nil error:NULL];
 		NSString* UDIDString = info[@"UDID"];
-		
-		rv = [[_pasteboardNodeMapping objectForKey:UDIDString] copy];
+		if([type isEqualToString:LNPropertyListNodePasteboardValueType])
+		{
+			rv = [[_pasteboardNodeMapping objectForKey:UDIDString] copy];
+		}
+		else
+		{
+			rv = [_pasteboardNodeMapping objectForKey:UDIDString];
+		}
+
 		if(rv == nil)
 		{
 			rv = [NSKeyedUnarchiver unarchivedObjectOfClass:LNPropertyListNode.class fromData:info[@"data"] error:NULL];
@@ -552,12 +571,12 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 
 - (NSArray<NSPasteboardType> *)writableTypesForPasteboard:(NSPasteboard *)pasteboard
 {
-	return @[LNPropertyListNodePasteboardType, LNPropertyListNodeXcodeKeyType, NS(kUTTypeUTF8PlainText)];
+	return @[LNPropertyListNodePasteboardReferenceType, LNPropertyListNodePasteboardValueType, LNPropertyListNodeXcodeKeyType, NS(kUTTypeUTF8PlainText)];
 }
 
 - (id)pasteboardPropertyListForType:(NSPasteboardType)type
 {
-	if([type isEqualToString:LNPropertyListNodePasteboardType])
+	if([type isEqualToString:LNPropertyListNodePasteboardReferenceType] || [type isEqualToString:LNPropertyListNodePasteboardValueType])
 	{
 		NSString* UUIDString = NSUUID.UUID.UUIDString;
 		

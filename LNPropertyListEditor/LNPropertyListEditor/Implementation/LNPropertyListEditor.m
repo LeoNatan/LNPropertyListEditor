@@ -91,9 +91,9 @@
 	
 	_outlineView.enclosingScrollView.translatesAutoresizingMaskIntoConstraints = NO;
 	
-	[_outlineView registerForDraggedTypes:@[LNPropertyListNodePasteboardType]];
 	[_outlineView setDraggingSourceOperationMask:NSDragOperationCopy forLocal:NO];
 	
+	[_outlineView registerForDraggedTypes:@[LNPropertyListNodePasteboardReferenceType]];
 	[_outlineView setTarget:self];
 	[_outlineView setAction:@selector(_outlineViewSingleClick)];
 	[_outlineView setDoubleAction:@selector(_outlineViewDoubleClick)];
@@ -657,7 +657,7 @@
 
 - (BOOL)_validateCanPasteForSender:(id)sender
 {
-	BOOL canPaste = [NSPasteboard.generalPasteboard canReadItemWithDataConformingToTypes:@[LNPropertyListNodePasteboardType, LNPropertyListNodeXcodeKeyType]];
+	BOOL canPaste = [NSPasteboard.generalPasteboard canReadItemWithDataConformingToTypes:@[LNPropertyListNodePasteboardReferenceType, LNPropertyListNodePasteboardValueType, LNPropertyListNodeXcodeKeyType]];
 	NSInteger row = [self _rowForSender:sender beep:NO];
 	id node = [self.outlineView itemAtRow:row] ?: self.rootPropertyListNode;
 	if(canPaste && _flags.delegate_canAddNewNodeInNode)

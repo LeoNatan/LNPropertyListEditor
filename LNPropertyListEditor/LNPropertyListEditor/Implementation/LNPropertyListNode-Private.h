@@ -11,7 +11,8 @@
 
 #import <AppKit/AppKit.h>
 
-extern NSString* const LNPropertyListNodePasteboardType;
+extern NSString* const LNPropertyListNodePasteboardReferenceType;
+extern NSString* const LNPropertyListNodePasteboardValueType;
 extern NSString* const LNPropertyListNodeXcodeKeyType;
 
 @interface LNPropertyListNode () <NSPasteboardReading>
