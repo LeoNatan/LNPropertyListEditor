@@ -21,7 +21,7 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 {
 	@autoreleasepool
 	{
-		_pasteboardNodeMapping = [NSMapTable strongToWeakObjectsMapTable];
+		_pasteboardNodeMapping = [NSMapTable strongToStrongObjectsMapTable];
 	}
 }
 
@@ -482,8 +482,16 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 	rv.key = self.key;
 	rv.type = self.type;
 	rv.value = self.value;
-	rv.children = self.children.mutableCopy;
-	
+
+  if(self.children.count > 0)
+  {
+    rv.children = [[NSMutableArray alloc] initWithArray:self.children copyItems:YES];
+    for (LNPropertyListNode *child in rv.children)
+    {
+      child.parent = rv;
+    }
+  }
+
 	return rv;
 }
 
@@ -502,8 +510,8 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 	{
 		NSDictionary* info = [NSPropertyListSerialization propertyListWithData:propertyList options:0 format:nil error:NULL];
 		NSString* UDIDString = info[@"UDID"];
-		rv = [_pasteboardNodeMapping objectForKey:UDIDString];
 		
+		rv = [[_pasteboardNodeMapping objectForKey:UDIDString] copy];
 		if(rv == nil)
 		{
 			rv = [NSKeyedUnarchiver unarchivedObjectOfClass:LNPropertyListNode.class fromData:info[@"data"] error:NULL];

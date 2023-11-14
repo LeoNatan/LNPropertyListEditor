@@ -937,8 +937,8 @@
 		return;
 	}
 	
-	LNPropertyListNode* node = [_outlineView itemAtRow:row];
-	
+	LNPropertyListNode* node = [[_outlineView itemAtRow:row] copy];
+
 	id<NSPasteboardWriting> pbWriter = node.pasteboardWriter;
 	
 	[NSPasteboard.generalPasteboard clearContents];
