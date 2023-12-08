@@ -27,7 +27,7 @@ static NSAppearance* __darkAppearanceCache;
 
 - (NSRect)drawTitle:(NSAttributedString *)title withFrame:(NSRect)frame inView:(NSView *)controlView
 {
-	BOOL isHighlited = self.backgroundStyle == NSBackgroundStyleDark;
+	BOOL isHighlited = self.backgroundStyle == NSBackgroundStyleEmphasized;
 	//All this to get the damn colors to match a text field. Ridiculous
 	NSColor* controlColor = self.isEnabled ? (isHighlited ? __enabledTextColorHighlight : (controlView.effectiveAppearance == __darkAppearanceCache ? NSColor.whiteColor : __enabledTextColor)) : (isHighlited ? __disabledTextColorHighlight : __disabledTextColor);
 	NSMutableAttributedString* attr = self.attributedTitle.mutableCopy;

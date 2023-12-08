@@ -14,7 +14,7 @@
 
 @import ObjectiveC;
 
-@interface LNPropertyListEditor () <NSOutlineViewDataSource, NSOutlineViewDelegate, NSTextFieldDelegate>
+@interface LNPropertyListEditor () <NSOutlineViewDataSource, NSOutlineViewDelegate, NSTextFieldDelegate, NSMenuItemValidation>
 {
 	IBOutlet NSMenu* _menuItem;
 	
