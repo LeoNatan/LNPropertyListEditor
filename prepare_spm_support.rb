@@ -34,6 +34,7 @@ output_project_path = Pathname(File.expand_path("HexFiendFramework"))
 output_project = Xcodeproj::Project.new(output_project_path.join("HexFiend.xcodeproj"))
 output_project.build_configurations.each do |config|
   config.build_settings['ONLY_ACTIVE_ARCH'] = 'NO'
+  config.build_settings['GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS'] = 'NO'
 end
 output_target = output_project.new_target(:framework, 'HexFiend', :osx, '10.14')
 
