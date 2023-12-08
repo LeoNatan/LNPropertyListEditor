@@ -506,7 +506,10 @@ static NSMapTable<NSString*, LNPropertyListNode*>* _pasteboardNodeMapping;
 		
 		if(rv == nil)
 		{
-			rv = [NSKeyedUnarchiver unarchivedObjectOfClass:LNPropertyListNode.class fromData:info[@"data"] error:NULL];
+			NSKeyedUnarchiver* unarchiver = [[NSKeyedUnarchiver alloc] initForReadingFromData:info[@"data"] error:NULL];
+			unarchiver.requiresSecureCoding = NO;
+			
+			rv = [unarchiver decodeObjectForKey:NSKeyedArchiveRootObjectKey];
 		}
 	}
 	
